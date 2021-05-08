@@ -1,0 +1,15 @@
+#Stage1
+#Goのビルドを実行するベースイメージをPull
+FROM golang:1.16.4-alpine3.13 as builder
+#ローカルのmain.goをイメージ内にコピー
+COPY ./main.go ./
+#main.goをソースからビルド（コンパイル）して、msbというビルド成果物を生成
+RUN go build -o /msb ./main.go
+
+#Stage2
+#alpineベースイメージをPull
+FROM alpine:3.13
+#ビルドイメージからビルド成果物のmsbをコピーして配置
+COPY --from=builder /msb /usr/local/bin/msb
+#msbの実行
+ENTRYPOINT ["/usr/local/bin/msb"]
