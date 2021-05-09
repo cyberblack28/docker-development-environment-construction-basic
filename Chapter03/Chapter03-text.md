@@ -1483,3 +1483,292 @@ fabb50c8e09a   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   22 minutes
 </body>
 </html>
 ```
+
+```linuxコマンド
+# curl http://localhost:8080/copy.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Docker Command Practice</title>
+</head>
+<body>
+<p>Copy Command !!</p>
+</body>
+</html>
+```
+
+#### docker container stats
+
+```dockerコマンド
+# docker container stats sample-nginx
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O   PIDS
+fabb50c8e09a   sample-nginx   0.00%     3.789MiB / 3.597GiB   0.10%     1.87kB / 715B   0B / 0B     2
+```
+
+#### docker container inspect
+
+```dockerコマンド
+# docker container inspect sample-nginx
+[
+    {
+        "Id": "fabb50c8e09a75df779e207f48fde429669681a2cda6255355f52b6bb5c0b204",
+        "Created": "2021-05-09T07:30:34.756940885Z",
+        "Path": "/usr/sbin/nginx",
+        "Args": [
+            "-g",
+            "daemon off;"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 11179,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2021-05-09T07:52:32.284350756Z",
+            "FinishedAt": "2021-05-09T07:52:11.19895919Z"
+        },
+        "Image": "sha256:dd05031e366cc022080df34843ee166f9a707769ab9344545c268c7a8666e0b4",
+        "ResolvConfPath": "/var/lib/docker/containers/fabb50c8e09a75df779e207f48fde429669681a2cda6255355f52b6bb5c0b204/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/fabb50c8e09a75df779e207f48fde429669681a2cda6255355f52b6bb5c0b204/hostname",
+        "HostsPath": "/var/lib/docker/containers/fabb50c8e09a75df779e207f48fde429669681a2cda6255355f52b6bb5c0b204/hosts",
+        "LogPath": "/var/lib/docker/containers/fabb50c8e09a75df779e207f48fde429669681a2cda6255355f52b6bb5c0b204/fabb50c8e09a75df779e207f48fde429669681a2cda6255355f52b6bb5c0b204-json.log",
+        "Name": "/sample-nginx",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "docker-default",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "default",
+            "PortBindings": {
+                "80/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "8080"
+                    }
+                ]
+            },
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "host",
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/cfe423d4e29362968c7dcba3d82f671db6738fb12ef3e7e2ee6ec26ddaa0469b-init/diff:/var/lib/docker/overlay2/d15e58192be2b14a8027b6b1144bf43f5074f565b6b5c2cf9f75353c544a9ce8/diff:/var/lib/docker/overlay2/54980eeec746d3770946b578579d99c2fe9f86c39639db6fa24b503ffce0fcf5/diff:/var/lib/docker/overlay2/a0bb6497d5250d96620ddd030c28b54aaafa6c17063fc19078966c6efe303404/diff:/var/lib/docker/overlay2/a6f0d38fae88c5d22d01fbd9f9c1c2ec6354ccd6f718f0dd3666d726e6bf1427/diff",
+                "MergedDir": "/var/lib/docker/overlay2/cfe423d4e29362968c7dcba3d82f671db6738fb12ef3e7e2ee6ec26ddaa0469b/merged",
+                "UpperDir": "/var/lib/docker/overlay2/cfe423d4e29362968c7dcba3d82f671db6738fb12ef3e7e2ee6ec26ddaa0469b/diff",
+                "WorkDir": "/var/lib/docker/overlay2/cfe423d4e29362968c7dcba3d82f671db6738fb12ef3e7e2ee6ec26ddaa0469b/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [],
+        "Config": {
+            "Hostname": "fabb50c8e09a",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "80/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": null,
+            "Image": "cyberblack28/sample-nginx",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": [
+                "/usr/sbin/nginx",
+                "-g",
+                "daemon off;"
+            ],
+            "OnBuild": null,
+            "Labels": {
+                "org.label-schema.build-date": "20201113",
+                "org.label-schema.license": "GPLv2",
+                "org.label-schema.name": "CentOS Base Image",
+                "org.label-schema.schema-version": "1.0",
+                "org.label-schema.vendor": "CentOS",
+                "org.opencontainers.image.created": "2020-11-13 00:00:00+00:00",
+                "org.opencontainers.image.licenses": "GPL-2.0-only",
+                "org.opencontainers.image.title": "CentOS Base Image",
+                "org.opencontainers.image.vendor": "CentOS"
+            }
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "5f39981d10458797eba9d93b23132720bc166a6dab260f7c5143544279bb5af5",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {
+                "80/tcp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "8080"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "8080"
+                    }
+                ]
+            },
+            "SandboxKey": "/var/run/docker/netns/5f39981d1045",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "daf5b7a7fb382f82f994eaec0480ff25688c831b5a09fe3fc732a86a086b667c",
+            "Gateway": "172.17.0.1",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "172.17.0.2",
+            "IPPrefixLen": 16,
+            "IPv6Gateway": "",
+            "MacAddress": "02:42:ac:11:00:02",
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "15a685036c1a02014933dda087ed82d5d29b6dadb93893c0bfbd510eb3ba2e88",
+                    "EndpointID": "daf5b7a7fb382f82f994eaec0480ff25688c831b5a09fe3fc732a86a086b667c",
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.2",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:11:00:02",
+                    "DriverOpts": null
+                }
+            }
+        }
+    }
+]
+```
+
+#### docker container rm
+
+```dockerコマンド
+# docker container stop sample-nginx
+sample-nginx
+```
+
+```dockerコマンド
+# docker container ls -a
+CONTAINER ID   IMAGE                       COMMAND                  CREATED             STATUS                      PORTS     NAMES
+fabb50c8e09a   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   About an hour ago   Exited (0) 10 seconds ago             sample-nginx
+```
+
+```dockerコマンド
+# docker container rm sample-nginx
+sample-nginx
+```
+
+```dockerコマンド
+# docker container ls -a
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+#### docker container logs
+
+```dockerコマンド
+# cd ../3-3-2-02
+# cat Dockerfile
+```
