@@ -1871,7 +1871,7 @@ CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 #### バインドマウントの作成
 
 ```dockerコマンド
-# cd ../3-3-3-01
+# cd ../3-3-4-01
 # cat htdocs/index.html
 <!DOCTYPE html>
 <html>
@@ -1885,7 +1885,7 @@ CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
 ```dockerコマンド
-# docker run --name bind-nginx -d -p 8080:80 --mount type=bind,source=/root/container-develop-environment-construction-guide/Chapter03/3-3-3-01/htdocs,target=/usr/share/nginx/html nginx
+# docker run --name bind-nginx -d -p 8080:80 --mount type=bind,source=/root/container-develop-environment-construction-guide/Chapter03/3-3-4-01/htdocs,target=/usr/share/nginx/html nginx
 Unable to find image 'nginx:latest' locally
 latest: Pulling from library/nginx
 f7ec5a41d630: Pull complete
@@ -1897,6 +1897,29 @@ cf16cd8e71e0: Pull complete
 Digest: sha256:75a55d33ecc73c2a242450a9f1cc858499d468f077ea942867e662c247b5e412
 Status: Downloaded newer image for nginx:latest
 1d92e100abcfb9301c2f77cc5f707d44820e19bcb970a9f56b96cfaa3be8ee1a
+# curl http://localhost:8080/index.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Docker Bind mount</title>
+</head>
+<body>
+<h1>ホストのhtmlファイルをマウントしています！</h1>
+</body>
+```
+
+```dockerコマンド
+# docker run --name bind-nginx -d -p 8080:80 -v /root/container-develop-environment-construction-guide/Chapter03/3-3-4-01/htdocs:/usr/share/nginx/html nginx
+aaab73a2a5de468200062b5ddcd42bb3e4c4a801053a5341a84a00a13176bf5b
+# curl http:////localhost:8080/index.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Docker Bind mount</title>
+</head>
+<body>
+<h1>ホストのhtmlファイルをマウントしています！</h1>
+</body>
 ```
 
 ```linuxコマンド
@@ -1963,8 +1986,37 @@ local htdocs
 
 #### ホスト側ディレクトリの確認
 
-```dockerコマンド
+```linuxコマンド
 # ls /var/lib/docker/volumes/htdocs/_data/
 50x.html  index.html
 ```
 
+```linuxコマンド
+# curl http://localhost:8080/volume.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Docker Volume</title>
+</head>
+<body>
+<h1>Volumeでhtmlファイルを作成しました！</h1>
+</body>
+</html>
+```
+
+```dockerコマンド
+# docker container exec -it volume-nginx /bin/bash
+root@978821cb0c6c:/# touch /usr/share/nginx/html/test
+root@978821cb0c6c:/# ls /usr/share/nginx/html/
+50x.html  index.html  test  volume.html
+root@978821cb0c6c:/# exit
+exit
+# ls /var/lib/docker/volumes/htdocs/_data/
+50x.html  index.html  test  volume.html
+# docker container stop volume-nginx
+volume-nginx
+# docker container rm volume-nginx
+volume-nginx
+```
+
+### 3・3・6 一時ファイルシステムのマウント（tmpfs mount）
