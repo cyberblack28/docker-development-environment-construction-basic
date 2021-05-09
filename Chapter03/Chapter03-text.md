@@ -752,3 +752,88 @@ Total: 151 (UNKNOWN: 0, LOW: 116, MEDIUM: 35, HIGH: 0, CRITICAL: 0)
 |                  | TEMP-0290435-0B57B5 |          |                           |                   |                                                              |
 +------------------+---------------------+----------+---------------------------+-------------------+--------------------------------------------------------------+
 ```
+
+### 3.2.4 イメージのPush/Pullコマンドの実行
+
+#### Docker Hubへのログイン
+
+```dockerコマンド
+# docker login
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+Username: cyberblack28
+Password:
+WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+```
+
+#### Pushコマンドの実行
+
+```dockerコマンド
+# docker image push cyberblack28/sample-nginx
+Using default tag: latest
+The push refers to repository [docker.io/cyberblack28/sample-nginx]
+8967fe867ced: Pushed
+e1f7893ab52e: Pushed
+acfaf1472707: Pushed
+174f56854903: Mounted from library/centos
+latest: digest: sha256:b51f647395095e5364928c0bf53b82a05c73ea15fd757fe641c07f152e4b43d6 size: 1161
+```
+
+#### IMAGE IDの確認
+
+```dockerコマンド
+# docker image ls
+REPOSITORY                  TAG                 IMAGE ID       CREATED        SIZE
+msb                         latest              e4292341aafc   17 hours ago   7.55MB
+<none>                      <none>              4c6515bdcb21   21 hours ago   7.55MB
+<none>                      <none>              fb2a599580ef   21 hours ago   303MB
+cyberblack28/sample-nginx   latest              c0adbbc67c75   22 hours ago   558MB
+golang                      1.16.4-alpine3.13   722a834ff95b   2 days ago     301MB
+alpine                      3.13                6dbb9cc54074   3 weeks ago    5.61MB
+centos                      7                   8652b9f0cb4c   5 months ago   204MB
+```
+
+#### イメージの削除と確認
+
+```dockerコマンド
+# docker image rm c0adbbc67c75
+Untagged: cyberblack28/sample-nginx:latest
+Untagged: cyberblack28/sample-nginx@sha256:b51f647395095e5364928c0bf53b82a05c73ea15fd757fe641c07f152e4b43d6
+Deleted: sha256:c0adbbc67c7579f10c0e02d156ae5848b2f6b20cc7e9fbba7c824e0b942d3785
+Deleted: sha256:1404cd12fc173f744af2fc45304d2bc5e183dfb93ce4b5225d593d54ca44201e
+Deleted: sha256:5a229a3ebc2f92712884dc511c6b8011ffeb669854fc25607f64f3b33a39ad2a
+Deleted: sha256:7dfdc72897361211e00fabc1ed1684f36d6164c8b9e39f584583e0c0eb778705
+Deleted: sha256:5bfb8527698f016527c8408877281b44d246d6dc3fdcfb52265ec8bb5f2ddee1
+Deleted: sha256:1e01263f61e1a2f65e9e0fd5f78016ad787d6ed375918196665517f88585f054
+Deleted: sha256:e11d86dec8982063e784b2356306cbbb532c4f8029f6b12c0950f57b3485ce35
+```
+
+#### Pullコマンドの実行
+
+```dockerコマンド
+# docker image pull cyberblack28/sample-nginx
+Using default tag: latest
+latest: Pulling from cyberblack28/sample-nginx
+2d473b07cdd5: Already exists
+81e72b5342fa: Pull complete
+7a2a3e571b4a: Pull complete
+0a4fc4cba375: Pull complete
+Digest: sha256:b51f647395095e5364928c0bf53b82a05c73ea15fd757fe641c07f152e4b43d6
+Status: Downloaded newer image for cyberblack28/sample-nginx:latest
+docker.io/cyberblack28/sample-nginx:latest
+```
+
+```dockerコマンド
+# docker image ls
+REPOSITORY                  TAG                 IMAGE ID       CREATED        SIZE
+msb                         latest              e4292341aafc   17 hours ago   7.55MB
+<none>                      <none>              4c6515bdcb21   21 hours ago   7.55MB
+<none>                      <none>              fb2a599580ef   21 hours ago   303MB
+cyberblack28/sample-nginx   latest              c0adbbc67c75   22 hours ago   558MB
+golang                      1.16.4-alpine3.13   722a834ff95b   2 days ago     301MB
+alpine                      3.13                6dbb9cc54074   3 weeks ago    5.61MB
+centos                      7                   8652b9f0cb4c   5 months ago   204MB
+```
