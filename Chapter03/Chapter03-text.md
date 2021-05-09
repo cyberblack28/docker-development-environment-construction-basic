@@ -1406,3 +1406,80 @@ cdb6104e7e5e: Pushed
 174f56854903: Layer already exists
 latest: digest: sha256:85bfa643cc5fb6cb85544993a216ddf092fc2eb8b4e0c34598ebf86b2f6e1977 size: 1161
 ```
+
+### 3.3.2 コンテナ起動と操作
+
+#### docker container run
+
+```dockerコマンド
+# docker container run --name sample-nginx -d -p 8080:80 cyberblack28/sample-nginx
+fabb50c8e09a75df779e207f48fde429669681a2cda6255355f52b6bb5c0b204
+```
+
+```dockerコマンド
+# curl http://localhost:8080
+<!DOCTYPE html>
+<html>
+<head>
+<title>First Docker Build</title>
+</head>
+<body>
+<p>Happy, Container !!</p>
+</body>
+```
+
+```dockerコマンド
+# docker container ls
+CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS         PORTS                                   NAMES
+fabb50c8e09a   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   7 minutes ago   Up 7 minutes   0.0.0.0:8080->80/tcp, :::8080->80/tcp   sample-nginx
+```
+
+#### docker container exec
+
+```dockerコマンド
+# docker container exec -it sample-nginx /bin/bash
+[root@fabb50c8e09a /]# ls
+anaconda-post.log  bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+[root@fabb50c8e09a /]# exit
+exit
+```
+
+#### docker container stop / docker container start
+
+```dockerコマンド
+# docker container stop sample-nginx
+sample-nginx
+```
+
+```dockerコマンド
+# docker container ls -a
+CONTAINER ID   IMAGE                       COMMAND                  CREATED          STATUS                     PORTS     NAMES
+fabb50c8e09a   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   21 minutes ago   Exited (0) 9 seconds ago             sample-nginx
+```
+
+```dockerコマンド
+# docker container start sample-nginx
+sample-nginx
+```
+
+```dockerコマンド
+# docker container ls -a
+CONTAINER ID   IMAGE                       COMMAND                  CREATED          STATUS         PORTS                                   NAMES
+fabb50c8e09a   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   22 minutes ago   Up 8 seconds   0.0.0.0:8080->80/tcp, :::8080->80/tcp   sample-nginx
+```
+
+#### docker container cp
+
+```linuxコマンド
+# cd ../3-3-2-01
+# cat copy.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Docker Command Practice</title>
+</head>
+<body>
+<p>Copy Command !!</p>
+</body>
+</html>
+```
