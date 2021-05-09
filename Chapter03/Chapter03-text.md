@@ -1865,3 +1865,106 @@ sample-nginx
 # docker container ls
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
+
+### 3・3・4 バインドマウント
+
+#### バインドマウントの作成
+
+```dockerコマンド
+# cd ../3-3-3-01
+# cat htdocs/index.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Docker Bind mount</title>
+</head>
+<body>
+<h1>ホストのhtmlファイルをマウントしています！</h1>
+</body>
+</html>
+```
+
+```dockerコマンド
+# docker run --name bind-nginx -d -p 8080:80 --mount type=bind,source=/root/container-develop-environment-construction-guide/Chapter03/3-3-3-01/htdocs,target=/usr/share/nginx/html nginx
+Unable to find image 'nginx:latest' locally
+latest: Pulling from library/nginx
+f7ec5a41d630: Pull complete
+aa1efa14b3bf: Pull complete
+b78b95af9b17: Pull complete
+c7d6bca2b8dc: Pull complete
+cf16cd8e71e0: Pull complete
+0241c68333ef: Pull complete
+Digest: sha256:75a55d33ecc73c2a242450a9f1cc858499d468f077ea942867e662c247b5e412
+Status: Downloaded newer image for nginx:latest
+1d92e100abcfb9301c2f77cc5f707d44820e19bcb970a9f56b96cfaa3be8ee1a
+```
+
+```linuxコマンド
+# curl http://localhost:8080/index.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Docker Bind mount</title>
+</head>
+<body>
+<h1>ホストのhtmlファイルをマウントしています！</h1>
+</body>
+```
+
+#### マウントファイルの変更
+
+```dockerコマンド
+# curl http://localhost:8080/index.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Docker Bind mount</title>
+</head>
+<body>
+<h1>ホストのhtmlファイルを更新しました！</h1>
+</body>
+</html>
+```
+
+```dockerコマンド
+# docker container stop bind-nginx
+volume-nginx
+```
+
+```dockerコマンド
+# docker container rm bind-nginx
+volume-nginx
+```
+
+### 3・3・5 ボリューム（Volume）
+
+#### ボリュームの作成
+
+```dockerコマンド
+# docker volume create htdocs
+htdocs
+```
+
+```dockerコマンド
+# docker volume ls
+DRIVER VOLUME NAME
+local htdocs
+```
+
+```dockerコマンド
+# docker container run --name volume-nginx -d -p 8080:80 --mount source=htdocs,target=/usr/share/nginx/html nginx
+978821cb0c6c259e3a22245844b86b0f9216f3268af9bf95f5007f19cb975a26
+```
+
+```dockerコマンド
+# docker container run --name volume-nginx -d -p 8080:80 -v htdocs:/usr/share/nginx/html nginx
+67b44f15a9f8495a6fadbeb17bdab87d7a9c68b32978cda4d23269c86cd9751d
+```
+
+#### ホスト側ディレクトリの確認
+
+```dockerコマンド
+# ls /var/lib/docker/volumes/htdocs/_data/
+50x.html  index.html
+```
+
