@@ -1771,4 +1771,97 @@ CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```dockerコマンド
 # cd ../3-3-2-02
 # cat Dockerfile
+#CentOS7のベースイメージをPull
+FROM centos:7
+
+#yumでepel-releaseをインストール
+RUN yum -y install epel-release
+
+#yumでnginxをインストール
+RUN yum -y install nginx
+
+#ホスト側のindex.htmlをコピー
+COPY index.html /usr/share/nginx/html
+
+# アクセスログとエラーログを標準出力に出力
+RUN ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log
+
+#コンテナ起動時に実行するコマンド
+ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
+```
+
+```dockerコマンド
+# docker image build -t cyberblack28/sample-nginx .
+Sending build context to Docker daemon  3.584kB
+Step 1/6 : FROM centos:7
+ ---> 8652b9f0cb4c
+Step 2/6 : RUN yum -y install epel-release
+ ---> Using cache
+ ---> aef1753346c0
+Step 3/6 : RUN yum -y install nginx
+ ---> Using cache
+ ---> b769804e22fe
+Step 4/6 : COPY index.html /usr/share/nginx/html
+ ---> Using cache
+ ---> becc96f8d94a
+Step 5/6 : RUN ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log
+ ---> Running in 0d695afc504b
+Removing intermediate container 0d695afc504b
+ ---> cb9de963da77
+Step 6/6 : ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
+ ---> Running in bdc087580498
+Removing intermediate container bdc087580498
+ ---> fcd99f4c6ca4
+Successfully built fcd99f4c6ca4
+Successfully tagged cyberblack28/sample-nginx:latest
+```
+
+```dockerコマンド
+# docker container run --name sample-nginx -d -p 8080:80 cyberblack28/sample-nginx
+54891f0c0102c496b1a98f25ee1b4acabe41edc49f05086450944f8efa39ae9d
+```
+
+```dockerコマンド
+# docker container ls
+CONTAINER ID   IMAGE                       COMMAND                  CREATED              STATUS              PORTS                                   NAMES
+54891f0c0102   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   About a minute ago   Up About a minute   0.0.0.0:8080->80/tcp, :::8080->80/tcp   sample-nginx
+```
+
+```linuxコマンド
+# curl http://localhost:8080
+<!DOCTYPE html>
+<html>
+<head>
+<title>First Docker Build</title>
+</head>
+<body>
+<p>Happy, Container !!</p>
+</body>
+</html>
+```
+
+```dockerコマンド
+# docker container logs sample-nginx
+172.17.0.1 - - [09/May/2021:08:57:34 +0000] "GET / HTTP/1.1" 200 126 "-" "curl/7.68.0" "-"
+```
+
+```dockerコマンド
+# docker container stop sample-nginx
+sample-nginx
+```
+
+```dockerコマンド
+# docker container ls -a
+CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS                      PORTS     NAMES
+54891f0c0102   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   7 minutes ago   Exited (0) 55 seconds ago             sample-nginx
+```
+
+```dockerコマンド
+# docker container rm sample-nginx
+sample-nginx
+```
+
+```dockerコマンド
+# docker container ls
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
