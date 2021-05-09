@@ -837,3 +837,572 @@ golang                      1.16.4-alpine3.13   722a834ff95b   2 days ago     30
 alpine                      3.13                6dbb9cc54074   3 weeks ago    5.61MB
 centos                      7                   8652b9f0cb4c   5 months ago   204MB
 ```
+
+#### Image Tag
+
+```dockerコマンド
+# cd ../3-2-4-01
+# cat index.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>First Docker Build</title>
+</head>
+<body>
+<p>Happy, Container !!</p>
+</body>
+</html>
+```
+
+```dockerコマンド
+# docker image build -t cyberblack28/sample-nginx .
+Sending build context to Docker daemon  3.072kB
+Step 1/5 : FROM centos:7
+ ---> 8652b9f0cb4c
+Step 2/5 : RUN yum -y install epel-release
+ ---> Running in f724cf22bace
+Loaded plugins: fastestmirror, ovl
+Determining fastest mirrors
+ * base: ty1.mirror.newmediaexpress.com
+ * extras: ty1.mirror.newmediaexpress.com
+ * updates: ty1.mirror.newmediaexpress.com
+Resolving Dependencies
+--> Running transaction check
+---> Package epel-release.noarch 0:7-11 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+================================================================================
+ Package                Arch             Version         Repository        Size
+================================================================================
+Installing:
+ epel-release           noarch           7-11            extras            15 k
+
+Transaction Summary
+================================================================================
+Install  1 Package
+
+Total download size: 15 k
+Installed size: 24 k
+Downloading packages:
+warning: /var/cache/yum/x86_64/7/extras/packages/epel-release-7-11.noarch.rpm: Header V3 RSA/SHA256 Signature, key ID f4a80eb5: NOKEY
+Public key for epel-release-7-11.noarch.rpm is not installed
+Retrieving key from file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+Importing GPG key 0xF4A80EB5:
+ Userid     : "CentOS-7 Key (CentOS 7 Official Signing Key) <security@centos.org>"
+ Fingerprint: 6341 ab27 53d7 8a78 a7c2 7bb1 24c6 a8a7 f4a8 0eb5
+ Package    : centos-release-7-9.2009.0.el7.centos.x86_64 (@CentOS)
+ From       : /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : epel-release-7-11.noarch                                     1/1
+  Verifying  : epel-release-7-11.noarch                                     1/1
+
+Installed:
+  epel-release.noarch 0:7-11
+
+Complete!
+Removing intermediate container f724cf22bace
+ ---> aef1753346c0
+Step 3/5 : RUN yum -y install nginx
+ ---> Running in 274e58cb6f8e
+Loaded plugins: fastestmirror, ovl
+Loading mirror speeds from cached hostfile
+ * base: ty1.mirror.newmediaexpress.com
+ * epel: d2lzkl7pfhq30w.cloudfront.net
+ * extras: ty1.mirror.newmediaexpress.com
+ * updates: ty1.mirror.newmediaexpress.com
+http://mirrors.kernel.org/fedora-epel/7/x86_64/repodata/5ca9c8933445f59b58a261448d7ea4a487507718559420b519feef8f2cd02dcf-updateinfo.xml.bz2: [Errno 14] HTTP Error 404 - Not Found
+Trying other mirror.
+To address this issue please refer to the below wiki article 
+
+https://wiki.centos.org/yum-errors
+
+If above article doesn't help to resolve this issue please use https://bugs.centos.org/.
+
+http://mirrors.syringanetworks.net/fedora-epel/7/x86_64/repodata/85e65dec80c2929659de21faf9ad0463ca47ad5bde3db354cd74b7b8bde346ce-primary.sqlite.bz2: [Errno 14] HTTP Error 404 - Not Found
+Trying other mirror.
+Resolving Dependencies
+--> Running transaction check
+---> Package nginx.x86_64 1:1.16.1-3.el7 will be installed
+--> Processing Dependency: nginx-all-modules = 1:1.16.1-3.el7 for package: 1:nginx-1.16.1-3.el7.x86_64
+--> Processing Dependency: nginx-filesystem = 1:1.16.1-3.el7 for package: 1:nginx-1.16.1-3.el7.x86_64
+--> Processing Dependency: libcrypto.so.1.1(OPENSSL_1_1_0)(64bit) for package: 1:nginx-1.16.1-3.el7.x86_64
+--> Processing Dependency: libssl.so.1.1(OPENSSL_1_1_0)(64bit) for package: 1:nginx-1.16.1-3.el7.x86_64
+--> Processing Dependency: libssl.so.1.1(OPENSSL_1_1_1)(64bit) for package: 1:nginx-1.16.1-3.el7.x86_64
+--> Processing Dependency: nginx-filesystem for package: 1:nginx-1.16.1-3.el7.x86_64
+--> Processing Dependency: openssl for package: 1:nginx-1.16.1-3.el7.x86_64
+--> Processing Dependency: redhat-indexhtml for package: 1:nginx-1.16.1-3.el7.x86_64
+--> Processing Dependency: system-logos for package: 1:nginx-1.16.1-3.el7.x86_64
+--> Processing Dependency: libcrypto.so.1.1()(64bit) for package: 1:nginx-1.16.1-3.el7.x86_64
+--> Processing Dependency: libprofiler.so.0()(64bit) for package: 1:nginx-1.16.1-3.el7.x86_64
+--> Processing Dependency: libssl.so.1.1()(64bit) for package: 1:nginx-1.16.1-3.el7.x86_64
+--> Running transaction check
+---> Package centos-indexhtml.noarch 0:7-9.el7.centos will be installed
+---> Package centos-logos.noarch 0:70.0.6-3.el7.centos will be installed
+---> Package gperftools-libs.x86_64 0:2.6.1-1.el7 will be installed
+---> Package nginx-all-modules.noarch 1:1.16.1-3.el7 will be installed
+--> Processing Dependency: nginx-mod-http-image-filter = 1:1.16.1-3.el7 for package: 1:nginx-all-modules-1.16.1-3.el7.noarch
+--> Processing Dependency: nginx-mod-http-perl = 1:1.16.1-3.el7 for package: 1:nginx-all-modules-1.16.1-3.el7.noarch
+--> Processing Dependency: nginx-mod-http-xslt-filter = 1:1.16.1-3.el7 for package: 1:nginx-all-modules-1.16.1-3.el7.noarch
+--> Processing Dependency: nginx-mod-mail = 1:1.16.1-3.el7 for package: 1:nginx-all-modules-1.16.1-3.el7.noarch
+--> Processing Dependency: nginx-mod-stream = 1:1.16.1-3.el7 for package: 1:nginx-all-modules-1.16.1-3.el7.noarch
+---> Package nginx-filesystem.noarch 1:1.16.1-3.el7 will be installed
+---> Package openssl.x86_64 1:1.0.2k-21.el7_9 will be installed
+--> Processing Dependency: openssl-libs(x86-64) = 1:1.0.2k-21.el7_9 for package: 1:openssl-1.0.2k-21.el7_9.x86_64
+--> Processing Dependency: make for package: 1:openssl-1.0.2k-21.el7_9.x86_64
+---> Package openssl11-libs.x86_64 1:1.1.1g-3.el7 will be installed
+--> Running transaction check
+---> Package make.x86_64 1:3.82-24.el7 will be installed
+---> Package nginx-mod-http-image-filter.x86_64 1:1.16.1-3.el7 will be installed
+--> Processing Dependency: gd for package: 1:nginx-mod-http-image-filter-1.16.1-3.el7.x86_64
+--> Processing Dependency: libgd.so.2()(64bit) for package: 1:nginx-mod-http-image-filter-1.16.1-3.el7.x86_64
+---> Package nginx-mod-http-perl.x86_64 1:1.16.1-3.el7 will be installed
+--> Processing Dependency: perl >= 5.006001 for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
+--> Processing Dependency: perl(:MODULE_COMPAT_5.16.3) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
+--> Processing Dependency: perl(Exporter) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
+--> Processing Dependency: perl(XSLoader) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
+--> Processing Dependency: perl(constant) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
+--> Processing Dependency: perl(strict) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
+--> Processing Dependency: perl(warnings) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
+--> Processing Dependency: libperl.so()(64bit) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
+---> Package nginx-mod-http-xslt-filter.x86_64 1:1.16.1-3.el7 will be installed
+--> Processing Dependency: libxslt.so.1(LIBXML2_1.0.11)(64bit) for package: 1:nginx-mod-http-xslt-filter-1.16.1-3.el7.x86_64
+--> Processing Dependency: libxslt.so.1(LIBXML2_1.0.18)(64bit) for package: 1:nginx-mod-http-xslt-filter-1.16.1-3.el7.x86_64
+--> Processing Dependency: libexslt.so.0()(64bit) for package: 1:nginx-mod-http-xslt-filter-1.16.1-3.el7.x86_64
+--> Processing Dependency: libxslt.so.1()(64bit) for package: 1:nginx-mod-http-xslt-filter-1.16.1-3.el7.x86_64
+---> Package nginx-mod-mail.x86_64 1:1.16.1-3.el7 will be installed
+---> Package nginx-mod-stream.x86_64 1:1.16.1-3.el7 will be installed
+---> Package openssl-libs.x86_64 1:1.0.2k-19.el7 will be updated
+---> Package openssl-libs.x86_64 1:1.0.2k-21.el7_9 will be an update
+--> Running transaction check
+---> Package gd.x86_64 0:2.0.35-27.el7_9 will be installed
+--> Processing Dependency: libpng15.so.15(PNG15_0)(64bit) for package: gd-2.0.35-27.el7_9.x86_64
+--> Processing Dependency: libjpeg.so.62(LIBJPEG_6.2)(64bit) for package: gd-2.0.35-27.el7_9.x86_64
+--> Processing Dependency: libpng15.so.15()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
+--> Processing Dependency: libjpeg.so.62()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
+--> Processing Dependency: libfreetype.so.6()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
+--> Processing Dependency: libfontconfig.so.1()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
+--> Processing Dependency: libXpm.so.4()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
+--> Processing Dependency: libX11.so.6()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
+---> Package libxslt.x86_64 0:1.1.28-6.el7 will be installed
+---> Package perl.x86_64 4:5.16.3-299.el7_9 will be installed
+--> Processing Dependency: perl(Socket) >= 1.3 for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Scalar::Util) >= 1.10 for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl-macros for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(threads::shared) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(threads) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Time::Local) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Time::HiRes) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Storable) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Socket) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Scalar::Util) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Pod::Simple::XHTML) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Pod::Simple::Search) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Getopt::Long) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Filter::Util::Call) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(File::Temp) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(File::Spec::Unix) for package: 4:perl-5.16.3-299.el7_9.x86_64
+---> Package make.x86_64 1:3.82-24.el7 will be installed
+---> Package nginx-mod-http-image-filter.x86_64 1:1.16.1-3.el7 will be installed
+--> Processing Dependency: gd for package: 1:nginx-mod-http-image-filter-1.16.1-3.el7.x86_64
+--> Processing Dependency: libgd.so.2()(64bit) for package: 1:nginx-mod-http-image-filter-1.16.1-3.el7.x86_64
+---> Package nginx-mod-http-perl.x86_64 1:1.16.1-3.el7 will be installed
+--> Processing Dependency: perl >= 5.006001 for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
+--> Processing Dependency: perl(:MODULE_COMPAT_5.16.3) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
+--> Processing Dependency: perl(Exporter) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
+--> Processing Dependency: perl(XSLoader) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
+--> Processing Dependency: perl(constant) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
+--> Processing Dependency: perl(strict) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
+--> Processing Dependency: perl(warnings) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
+--> Processing Dependency: libperl.so()(64bit) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
+---> Package nginx-mod-http-xslt-filter.x86_64 1:1.16.1-3.el7 will be installed
+--> Processing Dependency: libxslt.so.1(LIBXML2_1.0.11)(64bit) for package: 1:nginx-mod-http-xslt-filter-1.16.1-3.el7.x86_64
+--> Processing Dependency: libxslt.so.1(LIBXML2_1.0.18)(64bit) for package: 1:nginx-mod-http-xslt-filter-1.16.1-3.el7.x86_64
+--> Processing Dependency: libexslt.so.0()(64bit) for package: 1:nginx-mod-http-xslt-filter-1.16.1-3.el7.x86_64
+--> Processing Dependency: libxslt.so.1()(64bit) for package: 1:nginx-mod-http-xslt-filter-1.16.1-3.el7.x86_64
+---> Package nginx-mod-mail.x86_64 1:1.16.1-3.el7 will be installed
+---> Package nginx-mod-stream.x86_64 1:1.16.1-3.el7 will be installed
+---> Package openssl-libs.x86_64 1:1.0.2k-19.el7 will be updated
+---> Package openssl-libs.x86_64 1:1.0.2k-21.el7_9 will be an update
+--> Running transaction check
+---> Package gd.x86_64 0:2.0.35-27.el7_9 will be installed
+--> Processing Dependency: libpng15.so.15(PNG15_0)(64bit) for package: gd-2.0.35-27.el7_9.x86_64
+--> Processing Dependency: libjpeg.so.62(LIBJPEG_6.2)(64bit) for package: gd-2.0.35-27.el7_9.x86_64
+--> Processing Dependency: libpng15.so.15()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
+--> Processing Dependency: libjpeg.so.62()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
+--> Processing Dependency: libfreetype.so.6()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
+--> Processing Dependency: libfontconfig.so.1()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
+--> Processing Dependency: libXpm.so.4()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
+--> Processing Dependency: libX11.so.6()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
+---> Package libxslt.x86_64 0:1.1.28-6.el7 will be installed
+---> Package perl.x86_64 4:5.16.3-299.el7_9 will be installed
+--> Processing Dependency: perl(Socket) >= 1.3 for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Scalar::Util) >= 1.10 for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl-macros for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(threads::shared) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(threads) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Time::Local) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Time::HiRes) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Storable) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Socket) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Scalar::Util) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Pod::Simple::XHTML) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Pod::Simple::Search) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Getopt::Long) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Filter::Util::Call) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(File::Temp) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(File::Spec::Unix) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: libXau.so.6()(64bit) for package: libxcb-1.13-1.el7.x86_64
+---> Package perl-Encode.x86_64 0:2.51-7.el7 will be installed
+---> Package perl-Pod-Escapes.noarch 1:1.04-299.el7_9 will be installed
+---> Package perl-Pod-Usage.noarch 0:1.63-3.el7 will be installed
+--> Processing Dependency: perl(Pod::Text) >= 3.15 for package: perl-Pod-Usage-1.63-3.el7.noarch
+--> Processing Dependency: perl-Pod-Perldoc for package: perl-Pod-Usage-1.63-3.el7.noarch
+---> Package perl-Text-ParseWords.noarch 0:3.29-4.el7 will be installed
+--> Running transaction check
+---> Package dejavu-fonts-common.noarch 0:2.33-6.el7 will be installed
+---> Package libXau.x86_64 0:1.0.8-2.1.el7 will be installed
+---> Package perl-Pod-Perldoc.noarch 0:3.20-4.el7 will be installed
+--> Processing Dependency: perl(parent) for package: perl-Pod-Perldoc-3.20-4.el7.noarch
+--> Processing Dependency: perl(HTTP::Tiny) for package: perl-Pod-Perldoc-3.20-4.el7.noarch
+--> Processing Dependency: groff-base for package: perl-Pod-Perldoc-3.20-4.el7.noarch
+---> Package perl-podlators.noarch 0:2.5.1-3.el7 will be installed
+--> Running transaction check
+---> Package groff-base.x86_64 0:1.22.2-8.el7 will be installed
+---> Package perl-HTTP-Tiny.noarch 0:0.033-3.el7 will be installed
+---> Package perl-parent.noarch 1:0.225-244.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+================================================================================
+ Package                       Arch     Version                 Repository
+                                                                           Size
+================================================================================
+Installing:
+ nginx                         x86_64   1:1.16.1-3.el7          epel      563 k
+Installing for dependencies:
+ centos-indexhtml              noarch   7-9.el7.centos          base       92 k
+ centos-logos                  noarch   70.0.6-3.el7.centos     base       21 M
+ dejavu-fonts-common           noarch   2.33-6.el7              base       64 k
+ dejavu-sans-fonts             noarch   2.33-6.el7              base      1.4 M
+ fontconfig                    x86_64   2.13.0-4.3.el7          base      254 k
+ fontpackages-filesystem       noarch   1.44-8.el7              base      9.9 k
+ freetype                      x86_64   2.8-14.el7_9.1          updates   380 k
+ gd                            x86_64   2.0.35-27.el7_9         updates   146 k
+ gperftools-libs               x86_64   2.6.1-1.el7             base      272 k
+ groff-base                    x86_64   1.22.2-8.el7            base      942 k
+ libX11                        x86_64   1.6.7-3.el7_9           updates   607 k
+ libX11-common                 noarch   1.6.7-3.el7_9           updates   164 k
+ libXau                        x86_64   1.0.8-2.1.el7           base       29 k
+ libXpm                        x86_64   3.5.12-1.el7            base       55 k
+ libjpeg-turbo                 x86_64   1.2.90-8.el7            base      135 k
+ libpng                        x86_64   2:1.5.13-8.el7          base      213 k
+ libxcb                        x86_64   1.13-1.el7              base      214 k
+ libxslt                       x86_64   1.1.28-6.el7            base      242 k
+ make                          x86_64   1:3.82-24.el7           base      421 k
+ nginx-all-modules             noarch   1:1.16.1-3.el7          epel       20 k
+ nginx-filesystem              noarch   1:1.16.1-3.el7          epel       21 k
+ nginx-mod-http-image-filter   x86_64   1:1.16.1-3.el7          epel       30 k
+ nginx-mod-http-perl           x86_64   1:1.16.1-3.el7          epel       39 k
+ nginx-mod-http-xslt-filter    x86_64   1:1.16.1-3.el7          epel       29 k
+ nginx-mod-mail                x86_64   1:1.16.1-3.el7          epel       57 k
+ nginx-mod-stream              x86_64   1:1.16.1-3.el7          epel       85 k
+ openssl                       x86_64   1:1.0.2k-21.el7_9       updates   493 k
+ openssl11-libs                x86_64   1:1.1.1g-3.el7          epel      1.5 M
+ perl                          x86_64   4:5.16.3-299.el7_9      updates   8.0 M
+ perl-Carp                     noarch   1.26-244.el7            base       19 k
+ perl-Encode                   x86_64   2.51-7.el7              base      1.5 M
+ perl-Exporter                 noarch   5.68-3.el7              base       28 k
+ perl-File-Path                noarch   2.09-2.el7              base       26 k
+ perl-File-Temp                noarch   0.23.01-3.el7           base       56 k
+ perl-Filter                   x86_64   1.49-3.el7              base       76 k
+ perl-Getopt-Long              noarch   2.40-3.el7              base       56 k
+ perl-HTTP-Tiny                noarch   0.033-3.el7             base       38 k
+ perl-PathTools                x86_64   3.40-5.el7              base       82 k
+ perl-Pod-Escapes              noarch   1:1.04-299.el7_9        updates    52 k
+ perl-Pod-Perldoc              noarch   3.20-4.el7              base       87 k
+ perl-Pod-Simple               noarch   1:3.28-4.el7            base      216 k
+ perl-Pod-Usage                noarch   1.63-3.el7              base       27 k
+ perl-Scalar-List-Utils        x86_64   1.27-248.el7            base       36 k
+ perl-Socket                   x86_64   2.010-5.el7             base       49 k
+ perl-Storable                 x86_64   2.45-3.el7              base       77 k
+ perl-Text-ParseWords          noarch   3.29-4.el7              base       14 k
+ perl-Time-HiRes               x86_64   4:1.9725-3.el7          base       45 k
+ perl-Time-Local               noarch   1.2300-2.el7            base       24 k
+ perl-constant                 noarch   1.27-2.el7              base       19 k
+ perl-libs                     x86_64   4:5.16.3-299.el7_9      updates   690 k
+ perl-macros                   x86_64   4:5.16.3-299.el7_9      updates    44 k
+ perl-parent                   noarch   1:0.225-244.el7         base       12 k
+ perl-podlators                noarch   2.5.1-3.el7             base      112 k
+ perl-threads                  x86_64   1.87-4.el7              base       49 k
+ perl-threads-shared           x86_64   1.43-6.el7              base       39 k
+Updating for dependencies:
+ openssl-libs                  x86_64   1:1.0.2k-21.el7_9       updates   1.2 M
+
+Transaction Summary
+================================================================================
+Install  1 Package  (+55 Dependent packages)
+Upgrade             (  1 Dependent package)
+
+Total download size: 42 M
+Downloading packages:
+Delta RPMs disabled because /usr/bin/applydeltarpm not installed.
+warning: /var/cache/yum/x86_64/7/epel/packages/nginx-1.16.1-3.el7.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID 352c64e5: NOKEY
+Public key for nginx-1.16.1-3.el7.x86_64.rpm is not installed
+--------------------------------------------------------------------------------
+Total                                               22 MB/s |  42 MB  00:01
+Retrieving key from file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+Importing GPG key 0x352C64E5:
+ Userid     : "Fedora EPEL (7) <epel@fedoraproject.org>"
+ Fingerprint: 91e9 7d7c 4a5e 96f1 7f3e 888f 6a2f aea2 352c 64e5
+ Package    : epel-release-7-11.noarch (@extras)
+ From       : /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : 2:libpng-1.5.13-8.el7.x86_64                                1/58
+  Installing : freetype-2.8-14.el7_9.1.x86_64                              2/58
+  Installing : fontpackages-filesystem-1.44-8.el7.noarch                   3/58
+  Installing : dejavu-fonts-common-2.33-6.el7.noarch                       4/58
+  Installing : dejavu-sans-fonts-2.33-6.el7.noarch                         5/58
+  Installing : fontconfig-2.13.0-4.3.el7.x86_64                            6/58
+  Installing : libXau-1.0.8-2.1.el7.x86_64                                 7/58
+  Installing : libxcb-1.13-1.el7.x86_64                                    8/58
+  Installing : 1:openssl11-libs-1.1.1g-3.el7.x86_64                        9/58
+  Installing : 1:nginx-filesystem-1.16.1-3.el7.noarch                     10/58
+  Installing : libxslt-1.1.28-6.el7.x86_64                                11/58
+  Updating   : 1:openssl-libs-1.0.2k-21.el7_9.x86_64                      12/58
+  Installing : libX11-common-1.6.7-3.el7_9.noarch                         13/58
+  Installing : libX11-1.6.7-3.el7_9.x86_64                                14/58
+  Installing : libXpm-3.5.12-1.el7.x86_64                                 15/58
+  Installing : libjpeg-turbo-1.2.90-8.el7.x86_64                          16/58
+  Installing : gd-2.0.35-27.el7_9.x86_64                                  17/58
+  Installing : 1:make-3.82-24.el7.x86_64                                  18/58
+  Installing : 1:openssl-1.0.2k-21.el7_9.x86_64                           19/58
+  Installing : centos-indexhtml-7-9.el7.centos.noarch                     20/58
+  Installing : centos-logos-70.0.6-3.el7.centos.noarch                    21/58
+  Installing : groff-base-1.22.2-8.el7.x86_64                             22/58
+  Installing : 1:perl-parent-0.225-244.el7.noarch                         23/58
+  Installing : perl-HTTP-Tiny-0.033-3.el7.noarch                          24/58
+  Installing : perl-podlators-2.5.1-3.el7.noarch                          25/58
+  Installing : perl-Pod-Perldoc-3.20-4.el7.noarch                         26/58
+  Installing : 1:perl-Pod-Escapes-1.04-299.el7_9.noarch                   27/58
+  Installing : perl-Encode-2.51-7.el7.x86_64                              28/58
+  Installing : perl-Text-ParseWords-3.29-4.el7.noarch                     29/58
+  Installing : perl-Pod-Usage-1.63-3.el7.noarch                           30/58
+  Installing : perl-threads-1.87-4.el7.x86_64                             31/58
+  Installing : 4:perl-Time-HiRes-1.9725-3.el7.x86_64                      32/58
+  Installing : perl-Exporter-5.68-3.el7.noarch                            33/58
+  Installing : perl-constant-1.27-2.el7.noarch                            34/58
+  Installing : perl-Socket-2.010-5.el7.x86_64                             35/58
+  Installing : perl-Filter-1.49-3.el7.x86_64                              36/58
+  Installing : perl-Time-Local-1.2300-2.el7.noarch                        37/58
+  Installing : perl-Carp-1.26-244.el7.noarch                              38/58
+  Installing : 4:perl-macros-5.16.3-299.el7_9.x86_64                      39/58
+  Installing : perl-Storable-2.45-3.el7.x86_64                            40/58
+  Installing : perl-PathTools-3.40-5.el7.x86_64                           41/58
+  Installing : perl-threads-shared-1.43-6.el7.x86_64                      42/58
+  Installing : perl-Scalar-List-Utils-1.27-248.el7.x86_64                 43/58
+  Installing : 1:perl-Pod-Simple-3.28-4.el7.noarch                        44/58
+  Installing : perl-File-Temp-0.23.01-3.el7.noarch                        45/58
+  Installing : perl-File-Path-2.09-2.el7.noarch                           46/58
+  Installing : 4:perl-libs-5.16.3-299.el7_9.x86_64                        47/58
+  Installing : perl-Getopt-Long-2.40-3.el7.noarch                         48/58
+  Installing : 4:perl-5.16.3-299.el7_9.x86_64                             49/58
+  Installing : gperftools-libs-2.6.1-1.el7.x86_64                         50/58
+  Installing : 1:nginx-mod-mail-1.16.1-3.el7.x86_64                       51/58
+  Installing : 1:nginx-mod-http-xslt-filter-1.16.1-3.el7.x86_64           52/58
+  Installing : 1:nginx-mod-stream-1.16.1-3.el7.x86_64                     53/58
+  Installing : 1:nginx-mod-http-image-filter-1.16.1-3.el7.x86_64          54/58
+  Installing : 1:nginx-1.16.1-3.el7.x86_64                                55/58
+  Installing : 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64                  56/58
+  Installing : 1:nginx-all-modules-1.16.1-3.el7.noarch                    57/58
+  Cleanup    : 1:openssl-libs-1.0.2k-19.el7.x86_64                        58/58
+  Verifying  : perl-HTTP-Tiny-0.033-3.el7.noarch                           1/58
+  Verifying  : fontconfig-2.13.0-4.3.el7.x86_64                            2/58
+  Verifying  : 1:nginx-mod-mail-1.16.1-3.el7.x86_64                        3/58
+  Verifying  : 4:perl-Time-HiRes-1.9725-3.el7.x86_64                       4/58
+  Verifying  : perl-threads-1.87-4.el7.x86_64                              5/58
+  Verifying  : perl-Exporter-5.68-3.el7.noarch                             6/58
+  Verifying  : perl-constant-1.27-2.el7.noarch                             7/58
+  Verifying  : perl-PathTools-3.40-5.el7.x86_64                            8/58
+  Verifying  : gperftools-libs-2.6.1-1.el7.x86_64                          9/58
+  Verifying  : perl-Socket-2.010-5.el7.x86_64                             10/58
+  Verifying  : fontpackages-filesystem-1.44-8.el7.noarch                  11/58
+  Verifying  : groff-base-1.22.2-8.el7.x86_64                             12/58
+  Verifying  : centos-logos-70.0.6-3.el7.centos.noarch                    13/58
+  Verifying  : 1:perl-parent-0.225-244.el7.noarch                         14/58
+  Verifying  : gd-2.0.35-27.el7_9.x86_64                                  15/58
+  Verifying  : centos-indexhtml-7-9.el7.centos.noarch                     16/58
+  Verifying  : perl-Filter-1.49-3.el7.x86_64                              17/58
+  Verifying  : perl-File-Temp-0.23.01-3.el7.noarch                        18/58
+  Verifying  : 1:perl-Pod-Simple-3.28-4.el7.noarch                        19/58
+  Verifying  : 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64                  20/58
+  Verifying  : perl-Time-Local-1.2300-2.el7.noarch                        21/58
+  Verifying  : libxcb-1.13-1.el7.x86_64                                   22/58
+  Verifying  : 1:make-3.82-24.el7.x86_64                                  23/58
+  Verifying  : 1:perl-Pod-Escapes-1.04-299.el7_9.noarch                   24/58
+  Verifying  : perl-Pod-Perldoc-3.20-4.el7.noarch                         25/58
+  Verifying  : 1:openssl-1.0.2k-21.el7_9.x86_64                           26/58
+  Verifying  : libXpm-3.5.12-1.el7.x86_64                                 27/58
+  Verifying  : libjpeg-turbo-1.2.90-8.el7.x86_64                          28/58
+  Verifying  : perl-Carp-1.26-244.el7.noarch                              29/58
+  Verifying  : perl-threads-shared-1.43-6.el7.x86_64                      30/58
+  Verifying  : libX11-common-1.6.7-3.el7_9.noarch                         31/58
+  Verifying  : libX11-1.6.7-3.el7_9.x86_64                                32/58
+  Verifying  : 4:perl-macros-5.16.3-299.el7_9.x86_64                      33/58
+  Verifying  : perl-Storable-2.45-3.el7.x86_64                            34/58
+  Verifying  : 1:nginx-mod-http-xslt-filter-1.16.1-3.el7.x86_64           35/58
+  Verifying  : dejavu-sans-fonts-2.33-6.el7.noarch                        36/58
+  Verifying  : perl-Scalar-List-Utils-1.27-248.el7.x86_64                 37/58
+  Verifying  : 2:libpng-1.5.13-8.el7.x86_64                               38/58
+  Verifying  : 1:nginx-mod-stream-1.16.1-3.el7.x86_64                     39/58
+  Verifying  : 1:openssl-libs-1.0.2k-21.el7_9.x86_64                      40/58
+  Verifying  : freetype-2.8-14.el7_9.1.x86_64                             41/58
+  Verifying  : perl-Encode-2.51-7.el7.x86_64                              42/58
+  Verifying  : perl-Pod-Usage-1.63-3.el7.noarch                           43/58
+  Verifying  : dejavu-fonts-common-2.33-6.el7.noarch                      44/58
+  Verifying  : perl-podlators-2.5.1-3.el7.noarch                          45/58
+  Verifying  : 4:perl-5.16.3-299.el7_9.x86_64                             46/58
+  Verifying  : perl-File-Path-2.09-2.el7.noarch                           47/58
+  Verifying  : libxslt-1.1.28-6.el7.x86_64                                48/58
+  Verifying  : 1:nginx-filesystem-1.16.1-3.el7.noarch                     49/58
+  Verifying  : 1:nginx-1.16.1-3.el7.x86_64                                50/58
+  Verifying  : 1:openssl11-libs-1.1.1g-3.el7.x86_64                       51/58
+  Verifying  : libXau-1.0.8-2.1.el7.x86_64                                52/58
+  Verifying  : 1:nginx-all-modules-1.16.1-3.el7.noarch                    53/58
+  Verifying  : perl-Getopt-Long-2.40-3.el7.noarch                         54/58
+  Verifying  : perl-Text-ParseWords-3.29-4.el7.noarch                     55/58
+  Verifying  : 1:nginx-mod-http-image-filter-1.16.1-3.el7.x86_64          56/58
+  Verifying  : 4:perl-libs-5.16.3-299.el7_9.x86_64                        57/58
+  Verifying  : 1:openssl-libs-1.0.2k-19.el7.x86_64                        58/58
+
+Installed:
+  nginx.x86_64 1:1.16.1-3.el7
+
+Dependency Installed:
+  centos-indexhtml.noarch 0:7-9.el7.centos
+  centos-logos.noarch 0:70.0.6-3.el7.centos
+  dejavu-fonts-common.noarch 0:2.33-6.el7
+  dejavu-sans-fonts.noarch 0:2.33-6.el7
+  fontconfig.x86_64 0:2.13.0-4.3.el7
+  fontpackages-filesystem.noarch 0:1.44-8.el7
+  freetype.x86_64 0:2.8-14.el7_9.1
+  gd.x86_64 0:2.0.35-27.el7_9
+  gperftools-libs.x86_64 0:2.6.1-1.el7
+  groff-base.x86_64 0:1.22.2-8.el7
+  libX11.x86_64 0:1.6.7-3.el7_9
+  libX11-common.noarch 0:1.6.7-3.el7_9
+  libXau.x86_64 0:1.0.8-2.1.el7
+  libXpm.x86_64 0:3.5.12-1.el7
+  libjpeg-turbo.x86_64 0:1.2.90-8.el7
+  libpng.x86_64 2:1.5.13-8.el7
+  libxcb.x86_64 0:1.13-1.el7
+  libxslt.x86_64 0:1.1.28-6.el7
+  make.x86_64 1:3.82-24.el7
+  nginx-all-modules.noarch 1:1.16.1-3.el7
+  nginx-filesystem.noarch 1:1.16.1-3.el7
+  nginx-mod-http-image-filter.x86_64 1:1.16.1-3.el7
+  nginx-mod-http-perl.x86_64 1:1.16.1-3.el7
+  nginx-mod-http-xslt-filter.x86_64 1:1.16.1-3.el7
+  nginx-mod-mail.x86_64 1:1.16.1-3.el7
+  nginx-mod-stream.x86_64 1:1.16.1-3.el7
+  openssl.x86_64 1:1.0.2k-21.el7_9
+  openssl11-libs.x86_64 1:1.1.1g-3.el7
+  perl.x86_64 4:5.16.3-299.el7_9
+  perl-Carp.noarch 0:1.26-244.el7
+  perl-Encode.x86_64 0:2.51-7.el7
+  perl-Exporter.noarch 0:5.68-3.el7
+  perl-File-Path.noarch 0:2.09-2.el7
+  perl-File-Temp.noarch 0:0.23.01-3.el7
+  perl-Filter.x86_64 0:1.49-3.el7
+  perl-Getopt-Long.noarch 0:2.40-3.el7
+  perl-HTTP-Tiny.noarch 0:0.033-3.el7
+  perl-PathTools.x86_64 0:3.40-5.el7
+  perl-Pod-Escapes.noarch 1:1.04-299.el7_9
+  perl-Pod-Perldoc.noarch 0:3.20-4.el7
+  perl-Pod-Simple.noarch 1:3.28-4.el7
+  perl-Pod-Usage.noarch 0:1.63-3.el7
+  perl-Scalar-List-Utils.x86_64 0:1.27-248.el7
+  perl-Socket.x86_64 0:2.010-5.el7
+  perl-Storable.x86_64 0:2.45-3.el7
+  perl-Text-ParseWords.noarch 0:3.29-4.el7
+  perl-Time-HiRes.x86_64 4:1.9725-3.el7
+  perl-Time-Local.noarch 0:1.2300-2.el7
+  perl-constant.noarch 0:1.27-2.el7
+  perl-libs.x86_64 4:5.16.3-299.el7_9
+  perl-macros.x86_64 4:5.16.3-299.el7_9
+  perl-parent.noarch 1:0.225-244.el7
+  perl-podlators.noarch 0:2.5.1-3.el7
+  perl-threads.x86_64 0:1.87-4.el7
+  perl-threads-shared.x86_64 0:1.43-6.el7
+
+Dependency Updated:
+  openssl-libs.x86_64 1:1.0.2k-21.el7_9
+
+Complete!
+Removing intermediate container 274e58cb6f8e
+ ---> b769804e22fe
+Step 4/5 : COPY index.html /usr/share/nginx/html
+ ---> becc96f8d94a
+Step 5/5 : ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
+ ---> Running in b2e364603488
+Removing intermediate container b2e364603488
+ ---> dd05031e366c
+Successfully built dd05031e366c
+Successfully tagged cyberblack28/sample-nginx:latest
+```
+
+```dockerコマンド
+# docker image ls
+REPOSITORY                  TAG                 IMAGE ID       CREATED         SIZE
+cyberblack28/sample-nginx   latest              dd05031e366c   6 minutes ago   558MB
+msb                         latest              e4292341aafc   17 hours ago    7.55MB
+<none>                      <none>              4c6515bdcb21   22 hours ago    7.55MB
+<none>                      <none>              fb2a599580ef   22 hours ago    303MB
+cyberblack28/sample-nginx   <none>              c0adbbc67c75   22 hours ago    558MB
+golang                      1.16.4-alpine3.13   722a834ff95b   2 days ago      301MB
+alpine                      3.13                6dbb9cc54074   3 weeks ago     5.61MB
+centos                      7                   8652b9f0cb4c   5 months ago    204MB
+```
+
+```dockerコマンド
+# docker image tag c0adbbc67c75 cyberblack28/sample-nginx:1.0
+# docker image ls
+REPOSITORY                  TAG                 IMAGE ID       CREATED          SIZE
+cyberblack28/sample-nginx   latest              dd05031e366c   18 minutes ago   558MB
+msb                         latest              e4292341aafc   18 hours ago     7.55MB
+<none>                      <none>              4c6515bdcb21   22 hours ago     7.55MB
+<none>                      <none>              fb2a599580ef   22 hours ago     303MB
+cyberblack28/sample-nginx   1.0                 c0adbbc67c75   23 hours ago     558MB
+golang                      1.16.4-alpine3.13   722a834ff95b   2 days ago       301MB
+alpine                      3.13                6dbb9cc54074   3 weeks ago      5.61MB
+centos                      7                   8652b9f0cb4c   5 months ago     204MB
+```
+
+```dockerコマンド
+# docker image push cyberblack28/sample-nginx:1.0
+The push refers to repository [docker.io/cyberblack28/sample-nginx]
+8967fe867ced: Layer already exists
+e1f7893ab52e: Layer already exists
+acfaf1472707: Layer already exists
+174f56854903: Layer already exists
+1.0: digest: sha256:b51f647395095e5364928c0bf53b82a05c73ea15fd757fe641c07f152e4b43d6 size: 1161
+```
+
+```dockerコマンド
+# docker image push cyberblack28/sample-nginx
+Using default tag: latest
+The push refers to repository [docker.io/cyberblack28/sample-nginx]
+03fba5c533a6: Pushed
+c68a3ab6b548: Pushed
+cdb6104e7e5e: Pushed
+174f56854903: Layer already exists
+latest: digest: sha256:85bfa643cc5fb6cb85544993a216ddf092fc2eb8b4e0c34598ebf86b2f6e1977 size: 1161
+```
