@@ -2021,3 +2021,37 @@ volume-nginx
 
 ### 3・3・6 一時ファイルシステムのマウント（tmpfs mount）
 
+#### 一時ファイルシステムの作成
+
+```dockerコマンド
+# docker run -itd --name tmpfs-nginx --mount type=tmpfs,destination=/root/tmp,tmpfs-size=10,tmpfs-mode=755 nginx
+8708997d938db1c978494621e12a63255b191dc0261a0825eb2c20e82dd1003f
+```
+
+```dockerコマンド
+# docker container exec -it tmpfs-nginx /bin/bash
+root@8708997d938d:/# ls /root
+tmp
+root@8708997d938d:/# exit
+exit
+```
+
+```dockerコマンド
+# docker container stop tmpfs-nginx
+tmpfs-nginx
+```
+
+```dockerコマンド
+# docker container rm tmpfs-nginx
+tmpfs-nginx
+```
+
+### 3・3・7 データボリュームコンテナ（Data Volume Container）
+
+#### 作業ディレクトリの作成
+
+```dockerコマンド
+# cd ../3-3-7-01/
+# cd tmp/data-volume
+# touch share/share-file.txt
+```
