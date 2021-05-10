@@ -2051,7 +2051,522 @@ tmpfs-nginx
 #### 作業ディレクトリの作成
 
 ```dockerコマンド
-# cd ../3-3-7-01/
-# cd tmp/data-volume
-# touch share/share-file.txt
+# docker run -it -d --name ubuntu -v /tmp/data-volume/share:/tmp/data ubuntu
+Unable to find image 'ubuntu:latest' locally
+latest: Pulling from library/ubuntu
+345e3491a907: Pull complete
+57671312ef6f: Pull complete
+5e9250ddb7d0: Pull complete
+Digest: sha256:cf31af331f38d1d7158470e095b132acd126a7180a54f263d386da88eb681d93
+Status: Downloaded newer image for ubuntu:latest
+da7bbd309b62f4da57217629ee3fd026475b5515ccd01f8c8ddc65bdc2c2bf49
+```
+
+### コンテナの作成
+
+```dockerコマンド
+# docker run -it -d --name share01 --volumes-from ubuntu ubuntu
+a7f94c95c139799c8be2351d4d3ab1fb106b6c5cac95b10d39b6aa69759a7901
+```
+
+```dockerコマンド
+# docker run -it -d --name share02 --volumes-from ubuntu ubuntu
+92f5643a37cb94febed0d3c902750331f7348fd6fda7a810878bdd62f04f6700
+```
+
+```dockerコマンド
+# docker container ls
+CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS         PORTS     NAMES
+92f5643a37cb   ubuntu    "/bin/bash"   2 minutes ago   Up 2 minutes             share02
+a7f94c95c139   ubuntu    "/bin/bash"   3 minutes ago   Up 2 minutes             share01
+da7bbd309b62   ubuntu    "/bin/bash"   5 minutes ago   Up 5 minutes             ubuntu
+```
+
+### データ共有の確認
+
+```dockerコマンド
+# docker exec -it ubuntu /bin/bash
+root@da7bbd309b62:/# ls /tmp/data/
+share-file.txt
+root@da7bbd309b62:/# touch /tmp/data/new-sharefile
+root@da7bbd309b62:/# ls /tmp/data
+new-sharefile  share-file.txt
+root@da7bbd309b62:/# exit
+exit
+```
+
+```dockerコマンド
+# docker exec -it share01 /bin/bash
+root@a7f94c95c139:/# ls /tmp/data
+new-sharefile  share-file.txt
+root@a7f94c95c139:/# exit
+exit
+```
+
+```dockerコマンド
+# docker exec -it share02 /bin/bash
+root@92f5643a37cb:/# ls /tmp/data
+new-sharefile  share-file.txt
+root@92f5643a37cb:/# exit
+exit
+```
+
+```dockerコマンド
+# docker container stop ubuntu
+ubuntu
+```
+
+```dockerコマンド
+# docker container stop share01
+share01
+```
+
+```dockerコマンド
+# docker container stop share02
+share02
+```
+
+```dockerコマンド
+# docker container rm ubuntu
+ubuntu
+```
+
+```dockerコマンド
+# docker container rm share01
+share01
+```
+
+```dockerコマンド
+# docker container rm share02
+share02
+```
+
+### 3・3・8 コンテナのネットワーク
+
+```dockerコマンド
+# docker network ls
+NETWORK ID     NAME      DRIVER    SCOPE
+2572d881e2b2   bridge    bridge    local
+10be770dee84   host      host      local
+d2180dcb719e   none      null      local
+```
+
+```linuxコマンド
+# ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: ens4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1460 qdisc fq_codel state UP group default qlen 1000
+    link/ether 42:01:0a:92:0f:df brd ff:ff:ff:ff:ff:ff
+    inet 10.146.15.223/32 scope global dynamic ens4
+       valid_lft 3123sec preferred_lft 3123sec
+    inet6 fe80::4001:aff:fe92:fdf/64 scope link
+       valid_lft forever preferred_lft forever
+3: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default
+    link/ether 02:42:b8:9d:1c:48 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::42:b8ff:fe9d:1c48/64 scope link
+       valid_lft forever preferred_lft forever
+```
+
+### 3・3・9 ブリッジネットワークとアプリケーション
+
+```dockerコマンド
+# docker network create wordpress-network
+cd3191e5450a2424063c869d3b9326b9d07ab8d13c0bd0856c9651c67dc69082
+```
+
+```dockerコマンド
+# docker network ls
+NETWORK ID     NAME                DRIVER    SCOPE
+2572d881e2b2   bridge              bridge    local
+10be770dee84   host                host      local
+d2180dcb719e   none                null      local
+cd3191e5450a   wordpress-network   bridge    local
+```
+
+```dockerコマンド
+# docker run -d --name mysql \
+> --network wordpress-network \
+> -e MYSQL_ROOT_PASSWORD=wordpress \
+> -e MYSQL_DATABASE=wordpress \
+> -e MYSQL_USER=wordpress \
+> -e MYSQL_PASSWORD=wordpress \
+> mysql:8.0.22
+Unable to find image 'mysql:8.0.22' locally
+8.0.22: Pulling from library/mysql
+a076a628af6f: Pull complete
+f6c208f3f991: Pull complete
+88a9455a9165: Pull complete
+406c9b8427c6: Pull complete
+7c88599c0b25: Pull complete
+25b5c6debdaf: Pull complete
+43a5816f1617: Pull complete
+69dd1fbf9190: Pull complete
+5346a60dcee8: Pull complete
+ef28da371fc9: Pull complete
+fd04d935b852: Pull complete
+050c49742ea2: Pull complete
+Digest: sha256:0fd2898dc1c946b34dceaccc3b80d38b1049285c1dab70df7480de62265d6213
+Status: Downloaded newer image for mysql:8.0.22
+792043e00948185a7b6ce8237613b0ee4f5361173c5d07236ab7de82afba5a65
+```
+
+```dockerコマンド
+# docker run -d --name wordpress \
+> --network wordpress-network \
+> -p 8080:80 \
+> -e WORDPRESS_DB_HOST=mysql:3306 \
+> -e WORDPRESS_DB_NAME=wordpress \
+> -e WORDPRESS_DB_USER=wordpress \
+> -e WORDPRESS_DB_PASSWORD=wordpress \
+> wordpress:php7.4-apache
+Unable to find image 'wordpress:php7.4-apache' locally
+php7.4-apache: Pulling from library/wordpress
+f7ec5a41d630: Already exists
+941223b59841: Pull complete
+a5f2415e5a0c: Pull complete
+b9844b87f0e3: Pull complete
+5a07de50525b: Pull complete
+caeca1337a66: Pull complete
+5dbe0d7f8481: Pull complete
+b5287b60e185: Pull complete
+a3bdca77fbaf: Pull complete
+e3edcade6aa2: Pull complete
+703ba034e6f0: Pull complete
+36ef47972442: Pull complete
+4acb239a9263: Pull complete
+e74d610ba693: Pull complete
+97f505d02f6f: Pull complete
+d6dd6701aaec: Pull complete
+43ef3ceb4f4b: Pull complete
+a59b940a007f: Pull complete
+714359ef8f41: Pull complete
+24b7e9a8c62d: Pull complete
+b400ea29ad59: Pull complete
+Digest: sha256:208def35d7fcbbfd76df18997ce6cd5a5221c0256221b7fdaba41c575882d4f0
+Status: Downloaded newer image for wordpress:php7.4-apache
+acce6750e7d013358be9cf6d61e6f4fd504bd24c118d5bd0568315754a1db282
+```
+
+```dockerコマンド
+# docker container ls
+CONTAINER ID   IMAGE                     COMMAND                  CREATED              STATUS              PORTS                                   NAMES
+acce6750e7d0   wordpress:php7.4-apache   "docker-entrypoint.s…"   3 minutes ago   Up 3 minutes   0.0.0.0:8080->80/tcp, :::8080->80/tcp   wordpress
+792043e00948   mysql:8.0.22              "docker-entrypoint.s…"   7 minutes ago   Up 7 minutes   3306/tcp, 33060/tcp                     mysql
+```
+
+```dockerコマンド
+# docker container ls
+CONTAINER ID   IMAGE                     COMMAND                  CREATED              STATUS              PORTS                                   NAMES
+acce6750e7d0   wordpress:php7.4-apache   "docker-entrypoint.s…"   3 minutes ago   Up 3 minutes   0.0.0.0:8080->80/tcp, :::8080->80/tcp   wordpress
+792043e00948   mysql:8.0.22              "docker-entrypoint.s…"   7 minutes ago   Up 7 minutes   3306/tcp, 33060/tcp                     mysql
+```
+
+```dockerコマンド
+# curl http://localhost:8080/wp-admin/install.php
+<!DOCTYPE html>
+<html lang="en-US" xml:lang="en-US">
+<head>
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="robots" content="noindex,nofollow" />
+        <title>WordPress &rsaquo; Installation</title>
+        <link rel='stylesheet' id='dashicons-css'  href='http://localhost:8080/wp-includes/css/dashicons.min.css?ver=5.7.1' type='text/css' media='all' />
+<link rel='stylesheet' id='buttons-css'  href='http://localhost:8080/wp-includes/css/buttons.min.css?ver=5.7.1' type='text/css' media='all' />
+<link rel='stylesheet' id='forms-css'  href='http://localhost:8080/wp-admin/css/forms.min.css?ver=5.7.1' type='text/css' media='all' />
+<link rel='stylesheet' id='l10n-css'  href='http://localhost:8080/wp-admin/css/l10n.min.css?ver=5.7.1' type='text/css' media='all' />
+<link rel='stylesheet' id='install-css'  href='http://localhost:8080/wp-admin/css/install.min.css?ver=5.7.1' type='text/css' media='all' />
+</head>
+<body class="wp-core-ui language-chooser">
+<p id="logo">WordPress</p>
+
+        <form id="setup" method="post" action="?step=1"><label class='screen-reader-text' for='language'>Select a default language</label>
+<select size='14' name='language' id='language'>
+<option value="" lang="en" selected="selected" data-continue="Continue" data-installed="1">English (United States)</option>
+<option value="af" lang="af" data-continue="Gaan voort">Afrikaans</option>
+<option value="ar" lang="ar" data-continue="المتابعة">العربية</option>
+<option value="ary" lang="ar" data-continue="المتابعة">العربية المغربية</option>
+<option value="as" lang="as" data-continue="Continue">অসমীয়া</option>
+<option value="az" lang="az" data-continue="Davam">Azərbaycan dili</option>
+<option value="azb" lang="az" data-continue="Continue">گؤنئی آذربایجان</option>
+<option value="bel" lang="be" data-continue="Працягнуць">Беларуская мова</option>
+<option value="bg_BG" lang="bg" data-continue="Продължение">Български</option>
+<option value="bn_BD" lang="bn" data-continue="এগিয়ে চল.">বাংলা</option>
+<option value="bo" lang="bo" data-continue="མུ་མཐུད།">བོད་ཡིག</option>
+<option value="bs_BA" lang="bs" data-continue="Nastavi">Bosanski</option>
+<option value="ca" lang="ca" data-continue="Continua">Català</option>
+<option value="ceb" lang="ceb" data-continue="Padayun">Cebuano</option>
+<option value="cs_CZ" lang="cs" data-continue="Pokračovat">Čeština</option>
+<option value="cy" lang="cy" data-continue="Parhau">Cymraeg</option>
+<option value="da_DK" lang="da" data-continue="Forts&#230;t">Dansk</option>
+<option value="de_DE" lang="de" data-continue="Fortfahren">Deutsch</option>
+<option value="de_CH" lang="de" data-continue="Fortfahren">Deutsch (Schweiz)</option>
+<option value="de_CH_informal" lang="de" data-continue="Weiter">Deutsch (Schweiz, Du)</option>
+<option value="de_DE_formal" lang="de" data-continue="Fortfahren">Deutsch (Sie)</option>
+<option value="de_AT" lang="de" data-continue="Weiter">Deutsch (Österreich)</option>
+<option value="dsb" lang="dsb" data-continue="Dalej">Dolnoserbšćina</option>
+<option value="dzo" lang="dz" data-continue="Continue">རྫོང་ཁ</option>
+<option value="el" lang="el" data-continue="Συνέχεια">Ελληνικά</option>
+<option value="en_ZA" lang="en" data-continue="Continue">English (South Africa)</option>
+<option value="en_NZ" lang="en" data-continue="Continue">English (New Zealand)</option>
+<option value="en_CA" lang="en" data-continue="Continue">English (Canada)</option>
+<option value="en_AU" lang="en" data-continue="Continue">English (Australia)</option>
+<option value="en_GB" lang="en" data-continue="Continue">English (UK)</option>
+<option value="eo" lang="eo" data-continue="Daŭrigi">Esperanto</option>
+<option value="es_MX" lang="es" data-continue="Continuar">Español de México</option>
+<option value="es_AR" lang="es" data-continue="Continuar">Español de Argentina</option>
+<option value="es_CR" lang="es" data-continue="Continuar">Español de Costa Rica</option>
+<option value="es_UY" lang="es" data-continue="Continuar">Español de Uruguay</option>
+<option value="es_VE" lang="es" data-continue="Continuar">Español de Venezuela</option>
+<option value="es_EC" lang="es" data-continue="Continuar">Español de Ecuador</option>
+<option value="es_PE" lang="es" data-continue="Continuar">Español de Perú</option>
+<option value="es_PR" lang="es" data-continue="Continuar">Español de Puerto Rico</option>
+<option value="es_GT" lang="es" data-continue="Continuar">Español de Guatemala</option>
+<option value="es_ES" lang="es" data-continue="Continuar">Español</option>
+<option value="es_CO" lang="es" data-continue="Continuar">Español de Colombia</option>
+<option value="es_CL" lang="es" data-continue="Continuar">Español de Chile</option>
+<option value="et" lang="et" data-continue="Jätka">Eesti</option>
+<option value="eu" lang="eu" data-continue="Jarraitu">Euskara</option>
+<option value="fa_AF" lang="fa" data-continue="ادامه">(فارسی (افغانستان</option>
+<option value="fa_IR" lang="fa" data-continue="ادامه">فارسی</option>
+<option value="fi" lang="fi" data-continue="Jatka">Suomi</option>
+<option value="fr_BE" lang="fr" data-continue="Continuer">Français de Belgique</option>
+<option value="fr_CA" lang="fr" data-continue="Continuer">Français du Canada</option>
+<option value="fr_FR" lang="fr" data-continue="Continuer">Français</option>
+<option value="fur" lang="fur" data-continue="Continue">Friulian</option>
+<option value="gd" lang="gd" data-continue="Lean air adhart">Gàidhlig</option>
+<option value="gl_ES" lang="gl" data-continue="Continuar">Galego</option>
+<option value="gu" lang="gu" data-continue="ચાલુ રાખવું">ગુજરાતી</option>
+<option value="haz" lang="haz" data-continue="ادامه">هزاره گی</option>
+<option value="he_IL" lang="he" data-continue="להמשיך">עִבְרִית</option>
+<option value="hi_IN" lang="hi" data-continue="जारी">हिन्दी</option>
+<option value="hr" lang="hr" data-continue="Nastavi">Hrvatski</option>
+<option value="hsb" lang="hsb" data-continue="Dale">Hornjoserbšćina</option>
+<option value="hu_HU" lang="hu" data-continue="Tovább">Magyar</option>
+<option value="hy" lang="hy" data-continue="Շարունակել">Հայերեն</option>
+<option value="id_ID" lang="id" data-continue="Lanjutkan">Bahasa Indonesia</option>
+<option value="is_IS" lang="is" data-continue="Áfram">Íslenska</option>
+<option value="it_IT" lang="it" data-continue="Continua">Italiano</option>
+<option value="ja" lang="ja" data-continue="続ける">日本語</option>
+<option value="jv_ID" lang="jv" data-continue="Nutugne">Basa Jawa</option>
+<option value="ka_GE" lang="ka" data-continue="გაგრძელება">ქართული</option>
+<option value="kab" lang="kab" data-continue="Continuer">Taqbaylit</option>
+<option value="kk" lang="kk" data-continue="Жалғастыру">Қазақ тілі</option>
+<option value="km" lang="km" data-continue="បន្ត">ភាសាខ្មែរ</option>
+<option value="kn" lang="kn" data-continue="ಮುಂದುವರೆಸಿ">ಕನ್ನಡ</option>
+<option value="ko_KR" lang="ko" data-continue="계속">한국어</option>
+<option value="ckb" lang="ku" data-continue="به‌رده‌وام به‌">كوردی‎</option>
+<option value="lo" lang="lo" data-continue="ຕໍ່">ພາສາລາວ</option>
+<option value="lt_LT" lang="lt" data-continue="Tęsti">Lietuvių kalba</option>
+<option value="lv" lang="lv" data-continue="Turpināt">Latviešu valoda</option>
+<option value="mk_MK" lang="mk" data-continue="Продолжи">Македонски јазик</option>
+<option value="ml_IN" lang="ml" data-continue="തുടരുക">മലയാളം</option>
+<option value="lt_LT" lang="lt" data-continue="Tęsti">Lietuvių kalba</option>
+<option value="lv" lang="lv" data-continue="Turpināt">Latviešu valoda</option>
+<option value="mk_MK" lang="mk" data-continue="Продолжи">Македонски јазик</option>
+<option value="ml_IN" lang="ml" data-continue="തുടരുക">മലയാളം</option>
+<option value="mn" lang="mn" data-continue="Үргэлжлүүлэх">Монгол</option>
+<option value="mr" lang="mr" data-continue="सुरु ठेवा">मराठी</option>
+<option value="ms_MY" lang="ms" data-continue="Teruskan">Bahasa Melayu</option>
+<option value="my_MM" lang="my" data-continue="ဆက်လက်လုပ်ေဆာင်ပါ။">ဗမာစာ</option>
+<option value="nb_NO" lang="nb" data-continue="Fortsett">Norsk bokmål</option>
+<option value="ne_NP" lang="ne" data-continue="जारीराख्नु ">नेपाली</option>
+<option value="nl_BE" lang="nl" data-continue="Doorgaan">Nederlands (België)</option>
+<option value="nl_NL_formal" lang="nl" data-continue="Doorgaan">Nederlands (Formeel)</option>
+<option value="nl_NL" lang="nl" data-continue="Doorgaan">Nederlands</option>
+<option value="nn_NO" lang="nn" data-continue="Hald fram">Norsk nynorsk</option>
+<option value="oci" lang="oc" data-continue="Contunhar">Occitan</option>
+<option value="pa_IN" lang="pa" data-continue="ਜਾਰੀ ਰੱਖੋ">ਪੰਜਾਬੀ</option>
+<option value="pl_PL" lang="pl" data-continue="Kontynuuj">Polski</option>
+<option value="ps" lang="ps" data-continue="دوام">پښتو</option>
+<option value="pt_PT_ao90" lang="pt" data-continue="Continuar">Português (AO90)</option>
+<option value="pt_BR" lang="pt" data-continue="Continuar">Português do Brasil</option>
+<option value="pt_PT" lang="pt" data-continue="Continuar">Português</option>
+<option value="pt_AO" lang="pt" data-continue="Continuar">Português de Angola</option>
+<option value="rhg" lang="rhg" data-continue="Continue">Ruáinga</option>
+<option value="ro_RO" lang="ro" data-continue="Continuă">Română</option>
+<option value="ru_RU" lang="ru" data-continue="Продолжить">Русский</option>
+<option value="sah" lang="sah" data-continue="Салҕаа">Сахалыы</option>
+<option value="snd" lang="sd" data-continue="اڳتي هلو">سنڌي</option>
+<option value="si_LK" lang="si" data-continue="දිගටම කරගෙන යන්න">සිංහල</option>
+<option value="sk_SK" lang="sk" data-continue="Pokračovať">Slovenčina</option>
+<option value="skr" lang="skr" data-continue="جاری رکھو">سرائیکی</option>
+<option value="sl_SI" lang="sl" data-continue="Nadaljujte">Slovenščina</option>
+<option value="sq" lang="sq" data-continue="Vazhdo">Shqip</option>
+<option value="sr_RS" lang="sr" data-continue="Настави">Српски језик</option>
+<option value="sv_SE" lang="sv" data-continue="Fortsätt">Svenska</option>
+<option value="sw" lang="sw" data-continue="Endelea">Kiswahili</option>
+<option value="szl" lang="szl" data-continue="Kōntynuować">Ślōnskŏ gŏdka</option>
+<option value="ta_IN" lang="ta" data-continue="தொடரவும்">தமிழ்</option>
+<option value="ta_LK" lang="ta" data-continue="தொடர்க">தமிழ்</option>
+<option value="te" lang="te" data-continue="కొనసాగించు">తెలుగు</option>
+<option value="th" lang="th" data-continue="ต่อไป">ไทย</option>
+<option value="tl" lang="tl" data-continue="Magpatuloy">Tagalog</option>
+<option value="tr_TR" lang="tr" data-continue="Devam">Türkçe</option>
+<option value="tt_RU" lang="tt" data-continue="дәвам итү">Татар теле</option>
+<option value="tah" lang="ty" data-continue="Continue">Reo Tahiti</option>
+<option value="ug_CN" lang="ug" data-continue="داۋاملاشتۇرۇش">ئۇيغۇرچە</option>
+<option value="uk" lang="uk" data-continue="Продовжити">Українська</option>
+<option value="ur" lang="ur" data-continue="جاری رکھیں">اردو</option>
+<option value="uz_UZ" lang="uz" data-continue="Продолжить">O‘zbekcha</option>
+<option value="vi" lang="vi" data-continue="Tiếp tục">Tiếng Việt</option>
+<option value="zh_HK" lang="zh" data-continue="繼續">香港中文版 </option>
+<option value="zh_TW" lang="zh" data-continue="繼續">繁體中文</option>
+<option value="zh_CN" lang="zh" data-continue="继续">简体中文</option>
+</select>
+<p class="step"><span class="spinner"></span><input id="language-continue" type="submit" class="button button-primary button-large" value="Continue" /></p></form><script type="text/javascript">var t = document.getElementById('weblog_title'); if (t){ t.focus(); }</script>
+        <script type='text/javascript' src='http://localhost:8080/wp-includes/js/jquery/jquery.min.js?ver=3.5.1' id='jquery-core-js'></script>
+<script type='text/javascript' src='http://localhost:8080/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.3.2' id='jquery-migrate-js'></script>
+<script type='text/javascript' src='http://localhost:8080/wp-admin/js/language-chooser.min.js?ver=5.7.1' id='language-chooser-js'></script>
+<script type="text/javascript">
+jQuery( function( $ ) {
+        $( '.hide-if-no-js' ).removeClass( 'hide-if-no-js' );
+} );
+</script>
+</body>
+</html>
+```
+
+```dockerコマンド
+# docker container stop wordpress
+wordpress
+```
+
+```dockerコマンド
+# docker container stop mysql
+mysql
+```
+
+```dockerコマンド
+# docker container rm wordpress
+wordpress
+```
+
+```dockerコマンド
+# docker container rm mysql
+mysql
+```
+
+## 3.4 コンテナとイメージの一括削除
+
+```dockerコマンド
+# docker container prune
+```
+
+```dockerコマンド
+# docker container ls -a
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+```dockerコマンド
+# docker image prune -a
+WARNING! This will remove all images without at least one container associated to them.
+Are you sure you want to continue? [y/N] y
+Deleted Images:
+untagged: golang:1.16.4-alpine3.13
+untagged: golang@sha256:4dd403b2e7a689adc5b7110ba9cd5da43d216cfcfccfbe2b35680effcf336c7e
+untagged: wordpress:php7.4-apache
+untagged: wordpress@sha256:208def35d7fcbbfd76df18997ce6cd5a5221c0256221b7fdaba41c575882d4f0
+deleted: sha256:5684f8405e21e6037008f0ab18cd993a3325d12e67bfefe8c8e8423adb6aa041
+deleted: sha256:2f10a2cf2aabcf3551f7516c1bec517e6b98f399d2d240dd6a1438dbd22a587f
+deleted: sha256:1162800780ba2efe0e0bede36f67f96a155c73c1b5d7bdbf4075882bd4a20d91
+deleted: sha256:5d2517fd005a8e9c8551229d29a9eb33c96e0dcfae9276ee4b1404f4f9c86ca6
+deleted: sha256:c47f3ea5383b0f937578ffebbd708ed4c8754987b9813c0229682f1d2fd90f88
+deleted: sha256:15c528b756d5b8cb9669bd551f89387617330d1c71d82359f41c30e95a199394
+deleted: sha256:bd762c71564719c96d44b22d87911bdf725eafd54f67c584a9cfe72b8f2b1d4c
+deleted: sha256:5245c88a9af29dd7be42d013919e2c398f068626e75222151fa477a85e58dc34
+deleted: sha256:518d55141a5ba8f9b5ec4eb2cbaab7da1ecfae2d8a195c7f60aaed0382f0085b
+deleted: sha256:283b010b05aacd1280b14c0ef37f3fa15dea574aa0c37e586b0428402bcd4960
+deleted: sha256:a7e3a4c92fbe1da5a7a5233f7d3b8c7c0d2f11ed3607fa9365ca0e40c91ad4c6
+deleted: sha256:7fd504e828bdccb43fafc901bc24737dc87f89af7a2d4ca12d514cec3b6d895a
+deleted: sha256:883f1bd033776372784e83e55a07e4f7ef16e59bd13ef82b278591c05130a09e
+deleted: sha256:24cfcd0051d4c4c70c47e8bc07706088331789f81b1790a18635bcb44b84a117
+deleted: sha256:3cd13337872e7120ec64550353c38056a73e8083b06b3324e100d605a75c1bc8
+deleted: sha256:fa5ebc51c424d4c89c1afb63e2b5a4d1adb1872caa3f56d2b6d48c953ea4ab0a
+deleted: sha256:50b7b271050e44fdef5234756e73472b97efb53025b20e2b5bcea858fce0d3cf
+deleted: sha256:711e9ecbeeedaa6a7c5457ed8f01c16e69c5a0acce81ffbe31402233e08a5697
+deleted: sha256:0c094d6ea549215b0594dcf11cd851e4704c779a979e2bbfd7621ebfd1af8391
+deleted: sha256:4c8ef953bb0bd31d5a7f4b67aade3284b0af4f840cc7dd019940def3fac1aca3
+deleted: sha256:018306c9cf4d8c3f63d9ebf5aa23c44a88c19c31956bc570c4136c55a2b95785
+untagged: cyberblack28/sample-nginx@sha256:85bfa643cc5fb6cb85544993a216ddf092fc2eb8b4e0c34598ebf86b2f6e1977
+deleted: sha256:dd05031e366cc022080df34843ee166f9a707769ab9344545c268c7a8666e0b4
+untagged: alpine:3.13
+untagged: alpine@sha256:69e70a79f2d41ab5d637de98c1e0b055206ba40a8145e7bddb55ccc04e13cf8f
+untagged: nginx:latest
+untagged: nginx@sha256:75a55d33ecc73c2a242450a9f1cc858499d468f077ea942867e662c247b5e412
+deleted: sha256:62d49f9bab67f7c70ac3395855bf01389eb3175b374e621f6f191bf31b54cd5b
+deleted: sha256:3444fb58dc9e8338f6da71c1040e8ff532f25fab497312f95dcee0f756788a84
+deleted: sha256:f85cfdc7ca97d8856cd4fa916053084e2e31c7e53ed169577cef5cb1b8169ccb
+deleted: sha256:704bf100d7f16255a2bc92e925f7007eef0bd3947af4b860a38aaffc3f992eae
+deleted: sha256:d5955c2e658d1432abb023d7d6d1128b0aa12481b976de7cbde4c7a31310f29b
+deleted: sha256:11126fda59f7f4bf9bf08b9d24c9ea45a1194f3d61ae2a96af744c97eae71cbf
+deleted: sha256:7e718b9c0c8c2e6420fe9c4d1d551088e314fe923dce4b2caf75891d82fb227d
+untagged: msb:latest
+deleted: sha256:e4292341aafcb3b0caf6c0c491eb47aeaacf06226a90e26ed0d5ab33e29d6702
+untagged: cyberblack28/sample-nginx:latest
+deleted: sha256:fcd99f4c6ca470456beecad54ec4d86d27e879f5cf636e2385f47798c784e2bf
+deleted: sha256:cb9de963da772df8d352541f1259f6a83e90e05338c61925d9162599acff4e6a
+deleted: sha256:6a2b94bba6b530d080e4e66a1cf732ffbd151ef1faa7974a86f66ff0eeea75de
+deleted: sha256:becc96f8d94ac0087040c143c00ead382429290f51440d4babf8b3ab9f791f0e
+deleted: sha256:775c2404df10c39eb979ff6a4ec9b144e6e10a8ea46c9a6ea5e49270aacbebbf
+deleted: sha256:b769804e22fe64741e85fc6efaf3debffe805ab8821cfd8b817ad02c66c630bb
+deleted: sha256:6bb656a37288230a6e10e0d905aa05c1f7cf89608aff5905f899a9ced85c4c1d
+deleted: sha256:aef1753346c0b64695d557bb949e312d564bff15b59741a39783e981b83fbc2e
+deleted: sha256:511e90be7dd122ebe340c02fc54af3b7cc9e58e609311173cd514a440ad7a458
+deleted: sha256:4c6515bdcb216167a9bd7d9ddff4a70d526409d6f00bf8fcd4cd35104f6b7cdc
+deleted: sha256:c16ee41da1f206e505ed8c7368c293c952febbc56aa6dfe294551849edb78931
+deleted: sha256:fc75b017ed41c1c5d5e8a80ba0b7ee5d7b273309b63593c9993e9f6af79edbf4
+deleted: sha256:6dbb9cc54074106d46d4ccb330f2a40a682d49dda5f4844962b7dce9fe44aaec
+untagged: mysql:8.0.22
+untagged: mysql@sha256:0fd2898dc1c946b34dceaccc3b80d38b1049285c1dab70df7480de62265d6213
+deleted: sha256:d4c3cafb11d573699728f9e7de10d1b976089b01298c0360e03f0afd9a1a8b36
+deleted: sha256:3ce5f6a2175f88412c0e8241e9298e721cface0773ea2fd70f1fdaf0e606c7fa
+deleted: sha256:f840f44fb69007f9b78a9bb552882753066b8e4a7835aa8f1be83ba50466e346
+deleted: sha256:d5c65d80478a6f623a715e67e39c4756ce0d4d09348881d1e86b87033322c70c
+deleted: sha256:2a33bb3c3abf34893e689effc0f204c998eb1c8c137050808b9b2725589e3c66
+deleted: sha256:537f09811c9ed9704ccbda6a316f3a2bf346530a296753de6545025b2dfde532
+deleted: sha256:d08533f1e2acc40ad561a46fc6a76b54c739e6b24f077c183c5709e0a6885312
+deleted: sha256:4f9d91a4728e833d1062fb65a792f06e22e425f63824f260c8b5a64b776ddc38
+deleted: sha256:20bf4c759d1b0d0e6286d2145453af4e0e1b7ba3d4efa3b8bce46817ad4109de
+deleted: sha256:a9371bbdf16ac95cc72555c6ad42f79b9f03a82d964fe89d52bdc5f335a5f42a
+deleted: sha256:5b02130e449d94f51e8ff6e5f7d24802246198749ed9eb064631e63833cd8f1d
+deleted: sha256:ab74465b38bc1acb16c23091df32c5b7033ed55783386cb57acae8efff9f4b37
+deleted: sha256:cb42413394c4059335228c137fe884ff3ab8946a014014309676c25e3ac86864
+untagged: cyberblack28/sample-nginx:1.0
+untagged: cyberblack28/sample-nginx@sha256:b51f647395095e5364928c0bf53b82a05c73ea15fd757fe641c07f152e4b43d6
+deleted: sha256:c0adbbc67c7579f10c0e02d156ae5848b2f6b20cc7e9fbba7c824e0b942d3785
+deleted: sha256:5a229a3ebc2f92712884dc511c6b8011ffeb669854fc25607f64f3b33a39ad2a
+deleted: sha256:5bfb8527698f016527c8408877281b44d246d6dc3fdcfb52265ec8bb5f2ddee1
+deleted: sha256:e11d86dec8982063e784b2356306cbbb532c4f8029f6b12c0950f57b3485ce35
+untagged: ubuntu:latest
+untagged: ubuntu@sha256:cf31af331f38d1d7158470e095b132acd126a7180a54f263d386da88eb681d93
+deleted: sha256:7e0aa2d69a153215c790488ed1fcec162015e973e49962d438e18249d16fa9bd
+deleted: sha256:3dd8c8d4fd5b59d543c8f75a67cdfaab30aef5a6d99aea3fe74d8cc69d4e7bf2
+deleted: sha256:8d8dceacec7085abcab1f93ac1128765bc6cf0caac334c821e01546bd96eb741
+deleted: sha256:ccdbb80308cc5ef43b605ac28fac29c6a597f89f5a169bbedbb8dec29c987439
+untagged: centos:7
+untagged: centos@sha256:0f4ec88e21daf75124b8a9e5ca03c37a5e937e0e108a255d890492430789b60e
+deleted: sha256:8652b9f0cb4c0599575e5a003f5906876e10c1ceb2ab9fe1786712dac14a50cf
+deleted: sha256:174f5685490326fc0a1c0f5570b8663732189b327007e47ff13d2ca59673db02
+deleted: sha256:fb2a599580ef628da15da5245f1ff065e703505b5539e0761b12b17f53b0e546
+deleted: sha256:18077913be34b197239204227e465a1ffea8cfa34c1643fdbd6739560c38baf6
+deleted: sha256:2b8a7666257b699a24ea39451d27121652fd560a78e38bdb7bb78ec2c27d4ca1
+deleted: sha256:c7cdd6ac183911c469eaf9b2e8d1932d65eb52eb292471c22f80174a304aa281
+deleted: sha256:722a834ff95bfd3dac4bc5aae498c245eb76b98108ed9de4293df2596e60cf1a
+
+Total reclaimed space: 2.148GB
+```
+
+```linuxコマンド
+# exit
+logout
+$ exit
+logout
+Connection to 34.84.148.90 closed.
+$
 ```
