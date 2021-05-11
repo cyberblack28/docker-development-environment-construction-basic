@@ -50,11 +50,11 @@ Digest: sha256:0f4ec88e21daf75124b8a9e5ca03c37a5e937e0e108a255d890492430789b60e
 Status: Downloaded newer image for centos:7
  ---> 8652b9f0cb4c
 Step 2/5 : RUN yum -y install epel-release
- ---> Running in b26dbab58922
+ ---> Running in ae5353dc60f3
 Loaded plugins: fastestmirror, ovl
 Determining fastest mirrors
- * base: ty1.mirror.newmediaexpress.com
- * extras: ty1.mirror.newmediaexpress.com
+ * base: ftp-srv2.kddilabs.jp
+ * extras: ftp-srv2.kddilabs.jp
  * updates: ty1.mirror.newmediaexpress.com
 Resolving Dependencies
 --> Running transaction check
@@ -95,15 +95,15 @@ Installed:
   epel-release.noarch 0:7-11
 
 Complete!
-Removing intermediate container b26dbab58922
- ---> 1e01263f61e1
+Removing intermediate container ae5353dc60f3
+ ---> 5558949c41b5
 Step 3/5 : RUN yum -y install nginx
- ---> Running in fa33902183c4
+ ---> Running in 8040ae6650f1
 Loaded plugins: fastestmirror, ovl
 Loading mirror speeds from cached hostfile
- * base: ty1.mirror.newmediaexpress.com
+ * base: ftp-srv2.kddilabs.jp
  * epel: d2lzkl7pfhq30w.cloudfront.net
- * extras: ty1.mirror.newmediaexpress.com
+ * extras: ftp-srv2.kddilabs.jp
  * updates: ty1.mirror.newmediaexpress.com
 Resolving Dependencies
 --> Running transaction check
@@ -329,7 +329,7 @@ Delta RPMs disabled because /usr/bin/applydeltarpm not installed.
 warning: /var/cache/yum/x86_64/7/epel/packages/nginx-1.16.1-3.el7.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID 352c64e5: NOKEY
 Public key for nginx-1.16.1-3.el7.x86_64.rpm is not installed
 --------------------------------------------------------------------------------
-Total                                               12 MB/s |  42 MB  00:03
+Total                                               13 MB/s |  42 MB  00:03
 Retrieving key from file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
 Importing GPG key 0x352C64E5:
  Userid     : "Fedora EPEL (7) <epel@fedoraproject.org>"
@@ -521,15 +521,15 @@ Dependency Updated:
   openssl-libs.x86_64 1:1.0.2k-21.el7_9
 
 Complete!
-Removing intermediate container fa33902183c4
- ---> 7dfdc7289736
+Removing intermediate container 8040ae6650f1
+ ---> c39fdd92f3fc
 Step 4/5 : COPY index.html /usr/share/nginx/html
- ---> 1404cd12fc17
+ ---> 2fd5a19d6053
 Step 5/5 : ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
- ---> Running in 97c1bedd6aef
-Removing intermediate container 97c1bedd6aef
- ---> c0adbbc67c75
-Successfully built c0adbbc67c75
+ ---> Running in f0b63c663e9a
+Removing intermediate container f0b63c663e9a
+ ---> 59cb9dc6b0e2
+Successfully built 59cb9dc6b0e2
 Successfully tagged cyberblack28/sample-nginx:latest
 ```
 
@@ -537,9 +537,9 @@ Successfully tagged cyberblack28/sample-nginx:latest
 
 ```dockerコマンド
 # docker image ls
-REPOSITORY                  TAG       IMAGE ID       CREATED         SIZE
-cyberblack28/sample-nginx   latest    c0adbbc67c75   8 minutes ago   558MB
-centos                      7         8652b9f0cb4c   5 months ago    204MB
+REPOSITORY                  TAG       IMAGE ID       CREATED          SIZE
+cyberblack28/sample-nginx   latest    dda2f2973802   10 minutes ago   558MB
+centos                      7         8652b9f0cb4c   5 months ago     204MB
 ```
 
 #### レイヤの確認
@@ -547,10 +547,10 @@ centos                      7         8652b9f0cb4c   5 months ago    204MB
 ```dockerコマンド
 # docker image history cyberblack28/sample-nginx
 IMAGE          CREATED          CREATED BY                                      SIZE      COMMENT
-c0adbbc67c75   10 minutes ago   /bin/sh -c #(nop)  ENTRYPOINT ["/usr/sbin/ng…   0B
-1404cd12fc17   10 minutes ago   /bin/sh -c #(nop) COPY file:3e884108a93ee9b1…   126B
-7dfdc7289736   10 minutes ago   /bin/sh -c yum -y install nginx                 238MB
-1e01263f61e1   11 minutes ago   /bin/sh -c yum -y install epel-release          116MB
+59cb9dc6b0e2   12 minutes ago   /bin/sh -c #(nop)  ENTRYPOINT ["/usr/sbin/ng…   0B
+2fd5a19d6053   12 minutes ago   /bin/sh -c #(nop) COPY file:3e884108a93ee9b1…   126B
+c39fdd92f3fc   12 minutes ago   /bin/sh -c yum -y install nginx                 238MB
+5558949c41b5   12 minutes ago   /bin/sh -c yum -y install epel-release          116MB
 8652b9f0cb4c   5 months ago     /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B
 <missing>      5 months ago     /bin/sh -c #(nop)  LABEL org.label-schema.sc…   0B
 <missing>      5 months ago     /bin/sh -c #(nop) ADD file:b3ebbe8bd304723d4…   204MB
@@ -607,11 +607,11 @@ Digest: sha256:4dd403b2e7a689adc5b7110ba9cd5da43d216cfcfccfbe2b35680effcf336c7e
 Status: Downloaded newer image for golang:1.16.4-alpine3.13
  ---> 722a834ff95b
 Step 2/6 : COPY ./main.go ./
- ---> 2b8a7666257b
+ ---> c066d1644250
 Step 3/6 : RUN go build -o /msb ./main.go
- ---> Running in f4464264c3ab
-Removing intermediate container f4464264c3ab
- ---> fb2a599580ef
+ ---> Running in 808cdbbbd29a
+Removing intermediate container 808cdbbbd29a
+ ---> 0b9401537c5c
 Step 4/6 : FROM alpine:3.13
 3.13: Pulling from library/alpine
 540db60ca938: Already exists
@@ -619,12 +619,12 @@ Digest: sha256:69e70a79f2d41ab5d637de98c1e0b055206ba40a8145e7bddb55ccc04e13cf8f
 Status: Downloaded newer image for alpine:3.13
  ---> 6dbb9cc54074
 Step 5/6 : COPY --from=builder /msb /usr/local/bin/msb
- ---> c16ee41da1f2
+ ---> 628d25db0d06
 Step 6/6 : ENTRYPOINT ["/usr/local/bin/msb"]
- ---> Running in 3c95ca6464cb
-Removing intermediate container 3c95ca6464cb
- ---> 4c6515bdcb21
-Successfully built 4c6515bdcb21
+ ---> Running in b67b541189db
+Removing intermediate container b67b541189db
+ ---> 1ffb1b502170
+Successfully built 1ffb1b502170
 Successfully tagged msb:latest
 ```
 
@@ -636,10 +636,10 @@ Let's start multi-stage builds !!
 ```dockerコマンド
 # docker image ls
 REPOSITORY                  TAG                 IMAGE ID       CREATED          SIZE
-msb                         latest              4c6515bdcb21   2 minutes ago    7.55MB
-<none>                      <none>              fb2a599580ef   2 minutes ago    303MB
-cyberblack28/sample-nginx   latest              c0adbbc67c75   24 minutes ago   558MB
-golang                      1.16.4-alpine3.13   722a834ff95b   33 hours ago     301MB
+msb                         latest              1ffb1b502170   2 minutes ago    7.55MB
+<none>                      <none>              0b9401537c5c   2 minutes ago    303MB
+cyberblack28/sample-nginx   latest              59cb9dc6b0e2   16 minutes ago   558MB
+golang                      1.16.4-alpine3.13   722a834ff95b   4 days ago       301MB
 alpine                      3.13                6dbb9cc54074   3 weeks ago      5.61MB
 centos                      7                   8652b9f0cb4c   5 months ago     204MB
 ```
@@ -650,35 +650,36 @@ centos                      7                   8652b9f0cb4c   5 months ago     
 
 ```dockerコマンド
 # DOCKER_BUILDKIT=1 docker image build -t msb -f Dockerfile-msb .
-[+] Building 2.3s (11/11) FINISHED
- => [internal] load .dockerignore                                                                                                                                                                0.1s
- => => transferring context: 2B                                                                                                                                                                  0.0s
- => [internal] load build definition from Dockerfile-msb                                                                                                                                         0.1s
- => => transferring dockerfile: 589B                                                                                                                                                             0.0s
- => [internal] load metadata for docker.io/library/alpine:3.13                                                                                                                                   0.0s
- => [internal] load metadata for docker.io/library/golang:1.16.4-alpine3.13                                                                                                                      0.0s
- => [stage-1 1/2] FROM docker.io/library/alpine:3.13                                                                                                                                             0.0s
- => [internal] load build context                                                                                                                                                                0.1s
- => => transferring context: 134B                                                                                                                                                                0.0s
- => [builder 1/3] FROM docker.io/library/golang:1.16.4-alpine3.13                                                                                                                                0.1s
- => [builder 2/3] COPY ./main.go ./                                                                                                                                                              0.1s
- => [builder 3/3] RUN go build -o /msb ./main.go                                                                                                                                                 1.4s
- => [stage-1 2/2] COPY --from=builder /msb /usr/local/bin/msb                                                                                                                                    0.1s
- => exporting to image                                                                                                                                                                           0.0s
- => => exporting layers                                                                                                                                                                          0.0s
- => => writing image sha256:e4292341aafcb3b0caf6c0c491eb47aeaacf06226a90e26ed0d5ab33e29d6702                                                                                                     0.0s
- => => naming to docker.io/library/msb                                                                                                                                                           0.0s
+[+] Building 1.7s (11/11) FINISHED
+ => [internal] load build definition from Dockerfile-msb                                                                                                                         0.1s
+ => => transferring dockerfile: 589B                                                                                                                                             0.0s
+ => [internal] load .dockerignore                                                                                                                                                0.1s
+ => => transferring context: 2B                                                                                                                                                  0.0s
+ => [internal] load metadata for docker.io/library/alpine:3.13                                                                                                                   0.0s
+ => [internal] load metadata for docker.io/library/golang:1.16.4-alpine3.13                                                                                                      0.0s
+ => [stage-1 1/2] FROM docker.io/library/alpine:3.13                                                                                                                             0.0s
+ => [internal] load build context                                                                                                                                                0.1s
+ => => transferring context: 134B                                                                                                                                                0.0s
+ => [builder 1/3] FROM docker.io/library/golang:1.16.4-alpine3.13                                                                                                                0.1s
+ => [builder 2/3] COPY ./main.go ./                                                                                                                                              0.1s
+ => [builder 3/3] RUN go build -o /msb ./main.go                                                                                                                                 0.8s
+ => [stage-1 2/2] COPY --from=builder /msb /usr/local/bin/msb                                                                                                                    0.1s
+ => exporting to image                                                                                                                                                           0.1s
+ => => exporting layers                                                                                                                                                          0.0s
+ => => writing image sha256:ab4aa580a77fb3fb3ed6053a328f3b59a5a1a2c2ab00022ac085e1537192db9c                                                                                     0.0s
+ => => naming to docker.io/library/msb                                                                                                                                           0.0s
 ```
 
 ```dockerコマンド
 # docker image ls
-msb                         latest              e4292341aafc   About a minute ago   7.55MB
-<none>                      <none>              4c6515bdcb21   5 hours ago          7.55MB
-<none>                      <none>              fb2a599580ef   5 hours ago          303MB
-cyberblack28/sample-nginx   latest              c0adbbc67c75   5 hours ago          558MB
-golang                      1.16.4-alpine3.13   722a834ff95b   38 hours ago         301MB
-alpine                      3.13                6dbb9cc54074   3 weeks ago          5.61MB
-centos                      7                   8652b9f0cb4c   5 months ago         204MB
+REPOSITORY                  TAG                 IMAGE ID       CREATED          SIZE
+msb                         latest              ab4aa580a77f   3 minutes ago    7.55MB
+<none>                      <none>              1ffb1b502170   7 minutes ago    7.55MB
+<none>                      <none>              0b9401537c5c   7 minutes ago    303MB
+cyberblack28/sample-nginx   latest              59cb9dc6b0e2   21 minutes ago   558MB
+golang                      1.16.4-alpine3.13   722a834ff95b   4 days ago       301MB
+alpine                      3.13                6dbb9cc54074   3 weeks ago      5.61MB
+centos                      7                   8652b9f0cb4c   5 months ago     204MB
 ```
 
 #### Trivyのインストール
@@ -775,40 +776,51 @@ Login Succeeded
 # docker image push cyberblack28/sample-nginx
 Using default tag: latest
 The push refers to repository [docker.io/cyberblack28/sample-nginx]
-8967fe867ced: Pushed
-e1f7893ab52e: Pushed
-acfaf1472707: Pushed
+09ff5c3f3c16: Pushed
+6724fad9c54d: Pushed
+8ec59fb6f8fd: Pushed
 174f56854903: Mounted from library/centos
-latest: digest: sha256:b51f647395095e5364928c0bf53b82a05c73ea15fd757fe641c07f152e4b43d6 size: 1161
+latest: digest: sha256:c80b9c9ef042fecee96e7bd4b4e8456d113757133fe575adfe61768a434aaae7 size: 1161
 ```
 
 #### IMAGE IDの確認
 
 ```dockerコマンド
 # docker image ls
-REPOSITORY                  TAG                 IMAGE ID       CREATED        SIZE
-msb                         latest              e4292341aafc   17 hours ago   7.55MB
-<none>                      <none>              4c6515bdcb21   21 hours ago   7.55MB
-<none>                      <none>              fb2a599580ef   21 hours ago   303MB
-cyberblack28/sample-nginx   latest              c0adbbc67c75   22 hours ago   558MB
-golang                      1.16.4-alpine3.13   722a834ff95b   2 days ago     301MB
-alpine                      3.13                6dbb9cc54074   3 weeks ago    5.61MB
-centos                      7                   8652b9f0cb4c   5 months ago   204MB
+REPOSITORY                  TAG                 IMAGE ID       CREATED          SIZE
+msb                         latest              ab4aa580a77f   9 minutes ago    7.55MB
+<none>                      <none>              1ffb1b502170   13 minutes ago   7.55MB
+<none>                      <none>              0b9401537c5c   13 minutes ago   303MB
+cyberblack28/sample-nginx   latest              59cb9dc6b0e2   27 minutes ago   558MB
+golang                      1.16.4-alpine3.13   722a834ff95b   4 days ago       301MB
+alpine                      3.13                6dbb9cc54074   3 weeks ago      5.61MB
+centos                      7                   8652b9f0cb4c   5 months ago     204MB
 ```
 
 #### イメージの削除と確認
 
 ```dockerコマンド
-# docker image rm c0adbbc67c75
+# docker image rm 59cb9dc6b0e2
 Untagged: cyberblack28/sample-nginx:latest
-Untagged: cyberblack28/sample-nginx@sha256:b51f647395095e5364928c0bf53b82a05c73ea15fd757fe641c07f152e4b43d6
-Deleted: sha256:c0adbbc67c7579f10c0e02d156ae5848b2f6b20cc7e9fbba7c824e0b942d3785
-Deleted: sha256:1404cd12fc173f744af2fc45304d2bc5e183dfb93ce4b5225d593d54ca44201e
-Deleted: sha256:5a229a3ebc2f92712884dc511c6b8011ffeb669854fc25607f64f3b33a39ad2a
-Deleted: sha256:7dfdc72897361211e00fabc1ed1684f36d6164c8b9e39f584583e0c0eb778705
-Deleted: sha256:5bfb8527698f016527c8408877281b44d246d6dc3fdcfb52265ec8bb5f2ddee1
-Deleted: sha256:1e01263f61e1a2f65e9e0fd5f78016ad787d6ed375918196665517f88585f054
-Deleted: sha256:e11d86dec8982063e784b2356306cbbb532c4f8029f6b12c0950f57b3485ce35
+Untagged: cyberblack28/sample-nginx@sha256:c80b9c9ef042fecee96e7bd4b4e8456d113757133fe575adfe61768a434aaae7
+Deleted: sha256:59cb9dc6b0e253c56c88a3b0ac12a09e5d1e2e30f47b2489a899e3a09504bf1c
+Deleted: sha256:2fd5a19d6053511680d37fea7b2ca74698b1fa6b9c0b69f13773a321ec87b8ae
+Deleted: sha256:38dd054c1d3f973efd9344aba750f5583b425779818ab59f1ca81a187bf8c7ef
+Deleted: sha256:c39fdd92f3fc8f9ee980dd6a594bf9685efa7357fb6439157035faca00fe425f
+Deleted: sha256:46929772216af6d6ad2d7b5b1130a033ce09a771e3d40f48616e1cc17d7f5c31
+Deleted: sha256:5558949c41b554a1377ae604cc086a964a763405a3ef7121faa022b70e828384
+Deleted: sha256:dc254c8b63c3b59e102926bc8214ce1269a57890de864f8e98deb663edf399f7
+```
+
+```dockerコマンド
+# docker image ls
+REPOSITORY   TAG                 IMAGE ID       CREATED          SIZE
+msb          latest              ab4aa580a77f   11 minutes ago   7.55MB
+<none>       <none>              1ffb1b502170   15 minutes ago   7.55MB
+<none>       <none>              0b9401537c5c   15 minutes ago   303MB
+golang       1.16.4-alpine3.13   722a834ff95b   4 days ago       301MB
+alpine       3.13                6dbb9cc54074   3 weeks ago      5.61MB
+centos       7                   8652b9f0cb4c   5 months ago     204MB
 ```
 
 #### Pullコマンドの実行
@@ -818,24 +830,24 @@ Deleted: sha256:e11d86dec8982063e784b2356306cbbb532c4f8029f6b12c0950f57b3485ce35
 Using default tag: latest
 latest: Pulling from cyberblack28/sample-nginx
 2d473b07cdd5: Already exists
-81e72b5342fa: Pull complete
-7a2a3e571b4a: Pull complete
-0a4fc4cba375: Pull complete
-Digest: sha256:b51f647395095e5364928c0bf53b82a05c73ea15fd757fe641c07f152e4b43d6
+8e3bbe9a067d: Pull complete
+5bf3670baede: Pull complete
+4bc8e8517989: Pull complete
+Digest: sha256:c80b9c9ef042fecee96e7bd4b4e8456d113757133fe575adfe61768a434aaae7
 Status: Downloaded newer image for cyberblack28/sample-nginx:latest
 docker.io/cyberblack28/sample-nginx:latest
 ```
 
 ```dockerコマンド
 # docker image ls
-REPOSITORY                  TAG                 IMAGE ID       CREATED        SIZE
-msb                         latest              e4292341aafc   17 hours ago   7.55MB
-<none>                      <none>              4c6515bdcb21   21 hours ago   7.55MB
-<none>                      <none>              fb2a599580ef   21 hours ago   303MB
-cyberblack28/sample-nginx   latest              c0adbbc67c75   22 hours ago   558MB
-golang                      1.16.4-alpine3.13   722a834ff95b   2 days ago     301MB
-alpine                      3.13                6dbb9cc54074   3 weeks ago    5.61MB
-centos                      7                   8652b9f0cb4c   5 months ago   204MB
+REPOSITORY                  TAG                 IMAGE ID       CREATED          SIZE
+msb                         latest              ab4aa580a77f   16 minutes ago   7.55MB
+<none>                      <none>              1ffb1b502170   19 minutes ago   7.55MB
+<none>                      <none>              0b9401537c5c   19 minutes ago   303MB
+cyberblack28/sample-nginx   latest              59cb9dc6b0e2   33 minutes ago   558MB
+golang                      1.16.4-alpine3.13   722a834ff95b   4 days ago       301MB
+alpine                      3.13                6dbb9cc54074   3 weeks ago      5.61MB
+centos                      7                   8652b9f0cb4c   5 months ago     204MB
 ```
 
 #### Image Tag
@@ -860,11 +872,11 @@ Sending build context to Docker daemon  3.072kB
 Step 1/5 : FROM centos:7
  ---> 8652b9f0cb4c
 Step 2/5 : RUN yum -y install epel-release
- ---> Running in f724cf22bace
+ ---> Running in 6d1ed13029ca
 Loaded plugins: fastestmirror, ovl
 Determining fastest mirrors
- * base: ty1.mirror.newmediaexpress.com
- * extras: ty1.mirror.newmediaexpress.com
+ * base: ftp-srv2.kddilabs.jp
+ * extras: ftp-srv2.kddilabs.jp
  * updates: ty1.mirror.newmediaexpress.com
 Resolving Dependencies
 --> Running transaction check
@@ -905,26 +917,16 @@ Installed:
   epel-release.noarch 0:7-11
 
 Complete!
-Removing intermediate container f724cf22bace
- ---> aef1753346c0
+Removing intermediate container 6d1ed13029ca
+ ---> 358d8684562a
 Step 3/5 : RUN yum -y install nginx
- ---> Running in 274e58cb6f8e
+ ---> Running in c75c12a6a037
 Loaded plugins: fastestmirror, ovl
 Loading mirror speeds from cached hostfile
- * base: ty1.mirror.newmediaexpress.com
+ * base: ftp-srv2.kddilabs.jp
  * epel: d2lzkl7pfhq30w.cloudfront.net
- * extras: ty1.mirror.newmediaexpress.com
+ * extras: ftp-srv2.kddilabs.jp
  * updates: ty1.mirror.newmediaexpress.com
-http://mirrors.kernel.org/fedora-epel/7/x86_64/repodata/5ca9c8933445f59b58a261448d7ea4a487507718559420b519feef8f2cd02dcf-updateinfo.xml.bz2: [Errno 14] HTTP Error 404 - Not Found
-Trying other mirror.
-To address this issue please refer to the below wiki article 
-
-https://wiki.centos.org/yum-errors
-
-If above article doesn't help to resolve this issue please use https://bugs.centos.org/.
-
-http://mirrors.syringanetworks.net/fedora-epel/7/x86_64/repodata/85e65dec80c2929659de21faf9ad0463ca47ad5bde3db354cd74b7b8bde346ce-primary.sqlite.bz2: [Errno 14] HTTP Error 404 - Not Found
-Trying other mirror.
 Resolving Dependencies
 --> Running transaction check
 ---> Package nginx.x86_64 1:1.16.1-3.el7 will be installed
@@ -1006,56 +1008,50 @@ Resolving Dependencies
 --> Processing Dependency: perl(Filter::Util::Call) for package: 4:perl-5.16.3-299.el7_9.x86_64
 --> Processing Dependency: perl(File::Temp) for package: 4:perl-5.16.3-299.el7_9.x86_64
 --> Processing Dependency: perl(File::Spec::Unix) for package: 4:perl-5.16.3-299.el7_9.x86_64
----> Package make.x86_64 1:3.82-24.el7 will be installed
----> Package nginx-mod-http-image-filter.x86_64 1:1.16.1-3.el7 will be installed
---> Processing Dependency: gd for package: 1:nginx-mod-http-image-filter-1.16.1-3.el7.x86_64
---> Processing Dependency: libgd.so.2()(64bit) for package: 1:nginx-mod-http-image-filter-1.16.1-3.el7.x86_64
----> Package nginx-mod-http-perl.x86_64 1:1.16.1-3.el7 will be installed
---> Processing Dependency: perl >= 5.006001 for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
---> Processing Dependency: perl(:MODULE_COMPAT_5.16.3) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
---> Processing Dependency: perl(Exporter) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
---> Processing Dependency: perl(XSLoader) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
---> Processing Dependency: perl(constant) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
---> Processing Dependency: perl(strict) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
---> Processing Dependency: perl(warnings) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
---> Processing Dependency: libperl.so()(64bit) for package: 1:nginx-mod-http-perl-1.16.1-3.el7.x86_64
----> Package nginx-mod-http-xslt-filter.x86_64 1:1.16.1-3.el7 will be installed
---> Processing Dependency: libxslt.so.1(LIBXML2_1.0.11)(64bit) for package: 1:nginx-mod-http-xslt-filter-1.16.1-3.el7.x86_64
---> Processing Dependency: libxslt.so.1(LIBXML2_1.0.18)(64bit) for package: 1:nginx-mod-http-xslt-filter-1.16.1-3.el7.x86_64
---> Processing Dependency: libexslt.so.0()(64bit) for package: 1:nginx-mod-http-xslt-filter-1.16.1-3.el7.x86_64
---> Processing Dependency: libxslt.so.1()(64bit) for package: 1:nginx-mod-http-xslt-filter-1.16.1-3.el7.x86_64
----> Package nginx-mod-mail.x86_64 1:1.16.1-3.el7 will be installed
----> Package nginx-mod-stream.x86_64 1:1.16.1-3.el7 will be installed
----> Package openssl-libs.x86_64 1:1.0.2k-19.el7 will be updated
----> Package openssl-libs.x86_64 1:1.0.2k-21.el7_9 will be an update
+--> Processing Dependency: perl(File::Spec::Functions) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(File::Spec) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(File::Path) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Cwd) for package: 4:perl-5.16.3-299.el7_9.x86_64
+--> Processing Dependency: perl(Carp) for package: 4:perl-5.16.3-299.el7_9.x86_64
+---> Package perl-Exporter.noarch 0:5.68-3.el7 will be installed
+---> Package perl-constant.noarch 0:1.27-2.el7 will be installed
+---> Package perl-libs.x86_64 4:5.16.3-299.el7_9 will be installed
 --> Running transaction check
----> Package gd.x86_64 0:2.0.35-27.el7_9 will be installed
---> Processing Dependency: libpng15.so.15(PNG15_0)(64bit) for package: gd-2.0.35-27.el7_9.x86_64
---> Processing Dependency: libjpeg.so.62(LIBJPEG_6.2)(64bit) for package: gd-2.0.35-27.el7_9.x86_64
---> Processing Dependency: libpng15.so.15()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
---> Processing Dependency: libjpeg.so.62()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
---> Processing Dependency: libfreetype.so.6()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
---> Processing Dependency: libfontconfig.so.1()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
---> Processing Dependency: libXpm.so.4()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
---> Processing Dependency: libX11.so.6()(64bit) for package: gd-2.0.35-27.el7_9.x86_64
----> Package libxslt.x86_64 0:1.1.28-6.el7 will be installed
----> Package perl.x86_64 4:5.16.3-299.el7_9 will be installed
---> Processing Dependency: perl(Socket) >= 1.3 for package: 4:perl-5.16.3-299.el7_9.x86_64
---> Processing Dependency: perl(Scalar::Util) >= 1.10 for package: 4:perl-5.16.3-299.el7_9.x86_64
---> Processing Dependency: perl-macros for package: 4:perl-5.16.3-299.el7_9.x86_64
---> Processing Dependency: perl(threads::shared) for package: 4:perl-5.16.3-299.el7_9.x86_64
---> Processing Dependency: perl(threads) for package: 4:perl-5.16.3-299.el7_9.x86_64
---> Processing Dependency: perl(Time::Local) for package: 4:perl-5.16.3-299.el7_9.x86_64
---> Processing Dependency: perl(Time::HiRes) for package: 4:perl-5.16.3-299.el7_9.x86_64
---> Processing Dependency: perl(Storable) for package: 4:perl-5.16.3-299.el7_9.x86_64
---> Processing Dependency: perl(Socket) for package: 4:perl-5.16.3-299.el7_9.x86_64
---> Processing Dependency: perl(Scalar::Util) for package: 4:perl-5.16.3-299.el7_9.x86_64
---> Processing Dependency: perl(Pod::Simple::XHTML) for package: 4:perl-5.16.3-299.el7_9.x86_64
---> Processing Dependency: perl(Pod::Simple::Search) for package: 4:perl-5.16.3-299.el7_9.x86_64
---> Processing Dependency: perl(Getopt::Long) for package: 4:perl-5.16.3-299.el7_9.x86_64
---> Processing Dependency: perl(Filter::Util::Call) for package: 4:perl-5.16.3-299.el7_9.x86_64
---> Processing Dependency: perl(File::Temp) for package: 4:perl-5.16.3-299.el7_9.x86_64
---> Processing Dependency: perl(File::Spec::Unix) for package: 4:perl-5.16.3-299.el7_9.x86_64
+---> Package fontconfig.x86_64 0:2.13.0-4.3.el7 will be installed
+--> Processing Dependency: fontpackages-filesystem for package: fontconfig-2.13.0-4.3.el7.x86_64
+--> Processing Dependency: dejavu-sans-fonts for package: fontconfig-2.13.0-4.3.el7.x86_64
+---> Package freetype.x86_64 0:2.8-14.el7_9.1 will be installed
+---> Package libX11.x86_64 0:1.6.7-3.el7_9 will be installed
+--> Processing Dependency: libX11-common >= 1.6.7-3.el7_9 for package: libX11-1.6.7-3.el7_9.x86_64
+--> Processing Dependency: libxcb.so.1()(64bit) for package: libX11-1.6.7-3.el7_9.x86_64
+---> Package libXpm.x86_64 0:3.5.12-1.el7 will be installed
+---> Package libjpeg-turbo.x86_64 0:1.2.90-8.el7 will be installed
+---> Package libpng.x86_64 2:1.5.13-8.el7 will be installed
+---> Package perl-Carp.noarch 0:1.26-244.el7 will be installed
+---> Package perl-File-Path.noarch 0:2.09-2.el7 will be installed
+---> Package perl-File-Temp.noarch 0:0.23.01-3.el7 will be installed
+---> Package perl-Filter.x86_64 0:1.49-3.el7 will be installed
+---> Package perl-Getopt-Long.noarch 0:2.40-3.el7 will be installed
+--> Processing Dependency: perl(Pod::Usage) >= 1.14 for package: perl-Getopt-Long-2.40-3.el7.noarch
+--> Processing Dependency: perl(Text::ParseWords) for package: perl-Getopt-Long-2.40-3.el7.noarch
+---> Package perl-PathTools.x86_64 0:3.40-5.el7 will be installed
+---> Package perl-Pod-Simple.noarch 1:3.28-4.el7 will be installed
+--> Processing Dependency: perl(Pod::Escapes) >= 1.04 for package: 1:perl-Pod-Simple-3.28-4.el7.noarch
+--> Processing Dependency: perl(Encode) for package: 1:perl-Pod-Simple-3.28-4.el7.noarch
+---> Package perl-Scalar-List-Utils.x86_64 0:1.27-248.el7 will be installed
+---> Package perl-Socket.x86_64 0:2.010-5.el7 will be installed
+---> Package perl-Storable.x86_64 0:2.45-3.el7 will be installed
+---> Package perl-Time-HiRes.x86_64 4:1.9725-3.el7 will be installed
+---> Package perl-Time-Local.noarch 0:1.2300-2.el7 will be installed
+---> Package perl-macros.x86_64 4:5.16.3-299.el7_9 will be installed
+---> Package perl-threads.x86_64 0:1.87-4.el7 will be installed
+---> Package perl-threads-shared.x86_64 0:1.43-6.el7 will be installed
+--> Running transaction check
+---> Package dejavu-sans-fonts.noarch 0:2.33-6.el7 will be installed
+--> Processing Dependency: dejavu-fonts-common = 2.33-6.el7 for package: dejavu-sans-fonts-2.33-6.el7.noarch
+---> Package fontpackages-filesystem.noarch 0:1.44-8.el7 will be installed
+---> Package libX11-common.noarch 0:1.6.7-3.el7_9 will be installed
+---> Package libxcb.x86_64 0:1.13-1.el7 will be installed
 --> Processing Dependency: libXau.so.6()(64bit) for package: libxcb-1.13-1.el7.x86_64
 ---> Package perl-Encode.x86_64 0:2.51-7.el7 will be installed
 ---> Package perl-Pod-Escapes.noarch 1:1.04-299.el7_9 will be installed
@@ -1155,7 +1151,7 @@ Delta RPMs disabled because /usr/bin/applydeltarpm not installed.
 warning: /var/cache/yum/x86_64/7/epel/packages/nginx-1.16.1-3.el7.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID 352c64e5: NOKEY
 Public key for nginx-1.16.1-3.el7.x86_64.rpm is not installed
 --------------------------------------------------------------------------------
-Total                                               22 MB/s |  42 MB  00:01
+Total                                               13 MB/s |  42 MB  00:03
 Retrieving key from file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
 Importing GPG key 0x352C64E5:
  Userid     : "Fedora EPEL (7) <epel@fedoraproject.org>"
@@ -1347,41 +1343,41 @@ Dependency Updated:
   openssl-libs.x86_64 1:1.0.2k-21.el7_9
 
 Complete!
-Removing intermediate container 274e58cb6f8e
- ---> b769804e22fe
+Removing intermediate container c75c12a6a037
+ ---> 8bb02bf6f4c5
 Step 4/5 : COPY index.html /usr/share/nginx/html
- ---> becc96f8d94a
+ ---> 65029268118f
 Step 5/5 : ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
- ---> Running in b2e364603488
-Removing intermediate container b2e364603488
- ---> dd05031e366c
-Successfully built dd05031e366c
+ ---> Running in a4d13073fda9
+Removing intermediate container a4d13073fda9
+ ---> d487de1ee98f
+Successfully built d487de1ee98f
 Successfully tagged cyberblack28/sample-nginx:latest
 ```
 
 ```dockerコマンド
 # docker image ls
-REPOSITORY                  TAG                 IMAGE ID       CREATED         SIZE
-cyberblack28/sample-nginx   latest              dd05031e366c   6 minutes ago   558MB
-msb                         latest              e4292341aafc   17 hours ago    7.55MB
-<none>                      <none>              4c6515bdcb21   22 hours ago    7.55MB
-<none>                      <none>              fb2a599580ef   22 hours ago    303MB
-cyberblack28/sample-nginx   <none>              c0adbbc67c75   22 hours ago    558MB
-golang                      1.16.4-alpine3.13   722a834ff95b   2 days ago      301MB
-alpine                      3.13                6dbb9cc54074   3 weeks ago     5.61MB
-centos                      7                   8652b9f0cb4c   5 months ago    204MB
+REPOSITORY                  TAG                 IMAGE ID       CREATED          SIZE
+cyberblack28/sample-nginx   latest              d487de1ee98f   7 minutes ago    558MB
+msb                         latest              ab4aa580a77f   27 minutes ago   7.55MB
+<none>                      <none>              1ffb1b502170   30 minutes ago   7.55MB
+<none>                      <none>              0b9401537c5c   30 minutes ago   303MB
+cyberblack28/sample-nginx   <none>              59cb9dc6b0e2   44 minutes ago   558MB
+golang                      1.16.4-alpine3.13   722a834ff95b   4 days ago       301MB
+alpine                      3.13                6dbb9cc54074   3 weeks ago      5.61MB
+centos                      7                   8652b9f0cb4c   5 months ago     204MB
 ```
 
 ```dockerコマンド
-# docker image tag c0adbbc67c75 cyberblack28/sample-nginx:1.0
+# docker image tag 59cb9dc6b0e2 cyberblack28/sample-nginx:1.0
 # docker image ls
 REPOSITORY                  TAG                 IMAGE ID       CREATED          SIZE
-cyberblack28/sample-nginx   latest              dd05031e366c   18 minutes ago   558MB
-msb                         latest              e4292341aafc   18 hours ago     7.55MB
-<none>                      <none>              4c6515bdcb21   22 hours ago     7.55MB
-<none>                      <none>              fb2a599580ef   22 hours ago     303MB
-cyberblack28/sample-nginx   1.0                 c0adbbc67c75   23 hours ago     558MB
-golang                      1.16.4-alpine3.13   722a834ff95b   2 days ago       301MB
+cyberblack28/sample-nginx   latest              d487de1ee98f   10 minutes ago   558MB
+msb                         latest              ab4aa580a77f   29 minutes ago   7.55MB
+<none>                      <none>              1ffb1b502170   32 minutes ago   7.55MB
+<none>                      <none>              0b9401537c5c   32 minutes ago   303MB
+cyberblack28/sample-nginx   1.0                 59cb9dc6b0e2   47 minutes ago   558MB
+golang                      1.16.4-alpine3.13   722a834ff95b   4 days ago       301MB
 alpine                      3.13                6dbb9cc54074   3 weeks ago      5.61MB
 centos                      7                   8652b9f0cb4c   5 months ago     204MB
 ```
@@ -1389,22 +1385,22 @@ centos                      7                   8652b9f0cb4c   5 months ago     
 ```dockerコマンド
 # docker image push cyberblack28/sample-nginx:1.0
 The push refers to repository [docker.io/cyberblack28/sample-nginx]
-8967fe867ced: Layer already exists
-e1f7893ab52e: Layer already exists
-acfaf1472707: Layer already exists
+09ff5c3f3c16: Layer already exists
+6724fad9c54d: Layer already exists
+8ec59fb6f8fd: Layer already exists
 174f56854903: Layer already exists
-1.0: digest: sha256:b51f647395095e5364928c0bf53b82a05c73ea15fd757fe641c07f152e4b43d6 size: 1161
+1.0: digest: sha256:c80b9c9ef042fecee96e7bd4b4e8456d113757133fe575adfe61768a434aaae7 size: 1161
 ```
 
 ```dockerコマンド
 # docker image push cyberblack28/sample-nginx
 Using default tag: latest
 The push refers to repository [docker.io/cyberblack28/sample-nginx]
-03fba5c533a6: Pushed
-c68a3ab6b548: Pushed
-cdb6104e7e5e: Pushed
+a5401e6c2b2e: Pushed
+ba4774984f5f: Pushed
+2e7dbae908e5: Pushed
 174f56854903: Layer already exists
-latest: digest: sha256:85bfa643cc5fb6cb85544993a216ddf092fc2eb8b4e0c34598ebf86b2f6e1977 size: 1161
+latest: digest: sha256:0c1a50b2607da40143ab7bf61f48c89ca9a72451c85be399e95aefec156a98d7 size: 1161
 ```
 
 ### 3.3.2 コンテナ起動と操作
@@ -1413,7 +1409,7 @@ latest: digest: sha256:85bfa643cc5fb6cb85544993a216ddf092fc2eb8b4e0c34598ebf86b2
 
 ```dockerコマンド
 # docker container run --name sample-nginx -d -p 8080:80 cyberblack28/sample-nginx
-fabb50c8e09a75df779e207f48fde429669681a2cda6255355f52b6bb5c0b204
+c04bf6b03914a9e9984fc5f7b7c61d4bc1bd7d3295d06bc6bdf5bdca94b20f91
 ```
 
 ```dockerコマンド
@@ -1430,17 +1426,17 @@ fabb50c8e09a75df779e207f48fde429669681a2cda6255355f52b6bb5c0b204
 
 ```dockerコマンド
 # docker container ls
-CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS         PORTS                                   NAMES
-fabb50c8e09a   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   7 minutes ago   Up 7 minutes   0.0.0.0:8080->80/tcp, :::8080->80/tcp   sample-nginx
+CONTAINER ID   IMAGE                       COMMAND                  CREATED              STATUS              PORTS                                   NAMES
+c04bf6b03914   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   About a minute ago   Up About a minute   0.0.0.0:8080->80/tcp, :::8080->80/tcp   sample-nginx
 ```
 
 #### docker container exec
 
 ```dockerコマンド
 # docker container exec -it sample-nginx /bin/bash
-[root@fabb50c8e09a /]# ls
+[root@c04bf6b03914 /]# ls
 anaconda-post.log  bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
-[root@fabb50c8e09a /]# exit
+[root@c04bf6b03914 /]# exit
 exit
 ```
 
@@ -1453,8 +1449,8 @@ sample-nginx
 
 ```dockerコマンド
 # docker container ls -a
-CONTAINER ID   IMAGE                       COMMAND                  CREATED          STATUS                     PORTS     NAMES
-fabb50c8e09a   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   21 minutes ago   Exited (0) 9 seconds ago             sample-nginx
+CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS                      PORTS     NAMES
+c04bf6b03914   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   4 minutes ago   Exited (0) 15 seconds ago             sample-nginx
 ```
 
 ```dockerコマンド
@@ -1464,8 +1460,8 @@ sample-nginx
 
 ```dockerコマンド
 # docker container ls -a
-CONTAINER ID   IMAGE                       COMMAND                  CREATED          STATUS         PORTS                                   NAMES
-fabb50c8e09a   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   22 minutes ago   Up 8 seconds   0.0.0.0:8080->80/tcp, :::8080->80/tcp   sample-nginx
+CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS         PORTS                                   NAMES
+c04bf6b03914   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   6 minutes ago   Up 8 seconds   0.0.0.0:8080->80/tcp, :::8080->80/tcp   sample-nginx
 ```
 
 #### docker container cp
@@ -1485,6 +1481,7 @@ fabb50c8e09a   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   22 minutes
 ```
 
 ```linuxコマンド
+# docker container cp copy.html sample-nginx:/usr/share/nginx/html
 # curl http://localhost:8080/copy.html
 <!DOCTYPE html>
 <html>
@@ -1501,8 +1498,8 @@ fabb50c8e09a   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   22 minutes
 
 ```dockerコマンド
 # docker container stats sample-nginx
-CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O   PIDS
-fabb50c8e09a   sample-nginx   0.00%     3.789MiB / 3.597GiB   0.10%     1.87kB / 715B   0B / 0B     2
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O   PIDS
+c04bf6b03914   sample-nginx   0.00%     3.777MiB / 3.597GiB   0.10%     1.8kB / 4.25kB   0B / 0B     2
 ```
 
 #### docker container inspect
@@ -1511,8 +1508,8 @@ fabb50c8e09a   sample-nginx   0.00%     3.789MiB / 3.597GiB   0.10%     1.87kB /
 # docker container inspect sample-nginx
 [
     {
-        "Id": "fabb50c8e09a75df779e207f48fde429669681a2cda6255355f52b6bb5c0b204",
-        "Created": "2021-05-09T07:30:34.756940885Z",
+        "Id": "c04bf6b03914a9e9984fc5f7b7c61d4bc1bd7d3295d06bc6bdf5bdca94b20f91",
+        "Created": "2021-05-11T14:10:21.422499965Z",
         "Path": "/usr/sbin/nginx",
         "Args": [
             "-g",
@@ -1525,17 +1522,17 @@ fabb50c8e09a   sample-nginx   0.00%     3.789MiB / 3.597GiB   0.10%     1.87kB /
             "Restarting": false,
             "OOMKilled": false,
             "Dead": false,
-            "Pid": 11179,
+            "Pid": 6007,
             "ExitCode": 0,
             "Error": "",
-            "StartedAt": "2021-05-09T07:52:32.284350756Z",
-            "FinishedAt": "2021-05-09T07:52:11.19895919Z"
+            "StartedAt": "2021-05-11T14:16:22.027985577Z",
+            "FinishedAt": "2021-05-11T14:14:24.906533817Z"
         },
-        "Image": "sha256:dd05031e366cc022080df34843ee166f9a707769ab9344545c268c7a8666e0b4",
-        "ResolvConfPath": "/var/lib/docker/containers/fabb50c8e09a75df779e207f48fde429669681a2cda6255355f52b6bb5c0b204/resolv.conf",
-        "HostnamePath": "/var/lib/docker/containers/fabb50c8e09a75df779e207f48fde429669681a2cda6255355f52b6bb5c0b204/hostname",
-        "HostsPath": "/var/lib/docker/containers/fabb50c8e09a75df779e207f48fde429669681a2cda6255355f52b6bb5c0b204/hosts",
-        "LogPath": "/var/lib/docker/containers/fabb50c8e09a75df779e207f48fde429669681a2cda6255355f52b6bb5c0b204/fabb50c8e09a75df779e207f48fde429669681a2cda6255355f52b6bb5c0b204-json.log",
+        "Image": "sha256:d487de1ee98f14142bad549aaa2da82abce7956cd9b1df74ca4181bd15a9742b",
+        "ResolvConfPath": "/var/lib/docker/containers/c04bf6b03914a9e9984fc5f7b7c61d4bc1bd7d3295d06bc6bdf5bdca94b20f91/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/c04bf6b03914a9e9984fc5f7b7c61d4bc1bd7d3295d06bc6bdf5bdca94b20f91/hostname",
+        "HostsPath": "/var/lib/docker/containers/c04bf6b03914a9e9984fc5f7b7c61d4bc1bd7d3295d06bc6bdf5bdca94b20f91/hosts",
+        "LogPath": "/var/lib/docker/containers/c04bf6b03914a9e9984fc5f7b7c61d4bc1bd7d3295d06bc6bdf5bdca94b20f91/c04bf6b03914a9e9984fc5f7b7c61d4bc1bd7d3295d06bc6bdf5bdca94b20f91-json.log",
         "Name": "/sample-nginx",
         "RestartCount": 0,
         "Driver": "overlay2",
@@ -1646,16 +1643,16 @@ fabb50c8e09a   sample-nginx   0.00%     3.789MiB / 3.597GiB   0.10%     1.87kB /
         },
         "GraphDriver": {
             "Data": {
-                "LowerDir": "/var/lib/docker/overlay2/cfe423d4e29362968c7dcba3d82f671db6738fb12ef3e7e2ee6ec26ddaa0469b-init/diff:/var/lib/docker/overlay2/d15e58192be2b14a8027b6b1144bf43f5074f565b6b5c2cf9f75353c544a9ce8/diff:/var/lib/docker/overlay2/54980eeec746d3770946b578579d99c2fe9f86c39639db6fa24b503ffce0fcf5/diff:/var/lib/docker/overlay2/a0bb6497d5250d96620ddd030c28b54aaafa6c17063fc19078966c6efe303404/diff:/var/lib/docker/overlay2/a6f0d38fae88c5d22d01fbd9f9c1c2ec6354ccd6f718f0dd3666d726e6bf1427/diff",
-                "MergedDir": "/var/lib/docker/overlay2/cfe423d4e29362968c7dcba3d82f671db6738fb12ef3e7e2ee6ec26ddaa0469b/merged",
-                "UpperDir": "/var/lib/docker/overlay2/cfe423d4e29362968c7dcba3d82f671db6738fb12ef3e7e2ee6ec26ddaa0469b/diff",
-                "WorkDir": "/var/lib/docker/overlay2/cfe423d4e29362968c7dcba3d82f671db6738fb12ef3e7e2ee6ec26ddaa0469b/work"
+                "LowerDir": "/var/lib/docker/overlay2/ea3cc825606d4cb5bd29df639ee0c15414c642f2e9cf83648bd07081bb69bd52-init/diff:/var/lib/docker/overlay2/b1120b8fdaca705a4a223ea9e87c86a57b271ee85113ca4fd8b4d8686903bd14/diff:/var/lib/docker/overlay2/cc8294ec50e74ed4d7259dbb14d7d5350f11219fef3132fdf7a7defe104c6c49/diff:/var/lib/docker/overlay2/8345f2cffaf35cac263a78620253cda00f0e90cda0254d5f40e01715fd8b500b/diff:/var/lib/docker/overlay2/cb428ed041a5379fc7c3f2d23c07a810e7ba0fcafd7be954ba4533027e44fa2f/diff",
+                "MergedDir": "/var/lib/docker/overlay2/ea3cc825606d4cb5bd29df639ee0c15414c642f2e9cf83648bd07081bb69bd52/merged",
+                "UpperDir": "/var/lib/docker/overlay2/ea3cc825606d4cb5bd29df639ee0c15414c642f2e9cf83648bd07081bb69bd52/diff",
+                "WorkDir": "/var/lib/docker/overlay2/ea3cc825606d4cb5bd29df639ee0c15414c642f2e9cf83648bd07081bb69bd52/work"
             },
             "Name": "overlay2"
         },
         "Mounts": [],
         "Config": {
-            "Hostname": "fabb50c8e09a",
+            "Hostname": "c04bf6b03914",
             "Domainname": "",
             "User": "",
             "AttachStdin": false,
@@ -1694,7 +1691,7 @@ fabb50c8e09a   sample-nginx   0.00%     3.789MiB / 3.597GiB   0.10%     1.87kB /
         },
         "NetworkSettings": {
             "Bridge": "",
-            "SandboxID": "5f39981d10458797eba9d93b23132720bc166a6dab260f7c5143544279bb5af5",
+            "SandboxID": "65d3096cef5d0cad0accbda7b4cd136b1df6812f66d7889313a6208eb0d2700c",
             "HairpinMode": false,
             "LinkLocalIPv6Address": "",
             "LinkLocalIPv6PrefixLen": 0,
@@ -1710,10 +1707,10 @@ fabb50c8e09a   sample-nginx   0.00%     3.789MiB / 3.597GiB   0.10%     1.87kB /
                     }
                 ]
             },
-            "SandboxKey": "/var/run/docker/netns/5f39981d1045",
+            "SandboxKey": "/var/run/docker/netns/65d3096cef5d",
             "SecondaryIPAddresses": null,
             "SecondaryIPv6Addresses": null,
-            "EndpointID": "daf5b7a7fb382f82f994eaec0480ff25688c831b5a09fe3fc732a86a086b667c",
+            "EndpointID": "825c23dece94b84062ee4c38ed5a50a90b6ed9abd072551fc8fd738539dd2f68",
             "Gateway": "172.17.0.1",
             "GlobalIPv6Address": "",
             "GlobalIPv6PrefixLen": 0,
@@ -1726,8 +1723,8 @@ fabb50c8e09a   sample-nginx   0.00%     3.789MiB / 3.597GiB   0.10%     1.87kB /
                     "IPAMConfig": null,
                     "Links": null,
                     "Aliases": null,
-                    "NetworkID": "15a685036c1a02014933dda087ed82d5d29b6dadb93893c0bfbd510eb3ba2e88",
-                    "EndpointID": "daf5b7a7fb382f82f994eaec0480ff25688c831b5a09fe3fc732a86a086b667c",
+                    "NetworkID": "5fd8d761d73b3b8bbffc09caf632f23f68b487683facfdca0f11a3c8d43e6d98",
+                    "EndpointID": "825c23dece94b84062ee4c38ed5a50a90b6ed9abd072551fc8fd738539dd2f68",
                     "Gateway": "172.17.0.1",
                     "IPAddress": "172.17.0.2",
                     "IPPrefixLen": 16,
@@ -1752,8 +1749,8 @@ sample-nginx
 
 ```dockerコマンド
 # docker container ls -a
-CONTAINER ID   IMAGE                       COMMAND                  CREATED             STATUS                      PORTS     NAMES
-fabb50c8e09a   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   About an hour ago   Exited (0) 10 seconds ago             sample-nginx
+CONTAINER ID   IMAGE                       COMMAND                  CREATED          STATUS                      PORTS     NAMES
+c04bf6b03914   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   15 minutes ago   Exited (0) 11 seconds ago             sample-nginx
 ```
 
 ```dockerコマンド
@@ -1797,34 +1794,34 @@ Step 1/6 : FROM centos:7
  ---> 8652b9f0cb4c
 Step 2/6 : RUN yum -y install epel-release
  ---> Using cache
- ---> aef1753346c0
+ ---> 358d8684562a
 Step 3/6 : RUN yum -y install nginx
  ---> Using cache
- ---> b769804e22fe
+ ---> 8bb02bf6f4c5
 Step 4/6 : COPY index.html /usr/share/nginx/html
  ---> Using cache
- ---> becc96f8d94a
+ ---> 65029268118f
 Step 5/6 : RUN ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log
- ---> Running in 0d695afc504b
-Removing intermediate container 0d695afc504b
- ---> cb9de963da77
+ ---> Running in a83974f3d382
+Removing intermediate container a83974f3d382
+ ---> be9bcfa9ac93
 Step 6/6 : ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
- ---> Running in bdc087580498
-Removing intermediate container bdc087580498
- ---> fcd99f4c6ca4
-Successfully built fcd99f4c6ca4
+ ---> Running in 13da396949af
+Removing intermediate container 13da396949af
+ ---> e721ae4e9582
+Successfully built e721ae4e9582
 Successfully tagged cyberblack28/sample-nginx:latest
 ```
 
 ```dockerコマンド
 # docker container run --name sample-nginx -d -p 8080:80 cyberblack28/sample-nginx
-54891f0c0102c496b1a98f25ee1b4acabe41edc49f05086450944f8efa39ae9d
+089df1d46ec28ddec9f5c14af8b67681eaccdb09235fb5666900ff5aba2d92e0
 ```
 
 ```dockerコマンド
 # docker container ls
-CONTAINER ID   IMAGE                       COMMAND                  CREATED              STATUS              PORTS                                   NAMES
-54891f0c0102   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   About a minute ago   Up About a minute   0.0.0.0:8080->80/tcp, :::8080->80/tcp   sample-nginx
+CONTAINER ID   IMAGE                       COMMAND                  CREATED          STATUS          PORTS                                   NAMES
+089df1d46ec2   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   26 seconds ago   Up 25 seconds   0.0.0.0:8080->80/tcp, :::8080->80/tcp   sample-nginx
 ```
 
 ```linuxコマンド
@@ -1842,7 +1839,7 @@ CONTAINER ID   IMAGE                       COMMAND                  CREATED     
 
 ```dockerコマンド
 # docker container logs sample-nginx
-172.17.0.1 - - [09/May/2021:08:57:34 +0000] "GET / HTTP/1.1" 200 126 "-" "curl/7.68.0" "-"
+172.17.0.1 - - [11/May/2021:14:35:45 +0000] "GET / HTTP/1.1" 200 126 "-" "curl/7.68.0" "-"
 ```
 
 ```dockerコマンド
@@ -1853,7 +1850,7 @@ sample-nginx
 ```dockerコマンド
 # docker container ls -a
 CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS                      PORTS     NAMES
-54891f0c0102   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   7 minutes ago   Exited (0) 55 seconds ago             sample-nginx
+089df1d46ec2   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   3 minutes ago   Exited (0) 13 seconds ago             sample-nginx
 ```
 
 ```dockerコマンド
@@ -1951,12 +1948,12 @@ aaab73a2a5de468200062b5ddcd42bb3e4c4a801053a5341a84a00a13176bf5b
 
 ```dockerコマンド
 # docker container stop bind-nginx
-volume-nginx
+bind-nginx
 ```
 
 ```dockerコマンド
 # docker container rm bind-nginx
-volume-nginx
+bind-nginx
 ```
 
 ### 3・3・5 ボリューム（Volume）
@@ -2011,10 +2008,19 @@ root@978821cb0c6c:/# ls /usr/share/nginx/html/
 50x.html  index.html  test  volume.html
 root@978821cb0c6c:/# exit
 exit
+```
+
+```dockerコマンド
 # ls /var/lib/docker/volumes/htdocs/_data/
 50x.html  index.html  test  volume.html
+```
+
+```dockerコマンド
 # docker container stop volume-nginx
 volume-nginx
+```
+
+```dockerコマンド
 # docker container rm volume-nginx
 volume-nginx
 ```
@@ -2442,20 +2448,15 @@ wordpress
 mysql
 ```
 
-```dockerコマンド
-# docker container rm wordpress
-wordpress
-```
-
-```dockerコマンド
-# docker container rm mysql
-mysql
-```
-
 ## 3.4 コンテナとイメージの一括削除
 
 ```dockerコマンド
 # docker container prune
+WARNING! This will remove all stopped containers.
+Are you sure you want to continue? [y/N] y
+Deleted Containers:
+81b6b2f479493149c99a991a8ada112cda3b71bb29332a3edc85cb33ee583979
+2461c5ba5fc414a549174dcc036b335a532a94768bbc539efb1959945306aeb8
 ```
 
 ```dockerコマンド
