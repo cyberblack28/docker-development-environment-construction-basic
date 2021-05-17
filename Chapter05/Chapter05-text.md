@@ -450,7 +450,7 @@ Events:
   Normal  ScalingReplicaSet  97s (x2 over 16m)    deployment-controller  Scaled down replica set nginx-f589cd57f to 0
 ```
 
-#### Deployment の削除
+#### Deploymentの削除
 
 ```kubectlコマンド
 $ kubectl delete deployment nginx
@@ -465,4 +465,188 @@ deployment.apps "nginx" deleted
 ```kubectlコマンド
 $ kubectl get deployment
 No resources found in default namespace.
+```
+
+### 5.1.4 Service
+
+#### Podの作成
+
+```kubectlコマンド
+$ kubectl run nginx --image=nginx:1.20.0 --restart=Never --port=80
+pod/nginx created
+```
+
+```kubectlコマンド
+$ kubectl describe pod nginx
+Name:         nginx
+Namespace:    default
+Priority:     0
+Node:         gke-k8s-cluster-default-pool-8ad2d901-1k7g/10.146.15.232
+Start Time:   Sun, 16 May 2021 14:48:24 +0000
+Labels:       run=nginx
+Annotations:  <none>
+Status:       Running
+IP:           10.0.1.19
+IPs:
+  IP:  10.0.1.19
+Containers:
+  nginx:
+    Container ID:   docker://5eac6fee54bd6a2bc14b7e10379cc0c2af8fea40efad02816c32cd675bace4b2
+    Image:          nginx:1.20.0
+    Image ID:       docker-pullable://nginx@sha256:ea4560b87ff03479670d15df426f7d02e30cb6340dcd3004cdfc048d6a1d54b4
+    Port:           80/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Sun, 16 May 2021 14:48:25 +0000
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-7z9kn (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  default-token-7z9kn:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-7z9kn
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  2m5s  default-scheduler  Successfully assigned default/nginx to gke-k8s-cluster-default-pool-8ad2d901-1k7g
+  Normal  Pulled     2m4s  kubelet            Container image "nginx:1.20.0" already present on machine
+  Normal  Created    2m4s  kubelet            Created container nginx
+  Normal  Started    2m4s  kubelet            Started container nginx
+```
+
+#### Serviceの作成
+
+```kubectlコマンド
+$ kubectl expose pod nginx --name=nginx --port=80 --target-port=80
+service/nginx exposed
+```
+
+#### ClusterIPアドレスの確認
+
+```kubectlコマンド
+$ kubectl get service
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.3.240.1     <none>        443/TCP   11h
+nginx        ClusterIP   10.3.248.150   <none>        80/TCP    73s
+```
+
+#### PodのIPアドレスの確認
+
+```kubectlコマンド
+$ kubectl get ep
+NAME         ENDPOINTS          AGE
+kubernetes   35.200.23.27:443   11h
+nginx        10.0.1.19:80       2m4s
+```
+
+
+#### busybox Podの作成
+
+```kubectlコマンド
+$ kubectl run busybox --image=busybox --restart=Never --rm -it /bin/sh
+If you don't see a command prompt, try pressing enter.
+/ # wget -O- 10.3.248.150
+Connecting to 10.3.248.150 (10.3.248.150:80)
+writing to stdout
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+-                    100% |*****************************************************************************************************************************************************|   612  0:00:00 ETA
+written to stdout
+/ # wget -O- 10.0.1.19:80
+Connecting to 10.0.1.19:80 (10.0.1.19:80)
+writing to stdout
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+-                    100% |*****************************************************************************************************************************************************|   612  0:00:00 ETA
+written to stdout
+/ # exit
+pod "busybox" deleted
+```
+
+#### ServiceとPodの削除
+
+```kubectlコマンド
+$ kubectl delete service nginx
+service "nginx" deleted
+```
+
+```kubectlコマンド
+$ kubectl delete pod nginx
+pod "nginx" deleted
+```
+
+```kubectlコマンド
+$ kubectl get service
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.3.240.1   <none>        443/TCP   11h
+```
+
+```kubectlコマンド
+$ kubectl get pod
+No resources found in default namespace.
+```
+
+```kubectlコマンド
+$ kubectl run nginx --image=nginx:1.20.0 --port=80 --expose
+service/nginx created
+pod/nginx created
 ```
