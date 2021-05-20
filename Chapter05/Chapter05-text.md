@@ -650,3 +650,44 @@ $ kubectl run nginx --image=nginx:1.20.0 --port=80 --expose
 service/nginx created
 pod/nginx created
 ```
+
+### 5.1.5 ConfigMap
+
+#### ConfigMapの作成
+
+```kubectlコマンド
+$ kubectl create configmap sample-config1 --from-literal=var1=docker --from-literal=var2=kubernetes
+configmap/sample-config1 created
+```
+
+```kubectlコマンド
+$ kubectl get configmap
+NAME               DATA   AGE
+kube-root-ca.crt   1      4m31s
+sample-config1     2      82s
+```
+
+```kubectlコマンド
+$ kubectl get configmap sample-config1 -o yaml
+apiVersion: v1
+data:
+  var1: docker
+  var2: kubernetes
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2021-05-20T09:54:27Z"
+  name: sample-config1
+  namespace: default
+  resourceVersion: "2136"
+  selfLink: /api/v1/namespaces/default/configmaps/sample-config1
+  uid: 8c689311-be54-4e93-b71a-60edccf56312
+```
+
+#### マニフェストファイルの編集
+
+```linuxコマンド
+
+
+```
+
+
