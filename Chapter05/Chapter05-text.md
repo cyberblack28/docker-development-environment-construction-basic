@@ -675,19 +675,200 @@ data:
   var2: kubernetes
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2021-05-20T09:54:27Z"
+  creationTimestamp: "2021-05-20T15:01:12Z"
   name: sample-config1
   namespace: default
-  resourceVersion: "2136"
+  resourceVersion: "5779"
   selfLink: /api/v1/namespaces/default/configmaps/sample-config1
-  uid: 8c689311-be54-4e93-b71a-60edccf56312
+  uid: 20bfdae8-5bfd-467a-a4b5-67923d5f5725
 ```
 
 #### マニフェストファイルの編集
 
-```linuxコマンド
-
-
+```kubectlコマンド
+$ kubectl run --restart=Never nginx --image=nginx -o yaml --dry-run=client > nginx-configmap1.yaml
 ```
 
+```linuxコマンド
+$ vim nginx-configmap1.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    resources: {}
+    envFrom:
+    - configMapRef:
+        name: sample-config1
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
 
+```linuxコマンド
+$ cd
+$ cd container-develop-environment-construction-guide/Chapter05/5-1-5-01
+```
+
+#### Podの作成
+
+```kubectlコマンド
+$ kubectl create -f nginx-configmap1.yaml
+pod/nginx created
+```
+
+#### 環境変数の確認
+
+```kubectlコマンド
+$ kubectl exec -it nginx -- env
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=nginx
+TERM=xterm
+var1=docker
+var2=kubernetes
+KUBERNETES_SERVICE_PORT=443
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_PORT=tcp://10.3.240.1:443
+KUBERNETES_PORT_443_TCP=tcp://10.3.240.1:443
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT_443_TCP_ADDR=10.3.240.1
+KUBERNETES_SERVICE_HOST=10.3.240.1
+NGINX_VERSION=1.19.10
+NJS_VERSION=0.5.3
+PKG_RELEASE=1~buster
+HOME=/root
+```
+
+#### PodとConfigMapの削除
+
+```kubectlコマンド
+$ kubectl delete -f nginx-configmap1.yaml
+pod "nginx" deleted
+```
+
+```kubectlコマンド
+$ kubectl get pod
+No resources found in default namespace.
+```
+
+```kubectlコマンド
+$ kubectl delete configmap sample-config1
+configmap "sample-config1" deleted
+```
+
+```kubectlコマンド
+$ kubectl get configmap
+NAME               DATA   AGE
+kube-root-ca.crt   1      26m
+```
+
+#### 作成したファイルからConfigMapを作成
+
+```kubectlコマンド
+$ kubectl create configmap sample-config2 --from-env-file=sample-config2.env
+configmap/sample-config2 created
+```
+
+```kubectlコマンド
+$ kubectl get configmap
+NAME               DATA   AGE
+kube-root-ca.crt   1      91m
+sample-config2     2      112s
+```
+
+```kubectlコマンド
+$ kubectl get configmap sample-config2 -o yaml
+apiVersion: v1
+data:
+  var3: istio
+  var4: envoy
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2021-05-20T16:17:51Z"
+  name: sample-config2
+  namespace: default
+  resourceVersion: "33035"
+  selfLink: /api/v1/namespaces/default/configmaps/sample-config2
+  uid: 1d9e9ce7-399a-42eb-b0b8-186e1486b01b
+```
+
+#### PodからKeyを参照
+
+```kubectlコマンド
+$ cat nginx-configmap2.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    resources: {}
+    env:
+    - name: sample-config
+      valueFrom:
+        configMapKeyRef:
+          name: sample-config2
+          key: var3
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
+```
+
+```kubectlコマンド
+$ kubectl apply -f nginx-configmap2.yaml
+pod/nginx created
+```
+
+```kubectlコマンド
+$ kubectl exec -it nginx -- env
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=nginx
+TERM=xterm
+sample-config=istio
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT_443_TCP_ADDR=10.3.240.1
+KUBERNETES_SERVICE_HOST=10.3.240.1
+KUBERNETES_SERVICE_PORT=443
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_PORT=tcp://10.3.240.1:443
+KUBERNETES_PORT_443_TCP=tcp://10.3.240.1:443
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+NGINX_VERSION=1.19.10
+NJS_VERSION=0.5.3
+PKG_RELEASE=1~buster
+HOME=/root
+```
+
+#### PodとConfigMapの削除
+
+```kubectlコマンド
+$ kubectl delete -f nginx-configmap2.yaml
+pod "nginx" deleted
+```
+
+```kubectlコマンド
+$ kubectl get pod
+No resources found in default namespace.
+```
+
+```kubectlコマンド
+$ kubectl delete configmap sample-config2
+configmap "sample-config2" deleted
+```
+
+```kubectlコマンド
+$ kubectl get configmap
+NAME               DATA   AGE
+kube-root-ca.crt   1      114m
+```
