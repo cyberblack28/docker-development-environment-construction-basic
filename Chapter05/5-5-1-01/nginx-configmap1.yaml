@@ -10,6 +10,9 @@ spec:
   - image: nginx
     name: nginx
     resources: {}
+    envFrom:
+    - configMapRef:
+        name: sample-config1
   dnsPolicy: ClusterFirst
   restartPolicy: Never
 status: {}
