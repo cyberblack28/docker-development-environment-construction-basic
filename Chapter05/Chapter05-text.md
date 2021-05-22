@@ -1277,3 +1277,737 @@ pod "nginx" deleted
 $ kubectl get pod
 No resources found in default namespace.
 ```
+
+### 5.1.8 Multi Container Pod
+
+```linuxコマンド
+$ cd ../5-1-8-01
+```
+
+```kubectlコマンド
+$ cat multicontainer.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx-pod
+  name: nginx-pod
+spec:
+  volumes:
+  - name: share-data
+    emptyDir: {}
+  containers:
+  - image: nginx:1.20.0
+    name: nginx
+    volumeMounts:
+    - name: share-data
+      mountPath: /usr/share/nginx/html
+    resources: {}
+  - name: work-container
+    image: busybox
+    volumeMounts:
+    - name: share-data
+      mountPath: /data
+    command: ["/bin/sh"]
+    args: ["-c", "echo Hello from the work-container > /data/index.html;sleep 2400"]
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
+```
+
+```kubectlコマンド
+$ kubectl apply -f multicontainer.yaml
+pod/nginx-pod created
+```
+
+```kubectlコマンド
+$ kubectl get pod
+NAME        READY   STATUS    RESTARTS   AGE
+nginx-pod   2/2     Running   0          3m26s
+```
+
+```kubectlコマンド
+$ kubectl exec -it nginx-pod -c nginx -- /bin/sh
+# curl localhost
+Hello from the work-container
+# ls /usr/share/nginx/html
+index.html
+# exit
+```
+
+```kubectlコマンド
+$ kubectl delete pod nginx-pod
+pod "nginx-pod" deleted
+```
+
+```kubectlコマンド
+$ kubectl get pod
+No resources found in default namespace.
+```
+
+### 5.1.9 createとapply
+
+```linuxコマンド
+$ cd ../5-1-9-01
+```
+
+```kubectlコマンド
+$ kubectl create -f nginx.yaml
+pod/nginx created
+```
+
+```kubectlコマンド
+$ kubectl create -f nginx.yaml
+Error from server (AlreadyExists): error when creating "nginx.yaml": pods "nginx" already exists
+```
+
+```kubectlコマンド
+$ kubectl delete -f nginx.yaml
+pod "nginx" deleted
+```
+
+```kubectlコマンド
+$ kubectl apply -f nginx.yaml
+pod/nginx created
+```
+
+```kubectlコマンド
+$ kubectl apply -f nginx.yaml
+pod/nginx configured
+```
+
+```kubectlコマンド
+$ kubectl delete -f nginx.yaml
+pod "nginx" deleted
+```
+
+```kubectlコマンド
+$ kubectl delete pod nginx
+pod "nginx" deleted
+```
+
+```kubectlコマンド
+＄ kubectl get pod
+No resources found in default namespace.
+```
+
+## 5・2 Kubernetesでアプリケーションを動かす
+
+### 5.2.2 NFSサーバの作成
+
+#### gcePersistentDiskの作成
+
+```gcloudコマンド
+$ gcloud compute disks create nfs-disk --size=10GB --zone=asia-northeast1-a
+WARNING: You have selected a disk size of under [200GB]. This may result in poor I/O performance. For more information, see: https://developers.google.com/compute/docs/disks#performance.
+Created [https://www.googleapis.com/compute/v1/projects/mercurial-shape-278704/zones/asia-northeast1-a/disks/nfs-disk].
+NAME      ZONE               SIZE_GB  TYPE         STATUS
+nfs-disk  asia-northeast1-a  10       pd-standard  READY
+New disks are unformatted. You must format and mount a disk before it
+can be used. You can find instructions on how to do this at:
+
+https://cloud.google.com/compute/docs/disks/add-persistent-disk#formatting
+```
+
+```gcloudコマンド
+$ gcloud compute disks describe --zone=asia-northeast1-a nfs-disk
+creationTimestamp: '2021-05-22T05:09:11.734-07:00'
+id: '6161119284946094728'
+kind: compute#disk
+labelFingerprint: 42WmSpB8rSM=
+name: nfs-disk
+physicalBlockSizeBytes: '4096'
+selfLink: https://www.googleapis.com/compute/v1/projects/mercurial-shape-278704/zones/asia-northeast1-a/disks/nfs-disk
+sizeGb: '10'
+status: READY
+type: https://www.googleapis.com/compute/v1/projects/mercurial-shape-278704/zones/asia-northeast1-a/diskTypes/pd-standard
+zone: https://www.googleapis.com/compute/v1/projects/mercurial-shape-278704/zones/asia-northeast1-a
+```
+
+#### NFSサーバのDeploymentとServiceの作成
+
+```linuxコマンド
+$ cd ../5-2-2-01
+```
+
+```linuxコマンド
+$ cat nfs-server.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: nfs-server
+  template:
+    metadata:
+      labels:
+        role: nfs-server
+    spec:
+      containers:
+      - name: nfs-server
+        image: gcr.io/google_containers/volume-nfs:0.8
+        ports:
+          - name: nfs
+            containerPort: 2049
+          - name: mountd
+            containerPort: 20048
+          - name: rpcbind
+            containerPort: 111
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - mountPath: /exports
+            name: nfs
+      volumes:
+        - name: nfs
+          gcePersistentDisk:
+            pdName: nfs-disk
+            fsType: ext4
+```
+
+```kubectlコマンド
+$ kubectl apply -f nfs-server.yaml
+deployment.apps/nfs-server created
+```
+
+```kubectlコマンド
+$ kubectl get pod
+NAME                          READY   STATUS    RESTARTS   AGE
+nfs-server-6f7fc97dfd-n69bw   1/1     Running   0          12m
+```
+
+```linuxコマンド
+$ cat nfs-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nfs-service
+spec:
+  ports:
+    - name: nfs
+      port: 2049
+    - name: mountd
+      port: 20048
+    - name: rpcbind
+      port: 111
+  selector:
+    role: nfs-server
+```
+
+```kubectlコマンド
+$ kubectl apply -f nfs-service.yaml
+service/nfs-service created
+```
+
+```kubectlコマンド
+$ kubectl get service
+NAME          TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)                      AGE
+kubernetes    ClusterIP   10.3.240.1    <none>        443/TCP                      45h
+nfs-service   ClusterIP   10.3.252.83   <none>        2049/TCP,20048/TCP,111/TCP   51s
+```
+
+### 5.2.3 Secretの作成
+
+```kubectlコマンド
+$ kubectl create secret generic mysql --from-literal=password=mysqlp@ssw0d
+secret/mysql created
+```
+
+```kubectlコマンド
+$ kubectl get secret
+NAME                  TYPE                                  DATA   AGE
+default-token-dmlps   kubernetes.io/service-account-token   3      46h
+mysql                 Opaque                                1      79s
+```
+
+```kubectlコマンド
+$ kubectl get secret mysql -o yaml
+apiVersion: v1
+data:
+  password: bXlzcWxwQHNzdzBk
+kind: Secret
+metadata:
+  creationTimestamp: "2021-05-22T12:47:32Z"
+  name: mysql
+  namespace: default
+  resourceVersion: "983091"
+  selfLink: /api/v1/namespaces/default/secrets/mysql
+  uid: 17258347-09ab-445b-b0dc-b12a1d031b62
+type: Opaque
+```
+
+### 5.2.4 PersistentVolumeとPersistentVolumeClaimの作成
+
+#### PersistentVolumeの作成
+
+```linuxコマンド
+$ cd ../5-2-4-01
+```
+
+```linuxコマンド
+$ vim mysql-pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv
+  labels:
+    type: local
+spec:
+  storageClassName: mysql
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 10.3.252.83
+    path: /
+```
+
+```kubectlコマンド
+$ kubectl apply -f mysql-pv.yaml
+persistentvolume/mysql-pv created
+```
+
+```linuxコマンド
+$ vim wordpress-pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: wordpress-pv
+  labels:
+    type: local
+spec:
+  storageClassName: wordpress
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 10.3.252.83
+    path: /
+```
+
+```kubectlコマンド
+$ kubectl apply -f wordpress-pv.yaml
+persistentvolume/wordpress-pv created
+```
+
+```kubectlコマンド
+$ kubectl get persistentvolume
+NAME           CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
+mysql-pv       10Gi       RWX            Retain           Available           mysql                   9m23s
+wordpress-pv   10Gi       RWX            Retain           Available           wordpress               44s
+```
+
+#### PersistentVolumeClaimの作成
+
+```linuxコマンド
+$ cat mysql-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+  labels:
+    app: wordpress
+    tier: mysql
+spec:
+  storageClassName: mysql
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+```
+
+```kubectlコマンド
+$ kubectl apply -f mysql-pvc.yaml
+persistentvolumeclaim/mysql-pvc created
+```
+
+```linuxコマンド
+$ cat wordpress-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wordpress-pvc
+  labels:
+    app: wordpress
+    tier: wordpress
+spec:
+  storageClassName: wordpress
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+```
+
+```kubectlコマンド
+$ kubectl apply -f wordpress-pvc.yaml
+persistentvolumeclaim/wordpress-pvc created
+```
+
+```kubectlコマンド
+$ kubectl get persistentvolume,persistentvolumeclaim
+NAME                            CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                   STORAGECLASS   REASON   AGE
+persistentvolume/mysql-pv       10Gi       RWX            Retain           Bound    default/mysql-pvc       mysql                   27m
+persistentvolume/wordpress-pv   10Gi       RWX            Retain           Bound    default/wordpress-pvc   wordpress               18m
+
+NAME                                  STATUS   VOLUME         CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+persistentvolumeclaim/mysql-pvc       Bound    mysql-pv       10Gi       RWX            mysql          4m9s
+persistentvolumeclaim/wordpress-pvc   Bound    wordpress-pv   10Gi       RWX            wordpress      40s
+```
+
+### 5.2.5 DeploymentとServiceの作成
+
+#### MySQLのDeploymentとServiceの作成
+
+```linuxコマンド
+$ cd ../5-2-5-01
+```
+
+```linuxコマンド
+$ cat mysql.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - image: mysql:5.6
+          name: mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: password
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: mysql-local-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-local-storage
+          persistentVolumeClaim:
+            claimName: mysql-pvc
+```
+
+```kubectlコマンド
+$ kubectl apply -f mysql.yaml
+deployment.apps/mysql created
+```
+
+```kubectlコマンド
+$ kubectl get pod -l app=mysql
+NAME                     READY   STATUS    RESTARTS   AGE
+mysql-656fbb9446-hj4k9   1/1     Running   0          84s
+```
+
+```linuxコマンド
+$ cat mysql-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  labels:
+    app: mysql
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3306
+  selector:
+    app: mysql
+```
+
+```kubectlコマンド
+$ kubectl apply -f mysql-service.yaml
+service/mysql-service created
+```
+
+```kubectlコマンド
+$ kubectl get service
+NAME            TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
+kubernetes      ClusterIP   10.3.240.1     <none>        443/TCP                      47h
+mysql-service   ClusterIP   10.3.247.235   <none>        3306/TCP                     3m23s
+nfs-service     ClusterIP   10.3.252.83    <none>        2049/TCP,20048/TCP,111/TCP   78m
+```
+
+#### WordPressのDeploymentとServiceの作成
+
+```linuxコマンド
+$ cat wordpress.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+        - image: wordpress
+          name: wordpress
+          env:
+          - name: WORDPRESS_DB_HOST
+            value: mysql-service
+          - name: WORDPRESS_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql
+                key: password
+          ports:
+            - containerPort: 80
+              name: wordpress
+          volumeMounts:
+            - name: wordpress-local-storage
+              mountPath: /var/www/html
+      volumes:
+        - name: wordpress-local-storage
+          persistentVolumeClaim:
+            claimName: wordpress-pvc
+```
+
+```kubectlコマンド
+$ kubectl apply -f wordpress.yaml
+deployment.apps/wordpress created
+```
+
+```linuxコマンド
+$ cat wordpress-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-service
+  labels:
+    app: wordpress
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  selector:
+    app: wordpress
+```
+
+```kubectlコマンド
+$ kubectl apply -f wordpress-service.yaml
+service/wordpress-service created
+```
+
+```kubectlコマンド
+$ kubectl get service
+NAME                TYPE           CLUSTER-IP     EXTERNAL-IP     PORT(S)                      AGE
+kubernetes          ClusterIP      10.3.240.1     <none>          443/TCP                      47h
+mysql-service       ClusterIP      10.3.247.235   <none>          3306/TCP                     18m
+nfs-service         ClusterIP      10.3.252.83    <none>          2049/TCP,20048/TCP,111/TCP   93m
+wordpress-service   LoadBalancer   10.3.247.206   34.84.235.193   80:31998/TCP                 2m52s
+```
+
+### 5.2.6 アプリケーションのスケールアウト/スケールイン
+
+#### kubectlコマンドによるPodの追加
+
+```kubectlコマンド
+$ kubectl scale deployment wordpress --replicas 10
+deployment.apps/wordpress scaled
+```
+
+```kubectlコマンド
+$ kubectl get pod
+NAME                          READY   STATUS    RESTARTS   AGE
+mysql-656fbb9446-hj4k9        1/1     Running   0          117m
+nfs-server-6f7fc97dfd-n69bw   1/1     Running   0          3h26m
+wordpress-598599d9d6-2d8sp    1/1     Running   0          2m2s
+wordpress-598599d9d6-5ngrl    1/1     Running   0          2m2s
+wordpress-598599d9d6-7w6dh    1/1     Running   0          2m2s
+wordpress-598599d9d6-jfb2z    1/1     Running   0          2m2s
+wordpress-598599d9d6-mw9r2    1/1     Running   0          2m2s
+wordpress-598599d9d6-p4pkt    1/1     Running   0          102m
+wordpress-598599d9d6-q7rpc    1/1     Running   0          2m2s
+wordpress-598599d9d6-rf77m    1/1     Running   0          2m2s
+wordpress-598599d9d6-sg8nn    1/1     Running   0          2m2s
+wordpress-598599d9d6-xthb5    1/1     Running   0          2m2s
+```
+
+#### マニフェストファイルの編集によるPod数の変更
+
+```linuxコマンド
+$ cd ../5-2-5-01
+```
+
+```linuxコマンド
+$ cat wordpress.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+        - image: wordpress
+          name: wordpress
+          env:
+          - name: WORDPRESS_DB_HOST         //cmt{# Service名「//tt{mysql-service//}」を定義//}
+            value: mysql-service
+          - name: WORDPRESS_DB_PASSWORD     //cmt{# MySQLのデータベースパスワードを参照する定義//}
+            valueFrom:
+              secretKeyRef:
+                name: mysql
+                key: password
+          ports:
+            - containerPort: 80
+              name: wordpress
+          volumeMounts:                     //cmt{# Podのマウントパス定義//}
+            - name: wordpress-local-storage
+              mountPath: /var/www/html
+      volumes:                              //cmt{# 「//tt{wordpress-pvc//}」を指定する定義//}
+        - name: wordpress-local-storage
+          persistentVolumeClaim:
+            claimName: wordpress-pvc
+```
+
+```kubectlコマンド
+$ kubectl apply -f wordpress.yaml
+deployment.apps/wordpress configured
+```
+
+```kubectlコマンド
+$ kubectl edit deployment wordpress
+deployment.apps/wordpress edited
+```
+
+```kubectlコマンド
+$ kubectl get pod
+NAME                          READY   STATUS    RESTARTS   AGE
+mysql-656fbb9446-hj4k9        1/1     Running   0          128m
+nfs-server-6f7fc97dfd-n69bw   1/1     Running   0          3h37m
+wordpress-598599d9d6-jfb2z    1/1     Running   0          12m
+```
+
+```kubectlコマンド
+$ kubectl delete -f wordpress-service.yaml
+service "wordpress-service" deleted
+
+```kubectlコマンド
+$ kubectl delete -f wordpress.yaml
+deployment.apps "wordpress" deleted
+```
+
+```kubectlコマンド
+$ kubectl delete -f mysql-service.yaml
+service "mysql-service" deleted
+```
+
+```kubectlコマンド
+$ kubectl delete -f mysql.yaml
+deployment.apps "mysql" deleted
+```
+
+```kubectlコマンド
+$ kubectl delete -f wordpress-pvc.yaml
+persistentvolumeclaim "wordpress-pvc" deleted
+```
+
+```kubectlコマンド
+$ kubectl delete -f wordpress-pv.yaml
+persistentvolume "wordpress-pv" deleted
+```
+
+```kubectlコマンド
+$ kubectl delete -f mysql-pvc.yaml
+persistentvolumeclaim "mysql-pvc" deleted
+```
+
+```kubectlコマンド
+$ kubectl delete -f mysql-pv.yaml
+persistentvolume "mysql-pv" deleted
+```
+
+```kubectlコマンド
+$ kubectl delete -f nfs-service.yaml
+service "nfs-service" deleted
+```
+
+```kubectlコマンド
+$ kubectl delete -f nfs-server.yaml
+deployment.apps "nfs-server" deleted
+```
+
+```kubectlコマンド
+$ kubectl delete secret mysql
+secret "mysql" deleted
+```
+
+```kubectlコマンド
+$ kubectl get deployment
+No resources found in default namespace.
+```
+
+```kubectlコマンド
+$ kubectl get service
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.3.240.1   <none>        443/TCP   2d1h
+```
+
+```kubectlコマンド
+$ kubectl get persistentvolume,persistentvolumeclaim
+No resources found
+```
+
+```kubectlコマンド
+$ kubectl get secret
+NAME                  TYPE                                  DATA   AGE
+default-token-dmlps   kubernetes.io/service-account-token   3      2d1h
+```
+
+```kubectlコマンド
+$ kubectl get secret
+NAME                  TYPE                                  DATA   AGE
+default-token-dmlps   kubernetes.io/service-account-token   3      2d1h
+```
+
+```gcloudコマンド
+$ gcloud compute disks delete nfs-disk --zone=asia-northeast1-a
+The following disks will be deleted:
+ - [nfs-disk] in [asia-northeast1-a]
+
+Do you want to continue (Y/n)?   Y
+
+Deleted [https://www.googleapis.com/compute/v1/projects/mercurial-shape-278704/zones/asia-northeast1-a/disks/nfs-disk].
+```
