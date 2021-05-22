@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wordpress-pvc
+  labels:
+    app: wordpress
+    tier: wordpress
+spec:
+  storageClassName: wordpress
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
