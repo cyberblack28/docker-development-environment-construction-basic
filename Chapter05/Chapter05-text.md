@@ -872,3 +872,408 @@ $ kubectl get configmap
 NAME               DATA   AGE
 kube-root-ca.crt   1      114m
 ```
+
+### 5.1.6 ConfigMapとKeyの参照
+
+```linuxコマンド
+$ cd ../5-1-6-01
+```
+
+```linuxコマンド
+$ cat sample-config3.txt
+rook
+vitess
+containerd
+helm
+```
+
+```kubectlコマンド
+$ kubectl create configmap sample-cmvolume --from-file=sample-config3=sample-config3.txt
+configmap/sample-cmvolume created
+```
+
+```kubectlコマンド
+$ kubectl get configmap
+NAME               DATA   AGE
+kube-root-ca.crt   1      39h
+sample-cmvolume    1      119s
+```
+
+```kubectlコマンド
+$ kubectl get configmap sample-cmvolume -o yaml
+apiVersion: v1
+data:
+  sample-config3: |-
+    rook
+    vitess
+    containerd
+    helm
+    prometheus
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2021-05-22T05:51:49Z"
+  name: sample-cmvolume
+  namespace: default
+  resourceVersion: "835111"
+  selfLink: /api/v1/namespaces/default/configmaps/sample-cmvolume
+  uid: 53ff63a7-fa03-4c82-ab05-de7cee63a9b7
+```
+
+#### マニフェストファイルの編集
+
+```linuxコマンド
+$ cat nginx-configmap3.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  volumes:
+  - name: cmvolume
+    configMap:
+      name: sample-cmvolume
+  containers:
+  - image: nginx
+    name: nginx
+    resources: {}
+    volumeMounts:
+    - name: cmvolume
+      mountPath: /configmap
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
+```
+
+#### Podの作成
+
+```kubectlコマンド
+$ kubectl apply -f nginx-configmap3.yaml
+pod/nginx created
+```
+
+```kubectlコマンド
+$ kubectl exec -it nginx -- cat /configmap/sample-config3
+rook
+vitess
+containerd
+helm
+```
+
+### 5.1.7 Secret
+
+#### Secretの作成
+
+```kubectlコマンド
+$ kubectl create secret generic sample-secret1 --from-literal=password=testp@ss
+secret/sample-secret1 created
+```
+
+```kubectlコマンド
+$ kubectl get secret
+NAME                  TYPE                                  DATA   AGE
+default-token-dmlps   kubernetes.io/service-account-token   3      39h
+sample-secret1        Opaque                                1      118s
+```
+
+#### マニフェストの確認
+
+```kubectlコマンド
+$ kubectl get secret sample-secret1 -o yaml
+apiVersion: v1
+data:
+  password: dGVzdHBAc3M=
+kind: Secret
+metadata:
+  creationTimestamp: "2021-05-22T06:17:23Z"
+  name: sample-secret1
+  namespace: default
+  resourceVersion: "844182"
+  selfLink: /api/v1/namespaces/default/secrets/sample-secret1
+  uid: 2841a4c4-0deb-4227-8853-d192a4d98219
+type: Opaque
+```
+
+```linuxコマンド
+$ echo dGVzdHBAc3M= | base64 -d
+testp@ss
+```
+
+#### SecretとPodの削除
+
+```kubectlコマンド
+$ kubectl delete secret sample-secret1
+secret "sample-secret1" deleted
+```
+
+```kubectlコマンド
+$ kubectl get secret
+NAME                  TYPE                                  DATA   AGE
+default-token-dmlps   kubernetes.io/service-account-token   3      39h
+```
+
+```kubectlコマンド
+$ kubectl delete pod nginx
+pod "nginx" deleted
+```
+
+```kubectlコマンド
+$ kubectl get pod
+No resources found in default namespace.
+```
+
+#### envファイルからSecretを作成
+
+```linuxコマンド
+$ cd ../5-1-7-01
+```
+
+```linuxコマンド
+$ cat sample-secret2.env
+password=p@ssw0rd
+```
+
+```kubectlコマンド
+$ kubectl create secret generic sample-secret2 --from-env-file=sample-secret2.env
+secret/sample-secret2 created
+```
+
+```kubectlコマンド
+$ kubectl get secret
+NAME                  TYPE                                  DATA   AGE
+default-token-dmlps   kubernetes.io/service-account-token   3      39h
+sample-secret2        Opaque                                1      85s
+```
+
+```kubectlコマンド
+$ kubectl get secret sample-secret2 -o yaml
+apiVersion: v1
+data:
+  password: cEBzc3cwcmQ=
+kind: Secret
+metadata:
+  creationTimestamp: "2021-05-22T06:46:20Z"
+  name: sample-secret2
+  namespace: default
+  resourceVersion: "854491"
+  selfLink: /api/v1/namespaces/default/secrets/sample-secret2
+  uid: 4accb5b3-e51c-42cc-9bb5-d9a9402c6796
+type: Opaque
+```
+
+#### マニフェストの作成
+
+```linuxコマンド
+$ cat nginx-secret.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    resources: {}
+    env:
+    - name: PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: sample-secret2
+          key: password
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
+```
+
+#### Podの作成とSecretの参照確認
+
+```kubectlコマンド
+$ kubectl apply -f nginx-secret.yaml
+pod/nginx created
+```
+
+```kubectlコマンド
+$ kubectl describe pod nginx
+Name:         nginx
+Namespace:    default
+Priority:     0
+Node:         gke-k8s-cluster-default-pool-c2daf5f7-zz3p/10.146.0.6
+Start Time:   Sat, 22 May 2021 07:07:37 +0000
+Labels:       run=nginx
+Annotations:  <none>
+Status:       Running
+IP:           10.0.1.10
+IPs:
+  IP:  10.0.1.10
+Containers:
+  nginx:
+    Container ID:   docker://84bf3909c0bb84d1378e0d46e2a335fc2462feadd1d0f0afe532d0e400accf60
+    Image:          nginx
+    Image ID:       docker-pullable://nginx@sha256:df13abe416e37eb3db4722840dd479b00ba193ac6606e7902331dcea50f4f1f2
+    Port:           <none>
+    Host Port:      <none>
+    State:          Running
+      Started:      Sat, 22 May 2021 07:07:39 +0000
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      PASSWORD:  <set to the key 'password' in secret 'sample-secret2'>  Optional: false
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-dmlps (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  default-token-dmlps:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-dmlps
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  23s   default-scheduler  Successfully assigned default/nginx to gke-k8s-cluster-default-pool-c2daf5f7-zz3p
+  Normal  Pulling    22s   kubelet            Pulling image "nginx"
+  Normal  Pulled     21s   kubelet            Successfully pulled image "nginx"
+  Normal  Created    21s   kubelet            Created container nginx
+  Normal  Started    21s   kubelet            Started container nginx
+```
+
+```kubectlコマンド
+$ kubectl exec -it nginx -- env | grep PASSWORD
+PASSWORD=p@ssw0rd
+```
+
+#### SecretとPodの削除
+
+```kubectlコマンド
+$ kubectl delete secret sample-secret2
+secret "sample-secret2" deleted
+```
+
+```kubectlコマンド
+$ kubectl get secret
+NAME                  TYPE                                  DATA   AGE
+default-token-dmlps   kubernetes.io/service-account-token   3      40h
+```
+
+```kubectlコマンド
+$ kubectl delete pod nginx
+pod "nginx" deleted
+```
+
+```kubectlコマンド
+$ kubectl get pod
+No resources found in default namespace.
+```
+
+#### Secretの作成とVolumeデータの参照
+
+```kubectlコマンド
+$ cat sample-secret3.txt
+admin=86asnNlW
+operator=po89SYin
+user=oshu894LD
+```
+
+```kubectlコマンド
+$ kubectl create secret generic sample-secret3 --from-file=sample-secret3.txt
+secret/sample-secret3 created
+```
+
+```kubectlコマンド
+$ kubectl get secret
+NAME                  TYPE                                  DATA   AGE
+default-token-dmlps   kubernetes.io/service-account-token   3      40h
+sample-secret3        Opaque                                1      39s
+```
+
+```kubectlコマンド
+$ kubectl get secret sample-secret3 -o yaml
+apiVersion: v1
+data:
+  sample-secret3.txt: YWRtaW49ODZhc25ObFcKb3BlcmF0b3I9cG84OVNZaW4KdXNlcj1vc2h1ODk0TEQK
+kind: Secret
+metadata:
+  creationTimestamp: "2021-05-22T07:22:59Z"
+  name: sample-secret3
+  namespace: default
+  resourceVersion: "867562"
+  selfLink: /api/v1/namespaces/default/secrets/sample-secret3
+  uid: 835beb6f-3d14-4ae8-9e43-3e7450ca69a7
+type: Opaque
+```
+
+#### マニフェストの作成（Volumeの定義）
+
+```linuxコマンド
+$ cat nginx-secret2.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  volumes:
+  - name: secretvolume
+    secret:
+      secretName: sample-secret3
+  containers:
+  - image: nginx
+    name: nginx
+    resources: {}
+    volumeMounts:
+    - name: secretvolume
+      mountPath: /secret
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
+```
+
+```kubectlコマンド
+$ kubectl apply -f nginx-secret2.yaml
+pod/nginx created
+```
+
+```kubectlコマンド
+$ kubectl exec -it nginx -- cat /secret/sample-secret3.txt
+admin=86asnNlW
+operator=po89SYin
+user=oshu894LD
+```
+
+#### SecretとPodの削除
+
+```kubectlコマンド
+$ kubectl delete secret sample-secret3
+secret "sample-secret3" deleted
+```
+
+```kubectlコマンド
+$ kubectl get secret
+NAME                  TYPE                                  DATA   AGE
+default-token-dmlps   kubernetes.io/service-account-token   3      41h
+```
+
+```kubectlコマンド
+$ kubectl delete pod nginx
+pod "nginx" deleted
+```
+
+```kubectlコマンド
+$ kubectl get pod
+No resources found in default namespace.
+```
