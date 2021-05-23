@@ -8,7 +8,7 @@ spec:
   type: {{ .Values.wordpress_service.type }}
   ports:
     - port: {{ .Values.wordpress_service.port }}
-      targetPort: {{ .Values.wordpress_service.tartgePort }}
+      targetPort: {{ .Values.wordpress_service.targetPort }}
       protocol: {{ .Values.wordpress_service.protocol }}
   selector:
     app: wordpress

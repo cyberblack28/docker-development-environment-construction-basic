@@ -2087,3 +2087,316 @@ type: Opaque
 data:
   password: {{ .Values.mysql_secret.password }}
 ```
+
+#### PersistentVolume、PersistentVolumeClaimの作成
+
+```linuxコマンド
+$ cp -p helm-yaml/mysql-pv.yaml wordpress/templates
+```
+
+```linuxコマンド
+$ cat wordpress/templates/mysql-pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.mysql_pv.name }}
+  labels:
+    app: wordpress
+    tire: mysql
+    type: local
+spec:
+  storageClassName: {{ .Values.mysql_pv.storageClassName }}
+  capacity:
+    storage: {{ .Values.mysql_pv.storage }}
+  accessModes:
+    - {{ .Values.mysql_pv.accessModes }}
+  hostPath:
+    path: {{ .Values.mysql_pv.hostPath }}
+```
+
+```linuxコマンド
+$ mv helm-yaml/wordpress-pv.yaml wordpress/templates
+```
+
+```linuxコマンド
+$ cat wordpress/templates/wordpress-pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.wordpress_pv.name }}
+  labels:
+    app: wordpress
+    tire: wordpress
+    type: local
+spec:
+  storageClassName: {{ .Values.wordpress_pv.storageClassName }}
+  capacity:
+    storage: {{ .Values.wordpress_pv.storage }}
+  accessModes:
+    - {{ .Values.wordpress_pv.accessModes }}
+  hostPath:
+    path: {{ .Values.wordpress_pv.hostPath }}
+```
+
+```linuxコマンド
+$ mv helm-yaml/mysql-pvc.yaml wordpress/templates
+```
+
+```linuxコマンド
+$ cat wordpress/templates/mysql-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.mysql_pvc.name }}
+  labels:
+    app: wordpress
+    tier: mysql
+spec:
+  storageClassName: {{ .Values.mysql_pvc.storageClassName }}
+  accessModes:
+    - {{ .Values.mysql_pvc.accessModes }}
+  resources:
+    requests:
+      storage: {{ .Values.mysql_pvc.storage }}
+```
+
+```linuxコマンド
+$ mv helm-yaml/wordpress-pvc.yaml wordpress/templates
+```
+
+```linuxコマンド
+$ cat wordpress/templates/wordpress-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.wordpress_pvc.name }}
+  labels:
+    app: wordpress
+    tier: wordpress
+spec:
+  storageClassName: {{ .Values.wordpress_pvc.storageClassName }}
+  accessModes:
+    - {{ .Values.mysql_pvc.accessModes }}
+  resources:
+    requests:
+      storage: {{ .Values.wordpress_pvc.storage }}
+```
+
+#### DeploymentとServiceの作成
+
+```linuxコマンド
+$ mv helm-yaml/mysql.yaml wordpress/templates
+```
+
+```linuxコマンド
+$ cat wordpress/templates/mysql.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.mysql.name }}
+  labels:
+    app: mysql
+spec:
+  replicas: {{ .Values.mysql.replicas }}
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - image: {{ .Values.mysql.image }}
+          name: mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: password
+          ports:
+            - containerPort: {{ .Values.mysql.containerPort }}
+              name: mysql
+          volumeMounts:
+            - name: mysql-local-storage
+              mountPath: {{ .Values.mysql.mountPath }}
+      volumes:
+        - name: mysql-local-storage
+          persistentVolumeClaim:
+            claimName: {{ .Values.mysql.claimName }}
+```
+
+```linuxコマンド
+$ mv helm-yaml/mysql-service.yaml wordpress/templates
+```
+
+```linuxコマンド
+$ cat wordpress/templates/mysql-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.mysql_service.name }}
+  labels:
+    app: mysql
+spec:
+  type: {{ .Values.mysql_service.type }}
+  ports:
+    - port: {{ .Values.mysql_service.port }}
+  selector:
+    app: mysql
+```
+
+```linuxコマンド
+$ mv helm-yaml/wordpress.yaml wordpress/templates
+```
+
+```linuxコマンド
+$ cat helm-yaml/wordpress.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.wordpress.name }}
+  labels:
+    app: wordpress
+spec:
+  replicas: {{ .Values.wordpress.replicas }}
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+        - image: {{ .Values.wordpress.image }}
+          name: wordpress
+          env:
+          - name: WORDPRESS_DB_HOST
+            value: {{ .Values.wordpress.value }}
+          - name: WORDPRESS_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql
+                key: password
+          ports:
+            - containerPort: {{ .Values.wordpress.containerPort }}
+              name: wordpress
+          volumeMounts:
+            - name: wordpress-local-storage
+              mountPath: {{ .Values.wordpress.mountPath }}
+      volumes:
+        - name: wordpress-local-storage
+          persistentVolumeClaim:
+            claimName: {{ .Values.wordpress.claimName }}
+```
+
+```linuxコマンド
+$ mv helm-yaml/wordpress-service.yaml wordpress/templates
+```
+
+```linuxコマンド
+$ cat wordpress/templates/wordpress-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.wordpress_service.name }}
+  labels:
+    app: wordpress
+spec:
+  type: {{ .Values.wordpress_service.type }}
+  ports:
+    - port: {{ .Values.wordpress_service.port }}
+      targetPort: {{ .Values.wordpress_service.targetPort }}
+      protocol: {{ .Values.wordpress_service.protocol }}
+  selector:
+    app: wordpress
+```
+
+#### values.yaml の作成
+
+```linuxコマンド
+$ cp -p helm-yaml/values.yaml wordpress
+```
+
+```linuxコマンド
+$ cat wordpress/values.yaml
+#mysql-secret
+mysql_secret:
+  password: bXlzcWxwQHNzdzBk
+
+#mysql-pv
+mysql_pv:
+  name: mysql-pv
+  storageClassName: mysql
+  storage: 10Gi
+  accessModes: ReadWriteOnce
+  hostPath: /tmp/data/mysql
+
+#mysql-pvc
+mysql_pvc:
+  name: mysql-pvc
+  storageClassName: mysql
+  accessModes: ReadWriteOnce
+  storage: 5Gi
+
+#wordpress-pv
+wordpress_pv:
+  name: wordpress-pv
+  storageClassName: wordpress
+  storage: 10Gi
+  accessModes: ReadWriteOnce
+  hostPath: /tmp/data/wordpress
+
+#wordpress-pvc
+wordpress_pvc:
+  name: wordpress-pvc
+  storageClassName: wordpress
+  accessModes: ReadWriteOnce
+  storage: 5Gi
+
+#mysql
+mysql:
+  name: mysql
+  replicas: 1
+  image: mysql:5.6
+  containerPort: 3306
+  mountPath: /var/lib/mysql
+  claimName: mysql-pvc
+
+#mysql-service
+mysql_service:
+  name: mysql-service
+  type: ClusterIP
+  port: 3306
+
+#wordpress
+wordpress:
+  name: wordpress
+  replicas: 1
+  image: wordpress
+  value: mysql-service
+  containerPort: 80
+  mountPath: /var/www/html
+  claimName: wordpress-pvc
+
+#wordpress-service
+wordpress_service:
+  name: wordpress-service
+  type: LoadBalancer
+  port: 80
+  targetPort: 80
+  protocol: TCP
+```
+
+#### Chartのデバッグ
+
+```helmコマンド
+$ helm install wordpress --debug --dry-run wordpress
+install wordpress --debug --dry-run wordpress
+install.go:173: [debug] Original chart version: ""
+install.go:190: [debug] CHART PATH: /home/iyutaka2020/container-develop-environment-construction-guide/Chapter05/5-3-2-01/wordpress
+
+Error: template: wordpress/templates/tests/test-connection.yaml:14:61: executing "wordpress/templates/tests/test-connection.yaml" at <.Values.service.port>: nil pointer evaluating interface {}.port
+helm.go:81: [debug] template: wordpress/templates/tests/test-connection.yaml:14:61: executing "wordpress/templates/tests/test-connection.yaml" at <.Values.service.port>: nil pointer evaluating interface {}.port

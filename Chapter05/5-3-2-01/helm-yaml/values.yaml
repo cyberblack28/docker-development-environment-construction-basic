@@ -62,5 +62,5 @@ wordpress_service:
   name: wordpress-service
   type: LoadBalancer
   port: 80
-  tartgePort: 80
+  targetPort: 80
   protocol: TCP
