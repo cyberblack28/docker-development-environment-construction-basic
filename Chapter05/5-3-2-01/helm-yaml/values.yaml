@@ -1,0 +1,66 @@
+#mysql-secret
+mysql_secret:
+  password: bXlzcWxwQHNzdzBk
+
+#mysql-pv
+mysql_pv:
+  name: mysql-pv
+  storageClassName: mysql
+  storage: 10Gi
+  accessModes: ReadWriteOnce
+  hostPath: /tmp/data/mysql
+
+#mysql-pvc
+mysql_pvc:
+  name: mysql-pvc
+  storageClassName: mysql
+  accessModes: ReadWriteOnce
+  storage: 5Gi
+
+#wordpress-pv
+wordpress_pv:
+  name: wordpress-pv
+  storageClassName: wordpress
+  storage: 10Gi
+  accessModes: ReadWriteOnce
+  hostPath: /tmp/data/wordpress
+
+#wordpress-pvc
+wordpress_pvc:
+  name: wordpress-pvc
+  storageClassName: wordpress
+  accessModes: ReadWriteOnce
+  storage: 5Gi
+
+#mysql
+mysql:
+  name: mysql
+  replicas: 1
+  image: mysql:5.6
+  containerPort: 3306
+  mountPath: /var/lib/mysql
+  claimName: mysql-pvc
+
+#mysql-service
+mysql_service:
+  name: mysql-service
+  type: ClusterIP
+  port: 3306
+
+#wordpress
+wordpress:
+  name: wordpress
+  replicas: 1
+  image: wordpress
+  value: mysql-service
+  containerPort: 80
+  mountPath: /var/www/html
+  claimName: wordpress-pvc
+
+#wordpress-service
+wordpress_service:
+  name: wordpress-service
+  type: LoadBalancer
+  port: 80
+  tartgePort: 80
+  protocol: TCP

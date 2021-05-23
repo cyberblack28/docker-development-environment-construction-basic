@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.mysql_service.name }}
+  labels:
+    app: mysql
+spec:
+  type: {{ .Values.mysql_service.type }}
+  ports:
+    - port: {{ .Values.mysql_service.port }}
+  selector:
+    app: mysql

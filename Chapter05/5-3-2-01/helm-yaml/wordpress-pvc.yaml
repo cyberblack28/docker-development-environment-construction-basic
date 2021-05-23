@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.wordpress_pvc.name }}
+  labels:
+    app: wordpress
+    tier: wordpress
+spec:
+  storageClassName: {{ .Values.wordpress_pvc.storageClassName }}
+  accessModes:
+    - {{ .Values.mysql_pvc.accessModes }}
+  resources:
+    requests:
+      storage: {{ .Values.wordpress_pvc.storage }}

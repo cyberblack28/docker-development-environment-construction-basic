@@ -2011,3 +2011,79 @@ Do you want to continue (Y/n)?   Y
 
 Deleted [https://www.googleapis.com/compute/v1/projects/mercurial-shape-278704/zones/asia-northeast1-a/disks/nfs-disk].
 ```
+
+## 5.3 マニフェストの管理
+
+### 5.3.2 Chartの作成とアプリケーションのインストール
+
+#### Helm クライアントのインストール
+
+```linuxコマンド
+$ cd ../5-3-2-01
+```
+
+```linuxコマンド
+$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+```
+
+```linuxコマンド
+$ chmod 700 get_helm.sh
+```
+
+```linuxコマンド
+$ ./get_helm.sh
+```
+
+```helmコマンド
+$ helm version
+version.BuildInfo{Version:"v3.5.4", GitCommit:"1b5edb69df3d3a08df77c9902dc17af864ff05d1", GitTreeState:"clean", GoVersion:"go1.15.11"}
+```
+
+#### Chartの雛形の作成
+
+```helmコマンド
+$ helm create wordpress
+Creating wordpress
+```
+
+```linuxコマンド
+$ ls wordpress
+charts  Chart.yaml  templates  values.yaml
+```
+
+```linuxコマンド
+$ ls wordpress/templates/
+deployment.yaml  _helpers.tpl  hpa.yaml  ingress.yaml  NOTES.txt  serviceaccount.yaml  service.yaml  tests
+```
+
+```linuxコマンド
+$ ls wordpress/templates/tests
+test-connection.yaml
+```
+
+#### WordPressの独自Chartの作成
+
+```linuxコマンド
+$ rm -rf wordpress/templates/*
+```
+
+```linuxコマンド
+$ ls wordpress/templates/
+```
+
+#### Secret マニフェストテンプレートの作成
+
+```linuxコマンド
+$ mv helm-yaml/mysql-secret.yaml wordpress/templates
+```
+
+```linuxコマンド
+$ cat wordpress/templates/mysql-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql
+type: Opaque
+data:
+  password: {{ .Values.mysql_secret.password }}
+```
