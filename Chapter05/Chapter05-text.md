@@ -2074,7 +2074,7 @@ $ ls wordpress/templates/
 #### Secret マニフェストテンプレートの作成
 
 ```linuxコマンド
-$ mv helm-yaml/mysql-secret.yaml wordpress/templates
+$ cp -p helm-yaml/mysql-secret.yaml wordpress/templates
 ```
 
 ```linuxコマンド
@@ -2115,7 +2115,7 @@ spec:
 ```
 
 ```linuxコマンド
-$ mv helm-yaml/wordpress-pv.yaml wordpress/templates
+$ cp -p helm-yaml/wordpress-pv.yaml wordpress/templates
 ```
 
 ```linuxコマンド
@@ -2139,7 +2139,7 @@ spec:
 ```
 
 ```linuxコマンド
-$ mv helm-yaml/mysql-pvc.yaml wordpress/templates
+$ cp -p helm-yaml/mysql-pvc.yaml wordpress/templates
 ```
 
 ```linuxコマンド
@@ -2161,7 +2161,7 @@ spec:
 ```
 
 ```linuxコマンド
-$ mv helm-yaml/wordpress-pvc.yaml wordpress/templates
+$ cp -p helm-yaml/wordpress-pvc.yaml wordpress/templates
 ```
 
 ```linuxコマンド
@@ -2185,7 +2185,7 @@ spec:
 #### DeploymentとServiceの作成
 
 ```linuxコマンド
-$ mv helm-yaml/mysql.yaml wordpress/templates
+$ cp -p helm-yaml/mysql.yaml wordpress/templates
 ```
 
 ```linuxコマンド
@@ -2228,7 +2228,7 @@ spec:
 ```
 
 ```linuxコマンド
-$ mv helm-yaml/mysql-service.yaml wordpress/templates
+$ cp -p helm-yaml/mysql-service.yaml wordpress/templates
 ```
 
 ```linuxコマンド
@@ -2248,7 +2248,7 @@ spec:
 ```
 
 ```linuxコマンド
-$ mv helm-yaml/wordpress.yaml wordpress/templates
+$ cp -p helm-yaml/wordpress.yaml wordpress/templates
 ```
 
 ```linuxコマンド
@@ -2293,7 +2293,7 @@ spec:
 ```
 
 ```linuxコマンド
-$ mv helm-yaml/wordpress-service.yaml wordpress/templates
+$ cp -p helm-yaml/wordpress-service.yaml wordpress/templates
 ```
 
 ```linuxコマンド
@@ -2394,9 +2394,350 @@ wordpress_service:
 
 ```helmコマンド
 $ helm install wordpress --debug --dry-run wordpress
-install wordpress --debug --dry-run wordpress
 install.go:173: [debug] Original chart version: ""
 install.go:190: [debug] CHART PATH: /home/iyutaka2020/container-develop-environment-construction-guide/Chapter05/5-3-2-01/wordpress
 
-Error: template: wordpress/templates/tests/test-connection.yaml:14:61: executing "wordpress/templates/tests/test-connection.yaml" at <.Values.service.port>: nil pointer evaluating interface {}.port
-helm.go:81: [debug] template: wordpress/templates/tests/test-connection.yaml:14:61: executing "wordpress/templates/tests/test-connection.yaml" at <.Values.service.port>: nil pointer evaluating interface {}.port
+NAME: wordpress
+LAST DEPLOYED: Sun May 23 07:22:58 2021
+NAMESPACE: default
+STATUS: pending-install
+REVISION: 1
+TEST SUITE: None
+USER-SUPPLIED VALUES:
+{}
+
+COMPUTED VALUES:
+mysql:
+  claimName: mysql-pvc
+  containerPort: 3306
+  image: mysql:5.6
+  mountPath: /var/lib/mysql
+  name: mysql
+  replicas: 1
+mysql_pv:
+  accessModes: ReadWriteOnce
+  hostPath: /tmp/data/mysql
+  name: mysql-pv
+  storage: 10Gi
+  storageClassName: mysql
+mysql_pvc:
+  accessModes: ReadWriteOnce
+  name: mysql-pvc
+  storage: 5Gi
+  storageClassName: mysql
+mysql_secret:
+  password: bXlzcWxwQHNzdzBk
+mysql_service:
+  name: mysql-service
+  port: 3306
+  type: ClusterIP
+wordpress:
+  claimName: wordpress-pvc
+  containerPort: 80
+  image: wordpress
+  mountPath: /var/www/html
+  name: wordpress
+  replicas: 1
+  value: mysql-service
+wordpress_pv:
+  accessModes: ReadWriteOnce
+  hostPath: /tmp/data/wordpress
+  name: wordpress-pv
+  storage: 10Gi
+  storageClassName: wordpress
+wordpress_pvc:
+  accessModes: ReadWriteOnce
+  name: wordpress-pvc
+  storage: 5Gi
+  storageClassName: wordpress
+wordpress_service:
+  name: wordpress-service
+  port: 80
+  protocol: TCP
+  targetPort: 80
+  type: LoadBalancer
+
+HOOKS:
+MANIFEST:
+---
+# Source: wordpress/templates/mysql-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql
+type: Opaque
+data:
+  password: bXlzcWxwQHNzdzBk
+---
+# Source: wordpress/templates/mysql-pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv
+  labels:
+    app: wordpress
+    tire: mysql
+    type: local
+spec:
+  storageClassName: mysql
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /tmp/data/mysql
+---
+# Source: wordpress/templates/wordpress-pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: wordpress-pv
+  labels:
+    app: wordpress
+    tire: wordpress
+    type: local
+spec:
+  storageClassName: wordpress
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /tmp/data/wordpress
+---
+# Source: wordpress/templates/mysql-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+  labels:
+    app: wordpress
+    tier: mysql
+spec:
+  storageClassName: mysql
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+# Source: wordpress/templates/wordpress-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wordpress-pvc
+  labels:
+    app: wordpress
+    tier: wordpress
+spec:
+  storageClassName: wordpress
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+# Source: wordpress/templates/mysql-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  labels:
+    app: mysql
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3306
+  selector:
+    app: mysql
+---
+# Source: wordpress/templates/wordpress-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-service
+  labels:
+    app: wordpress
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  selector:
+    app: wordpress
+---
+# Source: wordpress/templates/mysql.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - image: mysql:5.6
+          name: mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: password
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: mysql-local-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-local-storage
+          persistentVolumeClaim:
+            claimName: mysql-pvc
+---
+# Source: wordpress/templates/wordpress.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+        - image: wordpress
+          name: wordpress
+          env:
+          - name: WORDPRESS_DB_HOST
+            value: mysql-service
+          - name: WORDPRESS_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql
+                key: password
+          ports:
+            - containerPort: 80
+              name: wordpress
+          volumeMounts:
+            - name: wordpress-local-storage
+              mountPath: /var/www/html
+      volumes:
+        - name: wordpress-local-storage
+          persistentVolumeClaim:
+            claimName: wordpress-pvc
+```
+
+```helmコマンド
+$ helm lint wordpress
+==> Linting wordpress
+[INFO] Chart.yaml: icon is recommended
+
+1 chart(s) linted, 0 chart(s) failed
+```
+
+#### Chartのパッケージ化
+
+```helmコマンド
+$ helm package wordpress
+Successfully packaged chart and saved it to: /home/iyutaka2020/container-develop-environment-construction-guide/Chapter05/5-3-2-01/wordpress-0.1.0.tgz
+```
+
+```helmコマンド
+$ helm repo index .
+```
+
+```linuxコマンド
+$ cat index.yaml
+apiVersion: v1
+entries:
+  wordpress:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2021-05-23T07:38:08.15113946Z"
+    description: A Helm chart for Kubernetes
+    digest: 7993b1c7198683a6c715f39ba2044a478016f2d11b18eccc978dbcae2d106874
+    name: wordpress
+    type: application
+    urls:
+    - wordpress-0.1.0.tgz
+    version: 0.1.0
+generated: "2021-05-23T07:38:08.15011907Z"
+```
+
+#### WordPressのインストール
+
+```helmコマンド
+$ helm install wordpress ./wordpress
+NAME: wordpress
+LAST DEPLOYED: Sun May 23 07:41:44 2021
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
+
+```kubectlコマンド
+$ kubectl get pod
+NAME                         READY   STATUS    RESTARTS   AGE
+mysql-656fbb9446-5wkth       1/1     Running   0          58s
+wordpress-598599d9d6-qkplh   1/1     Running   0          58s
+```
+
+```kubectlコマンド
+$ kubectl get persistentvolume,persistentvolumeclaim
+NAME                            CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                   STORAGECLASS   REASON   AGE
+persistentvolume/mysql-pv       10Gi       RWO            Retain           Bound    default/mysql-pvc       mysql                   2m10s
+persistentvolume/wordpress-pv   10Gi       RWO            Retain           Bound    default/wordpress-pvc   wordpress               2m10s
+
+NAME                                  STATUS   VOLUME         CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+persistentvolumeclaim/mysql-pvc       Bound    mysql-pv       10Gi       RWO            mysql          2m10s
+persistentvolumeclaim/wordpress-pvc   Bound    wordpress-pv   10Gi       RWO            wordpress      2m10s
+```
+
+```kubectlコマンド
+$ kubectl get service
+NAME                TYPE           CLUSTER-IP     EXTERNAL-IP     PORT(S)        AGE
+kubernetes          ClusterIP      10.3.240.1     <none>          443/TCP        2d16h
+mysql-service       ClusterIP      10.3.242.238   <none>          3306/TCP       3m12s
+wordpress-service   LoadBalancer   10.3.250.23    34.84.235.193   80:30863/TCP   3m12s
+```
+
+#### WordPressのアンインストール
+
+```helmコマンド
+$ helm uninstall wordpress
+release "wordpress" uninstalled
+```
+
+```kubectlコマンド
+$ kubectl get pod
+No resources found in default namespace.
+```
+
+```kubectlコマンド
+$ kubectl get persistentvolume,persistentvolumeclaim
+No resources found
+```
+
+```kubectlコマンド
+$ kubectl get service
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.3.240.1   <none>        443/TCP   2d17h
+```
