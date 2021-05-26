@@ -1,0 +1,15 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+build:
+  artifacts:
+  - image: DOCKER_USER/practice-skaffold
+    docker:
+      dockerfile: ./Dockerfile
+  tagPolicy:
+    dateTime: {}
+  local:
+    push: true
+deploy:
+  kubectl:
+    manifests:
+    - practice-skaffold-*

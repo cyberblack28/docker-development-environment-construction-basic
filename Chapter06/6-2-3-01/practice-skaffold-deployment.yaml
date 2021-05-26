@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: practice-skaffold-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: practice-skaffold
+  template:
+    metadata:
+      labels:
+        app: practice-skaffold
+    spec:
+      containers:
+      - name: nginx
+        image: DOCKER_USER/sample-skaffold
