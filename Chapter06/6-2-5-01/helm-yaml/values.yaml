@@ -1,0 +1,13 @@
+#Common
+label: practice-skaffold
+
+#Deployment
+replicas: 3
+image:
+  repository: docker.io/cyberblack28/
+  name: practice-skaffold
+imageConfig:
+  pullPolicy: IfNotPresent
+
+#Service
+service_type: LoadBalancer

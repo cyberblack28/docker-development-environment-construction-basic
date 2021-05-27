@@ -321,3 +321,211 @@ Convenience Skaffold!!
 $ kubectl get deployments practice-skaffold-deployment -o jsonpath="{.spec.template.spec.containers[].image}"
 cyberblack28/practice-skaffold:d7bed2d-dirty@sha256:37888b93ca6f42fa4f6dd7d6cb97736fc2bf34a6c4cc5fb29c1f0b2fe9a89378
 ```
+
+### 6.2.5 SkaffoldとHelmの連携
+
+#### テンプレートの作成
+
+```linuxコマンド
+$ cd ../6-2-5-01
+```
+
+```helmコマンド
+$ helm create skaffold-helm
+Creating skaffold-helm
+```
+
+```linuxコマンド
+$ rm -rf skaffold-helm/templates/*
+```
+
+```linuxコマンド
+$ cp -p helm-yaml/practice-skaffold-deployment.yaml skaffold-helm/templates
+```
+
+```linuxコマンド
+$ cat skaffold-helm/templates/practice-skaffold-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: practice-skaffold-deployment
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.label }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.label }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ .Values.image }}
+        imagePullPolicy: {{ .Values.imageConfig.pullPolicy }}
+```
+
+```linuxコマンド
+$ cp -p helm-yaml/practice-skaffold-service.yaml skaffold-helm/templates
+```
+
+```linuxコマンド
+$ cat skaffold-helm/templates/practice-skaffold-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: practice-skaffold-service
+spec:
+  type: {{ .Values.service_type }}
+  ports:
+  - name: {{ .Chart.Name }}
+    protocol: TCP
+    port: 80
+    targetPort: 8080
+  selector:
+    app: {{ .Values.label }}
+```
+
+#### values.yamlの作成
+
+```linuxコマンド
+$ echo "" > skaffold-helm/values.yaml
+```
+
+```linuxコマンド
+$ cp -p helm-yaml/values.yaml skaffold-helm
+```
+
+```linuxコマンド
+$ cat skaffold-helm/values.yaml
+#Common
+label: practice-skaffold
+
+#Deployment
+replicas: 3
+image:
+  repository: docker.io/cyberblack28/
+  name: practice-skaffold
+imageConfig:
+  pullPolicy: IfNotPresent
+
+#Service
+service_type: LoadBalancer
+```
+
+#### skaffold.yamlの編集
+
+```linuxコマンド
+$ cat skaffold.yaml
+apiVersion: skaffold/v2beta10
+kind: Config
+build:
+  artifacts:
+  - image: docker.io/cyberblack28/practice-skaffold
+    docker:
+      dockerfile: ./Dockerfile
+  tagPolicy:
+    dateTime: {}
+  local:
+    push: true
+deploy:
+  helm:
+    releases:
+    - name: practice-skaffold
+      chartPath: skaffold-helm
+      valuesFiles: [ skaffold-helm/values.yaml ]
+      artifactOverrides:
+        image: docker.io/cyberblack28/practice-skaffold
+```
+
+```linuxコマンド
+$ cat main.go
+package main
+import (
+  "fmt"
+  "net/http"
+)
+func handler(w http.ResponseWriter, r *http.Request) {
+  fmt.Fprintf(w, "Skaffold & Helm!!")
+}
+func main() {
+  http.HandleFunc("/", handler)
+  http.ListenAndServe(":8080", nil)
+}
+```
+
+#### skaffoldの実行
+
+```skaffoldコマンド
+$ skaffold dev -f skaffold.yaml
+Listing files to watch...
+ - docker.io/cyberblack28/practice-skaffold
+Generating tags...
+ - docker.io/cyberblack28/practice-skaffold -> docker.io/cyberblack28/practice-skaffold:2021-05-27_09-37-37.748_UTC
+Checking cache...
+ - docker.io/cyberblack28/practice-skaffold: Found. Tagging
+Starting test...
+Tags used in deployment:
+ - docker.io/cyberblack28/practice-skaffold -> docker.io/cyberblack28/practice-skaffold:2021-05-27_09-37-37.748_UTC@sha256:cedbecd4937b48b4a7bd7bf3274b748b76f4f6cf8ef1f23707e4b9496ab68eea
+Starting deploy...
+Helm release practice-skaffold not installed. Installing...
+NAME: practice-skaffold
+LAST DEPLOYED: Thu May 27 09:37:43 2021
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+Waiting for deployments to stabilize...
+ - deployment/practice-skaffold-deployment: waiting for rollout to finish: 0 of 3 updated replicas are available...
+ - deployment/practice-skaffold-deployment is ready.
+Deployments stabilized in 13.376 seconds
+Press Ctrl+C to exit
+Watching for changes...
+```
+
+```linuxコマンド
+$ LB_EXIP=$(kubectl get service practice-skaffold-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+```
+
+```linuxコマンド
+$ curl http://${LB_EXIP}
+Skaffold & Helm!!
+```
+
+```kubectlコマンド
+$ kubectl get deployments practice-skaffold-deployment -o jsonpath="{.spec.template.spec.containers[].image}"
+docker.io/cyberblack28/practice-skaffold:2021-05-27_09-37-37.748_UTC@sha256:cedbecd4937b48b4a7bd7bf3274b748b76f4f6cf8ef1f23707e4b9496ab68eea
+```
+
+
+```linuxコマンド
+Listing files to watch...
+ - docker.io/cyberblack28/practice-skaffold
+Generating tags...
+ - docker.io/cyberblack28/practice-skaffold -> docker.io/cyberblack28/practice-skaffold:2021-05-27_09-37-37.748_UTC
+Checking cache...
+ - docker.io/cyberblack28/practice-skaffold: Found. Tagging
+Starting test...
+Tags used in deployment:
+ - docker.io/cyberblack28/practice-skaffold -> docker.io/cyberblack28/practice-skaffold:2021-05-27_09-37-37.748_UTC@sha256:cedbecd4937b48b4a7bd7bf3274b748b76f4f6cf8ef1f23707e4b9496ab68eea
+Starting deploy...
+Helm release practice-skaffold not installed. Installing...
+NAME: practice-skaffold
+LAST DEPLOYED: Thu May 27 09:37:43 2021
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+Waiting for deployments to stabilize...
+ - deployment/practice-skaffold-deployment: waiting for rollout to finish: 0 of 3 updated replicas are available...
+ - deployment/practice-skaffold-deployment is ready.
+Deployments stabilized in 13.376 seconds
+Press Ctrl+C to exit
+Watching for changes...
+
+Cleaning up...
+release "practice-skaffold" uninstalled
+There is a new version (1.25.0) of Skaffold available. Download it from:
+  https://github.com/GoogleContainerTools/skaffold/releases/tag/v1.25.0
+```
+
