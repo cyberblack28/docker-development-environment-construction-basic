@@ -49,6 +49,15 @@ $ cd code
 
 ```gitコマンド
 $ git init
+Initialized empty Git repository in /home/iyutaka2021/container-develop-environment-construction-guide/Chapter07/7-4-1-01/code/.git/
+```
+
+```gitコマンド
+$ git config --global user.email "you@example.com"
+```
+
+```gitコマンド
+$ git config --global user.name "Your Name"
 ```
 
 ```gitコマンド
@@ -57,10 +66,10 @@ $ git add .
 
 ```gitコマンド
 $ git commit -m "first commit"
-```
-
-```gitコマンド
-$ git branch -M main
+[master (root-commit) 7962980] first commit
+ 2 files changed, 25 insertions(+)
+ create mode 100644 app/Dockerfile
+ create mode 100644 app/main.go
 ```
 
 ```gitコマンド
@@ -75,6 +84,10 @@ $ git remote add origin https://github.com/cyberblack28/code.git
 $ git push -u origin main
 ```
 
+```gitコマンド
+$ git config --global credential.helper 'cache --timeout=28800'
+```
+
 #### Configリポジトリの作成
 
 ```linuxコマンド
@@ -82,7 +95,16 @@ $ cd ../
 ```
 
 ```helmコマンド
+$ mkdir config
+```
+
+```helmコマンド
+$ cd config
+```
+
+```helmコマンド
 $ helm create gitops-helm
+Creating gitops-helm
 ```
 
 ```linuxコマンド
@@ -90,7 +112,7 @@ $ rm -rf gitops-helm/templates/*
 ```
 
 ```linuxコマンド
-$ cp -p helm-yaml/gitops-deployment.yaml gitops-helm/templates
+$ cp -p ../helm-yaml/gitops-deployment.yaml gitops-helm/templates
 ```
 
 ```linuxコマンド
@@ -116,7 +138,7 @@ spec:
 ```
 
 ```linuxコマンド
-$ cp -p helm-yaml/gitops-service.yaml gitops-helm/templates
+$ cp -p ../helm-yaml/gitops-service.yaml gitops-helm/templates
 ```
 
 ```linuxコマンド
@@ -139,7 +161,7 @@ spec:
 #### values.yamlの作成
 
 ```linuxコマンド
-$ cp -p helm-yaml/values.yaml gitops-helm
+$ cp -p ../helm-yaml/values.yaml gitops-helm
 ```
 
 ```linuxコマンド
@@ -160,12 +182,9 @@ imageConfig:
 service_type: LoadBalancer
 ```
 
-```linuxコマンド
-$ cd config
-```
-
 ```gitコマンド
 $ git init
+Initialized empty Git repository in /home/iyutaka2021/container-develop-environment-construction-guide/Chapter07/7-4-1-01/config/.git/
 ```
 
 ```gitコマンド
@@ -174,10 +193,13 @@ $ git add .
 
 ```gitコマンド
 $ git commit -m "first commit"
-```
-
-```gitコマンド
-$ git branch -M main
+[master (root-commit) 100b5d2] first commit
+ 5 files changed, 92 insertions(+)
+ create mode 100644 gitops-helm/.helmignore
+ create mode 100644 gitops-helm/Chart.yaml
+ create mode 100644 gitops-helm/templates/gitops-deployment.yaml
+ create mode 100644 gitops-helm/templates/gitops-service.yaml
+ create mode 100644 gitops-helm/values.yaml
 ```
 
 ```gitコマンド
@@ -190,6 +212,15 @@ $ git remote add origin https://github.com/cyberblack28/config.git
 
 ```gitコマンド
 $ git push -u origin main
+Enumerating objects: 9, done.
+Counting objects: 100% (9/9), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (8/8), done.
+Writing objects: 100% (9/9), 1.72 KiB | 1.72 MiB/s, done.
+Total 9 (delta 0), reused 0 (delta 0)
+To https://github.com/cyberblack28/config.git
+ * [new branch]      main -> main
+Branch 'main' set up to track remote branch 'main' from 'origin'.
 ```
 
 #### ローカルリポジトリとの同期
@@ -200,10 +231,28 @@ $ cd ../code
 
 ```gitコマンド
 $ git pull
+remote: Enumerating objects: 6, done.
+remote: Counting objects: 100% (6/6), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 5 (delta 0), reused 0 (delta 0), pack-reused 0
+Unpacking objects: 100% (5/5), done.
+From https://github.com/cyberblack28/code
+   7962980..2baf2ed  main       -> origin/main
+Updating 7962980..2baf2ed
+Fast-forward
+ .github/workflows/main.yml | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 .github/workflows/main.yml
 ```
 
 ```linuxコマンド
 $ ls -la
+total 20
+drwxr-xr-x 5 iyutaka2021 iyutaka2021 4096 May 30 08:20 .
+drwxr-xr-x 6 iyutaka2021 iyutaka2021 4096 May 30 08:03 ..
+drwxr-xr-x 2 iyutaka2021 iyutaka2021 4096 May 30 07:45 app
+drwxr-xr-x 8 iyutaka2021 iyutaka2021 4096 May 30 08:20 .git
+drwxr-xr-x 3 iyutaka2021 iyutaka2021 4096 May 30 08:20 .github
 ```
 
 ### 7.4.2 main.ymlの作成手順
@@ -211,7 +260,7 @@ $ ls -la
 #### main.ymlの作成
 
 ```linuxコマンド
-$ cp -p github-actions/main.yml config/.github/workflows/
+$ cp -p ../github-actions/main.yml .github/workflows/
 ```
 
 ```linuxコマンド
@@ -256,9 +305,6 @@ jobs:
 
         # values.yamlの更新、新規ブランチ作成、プッシュ、プルリクエスト
       - name: Update values.yaml & Pull Request to Config Repository
-        env:
-          # PERSONAL_ACCESS_TOKENをGITHUB_TOKEN変数に格納
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           # GitHubログイン
           echo -e "machine github.com\nlogin ${{ secrets.USERNAME }}\npassword ${{ secrets.GH_PASSWORD }}" > ~/.netrc
@@ -278,7 +324,7 @@ jobs:
           git commit -m "Update tag ${{ github.run_number }}"
           git push origin feature/${{ github.run_number }}
           # プルリクエスト処理
-          echo $GITHUB_TOKEN > token.txt
+          echo ${{ secrets.PERSONAL_ACCESS_TOKEN }} > token.txt
           gh auth login --with-token < token.txt
           gh pr create  --title "Update Tag ${{ github.run_number }}" --body "Please Merge !!"
 ```
@@ -289,6 +335,9 @@ $ git add .
 
 ```gitコマンド
 $ git commit -m "create main.yml"
+[main b6a9802] create main.yml
+ 1 file changed, 65 insertions(+), 36 deletions(-)
+ rewrite .github/workflows/main.yml (90%)
 ```
 
 ```gitコマンド
@@ -296,7 +345,16 @@ $ git branch -M main
 ```
 
 ```gitコマンド
-$ git branch -M main
+$ git push -u origin main
+Enumerating objects: 9, done.
+Counting objects: 100% (9/9), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (5/5), 1.43 KiB | 1.43 MiB/s, done.
+Total 5 (delta 0), reused 0 (delta 0)
+To https://github.com/cyberblack28/code.git
+   2baf2ed..b6a9802  main -> main
+Branch 'main' set up to track remote branch 'main' from 'origin'.
 ```
 
 ## 7.5 CD環境構築
