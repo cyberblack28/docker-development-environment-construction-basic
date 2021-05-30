@@ -66,7 +66,7 @@ $ git add .
 
 ```gitコマンド
 $ git commit -m "first commit"
-[master (root-commit) 27593fc] first commit
+[master (root-commit) 2f0ec0b] first commit
  2 files changed, 25 insertions(+)
  create mode 100644 app/Dockerfile
  create mode 100644 app/main.go
@@ -88,7 +88,7 @@ Enumerating objects: 5, done.
 Counting objects: 100% (5/5), done.
 Delta compression using up to 4 threads
 Compressing objects: 100% (4/4), done.
-Writing objects: 100% (5/5), 616 bytes | 616.00 KiB/s, done.
+Writing objects: 100% (5/5), 615 bytes | 615.00 KiB/s, done.
 Total 5 (delta 0), reused 0 (delta 0)
 To https://github.com/cyberblack28/code.git
  * [new branch]      main -> main
@@ -204,7 +204,7 @@ $ git add .
 
 ```gitコマンド
 $ git commit -m "first commit"
-[master (root-commit) a3d53a2] first commit
+[master (root-commit) 5395a9a] first commit
  5 files changed, 92 insertions(+)
  create mode 100644 gitops-helm/.helmignore
  create mode 100644 gitops-helm/Chart.yaml
@@ -248,8 +248,8 @@ remote: Compressing objects: 100% (3/3), done.
 remote: Total 5 (delta 0), reused 0 (delta 0), pack-reused 0
 Unpacking objects: 100% (5/5), done.
 From https://github.com/cyberblack28/code
-   27593fc..4386743  main       -> origin/main
-Updating 27593fc..4386743
+   2f0ec0b..311c1ac  main       -> origin/main
+Updating 2f0ec0b..311c1ac
 Fast-forward
  .github/workflows/main.yml | 36 ++++++++++++++++++++++++++++++++++++
  1 file changed, 36 insertions(+)
@@ -259,11 +259,11 @@ Fast-forward
 ```linuxコマンド
 $ ls -la
 total 20
-drwxr-xr-x 5 iyutaka2021 iyutaka2021 4096 May 30 11:11 .
-drwxr-xr-x 6 iyutaka2021 iyutaka2021 4096 May 30 11:05 ..
-drwxr-xr-x 2 iyutaka2021 iyutaka2021 4096 May 30 10:57 app
-drwxr-xr-x 8 iyutaka2021 iyutaka2021 4096 May 30 11:11 .git
-drwxr-xr-x 3 iyutaka2021 iyutaka2021 4096 May 30 11:11 .github
+drwxr-xr-x 5 iyutaka2021 iyutaka2021 4096 May 30 14:10 .
+drwxr-xr-x 6 iyutaka2021 iyutaka2021 4096 May 30 14:05 ..
+drwxr-xr-x 2 iyutaka2021 iyutaka2021 4096 May 30 14:00 app
+drwxr-xr-x 8 iyutaka2021 iyutaka2021 4096 May 30 14:10 .git
+drwxr-xr-x 3 iyutaka2021 iyutaka2021 4096 May 30 14:10 .github
 ```
 
 ### 7.4.2 main.ymlの作成手順
@@ -346,7 +346,7 @@ $ git add .
 
 ```gitコマンド
 $ git commit -m "create main.yml"
-[main 65c69be] create main.yml
+[main 842cd35] create main.yml
  1 file changed, 62 insertions(+), 36 deletions(-)
  rewrite .github/workflows/main.yml (90%)
 ```
@@ -361,10 +361,10 @@ Enumerating objects: 9, done.
 Counting objects: 100% (9/9), done.
 Delta compression using up to 4 threads
 Compressing objects: 100% (3/3), done.
-Writing objects: 100% (5/5), 1.39 KiB | 1.39 MiB/s, done.
+Writing objects: 100% (5/5), 1.38 KiB | 1.38 MiB/s, done.
 Total 5 (delta 0), reused 0 (delta 0)
 To https://github.com/cyberblack28/code.git
-   4386743..65c69be  main -> main
+   311c1ac..842cd35  main -> main
 Branch 'main' set up to track remote branch 'main' from 'origin'.
 ```
 
@@ -395,7 +395,7 @@ argocd: v2.0.3+8d2b13d
   GoVersion: go1.16
   Compiler: gc
   Platform: linux/amd64
-FATA[0000] Argo CD server address unspecified
+FATA[0000] Failed to establish connection to 34.84.196.132:443: dial tcp 34.84.196.132:443: connect: connection refused
 ```
 
 #### Argo CDサーバのインストール
@@ -429,7 +429,7 @@ namespace/argocd created
 ```kubectlコマンド
 $ kubectl get ns argocd
 NAME     STATUS   AGE
-argocd   Active   32s
+argocd   Active   20s
 ```
 
 ```helmコマンド
@@ -437,7 +437,7 @@ $ helm install argo-cd -n argocd argo/argo-cd --version 3.6.4
 manifest_sorter.go:192: info: skipping unknown hook: "crd-install"
 manifest_sorter.go:192: info: skipping unknown hook: "crd-install"
 NAME: argo-cd
-LAST DEPLOYED: Sun May 30 11:44:09 2021
+LAST DEPLOYED: Sun May 30 14:26:31 2021
 NAMESPACE: argocd
 STATUS: deployed
 REVISION: 1
@@ -466,18 +466,18 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 ```kubectlコマンド
 $ kubectl get pods,services -n argocd
 NAME                                                         READY   STATUS    RESTARTS   AGE
-pod/argo-cd-argocd-application-controller-676599564b-25tp4   1/1     Running   0          55s
-pod/argo-cd-argocd-dex-server-7b7d8d89b7-krqg8               1/1     Running   0          55s
-pod/argo-cd-argocd-redis-685b9cf4b9-rtzsx                    1/1     Running   0          55s
-pod/argo-cd-argocd-repo-server-5dd97dfcfd-f84ql              1/1     Running   0          55s
-pod/argo-cd-argocd-server-796fcf56d4-cx9mp                   1/1     Running   0          55s
+pod/argo-cd-argocd-application-controller-676599564b-gt2bz   1/1     Running   0          54s
+pod/argo-cd-argocd-dex-server-7b7d8d89b7-kmxf5               1/1     Running   0          54s
+pod/argo-cd-argocd-redis-685b9cf4b9-bjw84                    1/1     Running   0          54s
+pod/argo-cd-argocd-repo-server-5dd97dfcfd-ct5r2              1/1     Running   0          54s
+pod/argo-cd-argocd-server-796fcf56d4-xs74h                   1/1     Running   0          54s
 
 NAME                                            TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
-service/argo-cd-argocd-application-controller   ClusterIP   10.48.11.182   <none>        8082/TCP            56s
-service/argo-cd-argocd-dex-server               ClusterIP   10.48.6.215    <none>        5556/TCP,5557/TCP   56s
-service/argo-cd-argocd-redis                    ClusterIP   10.48.11.229   <none>        6379/TCP            57s
-service/argo-cd-argocd-repo-server              ClusterIP   10.48.11.14    <none>        8081/TCP            57s
-service/argo-cd-argocd-server                   ClusterIP   10.48.6.160    <none>        80/TCP,443/TCP      56s
+service/argo-cd-argocd-application-controller   ClusterIP   10.48.13.200   <none>        8082/TCP            54s
+service/argo-cd-argocd-dex-server               ClusterIP   10.48.0.207    <none>        5556/TCP,5557/TCP   54s
+service/argo-cd-argocd-redis                    ClusterIP   10.48.9.140    <none>        6379/TCP            54s
+service/argo-cd-argocd-repo-server              ClusterIP   10.48.8.132    <none>        8081/TCP            54s
+service/argo-cd-argocd-server                   ClusterIP   10.48.10.158   <none>        80/TCP,443/TCP      54s
 ```
 
 #### Argo CD GUIの設定
@@ -489,24 +489,24 @@ service/argo-cd-argocd-server patched
 
 ```kubectlコマンド
 $ kubectl get service -n argocd
-NAME                                    TYPE           CLUSTER-IP     EXTERNAL-IP     PORT(S)                      AGE
-argo-cd-argocd-application-controller   ClusterIP      10.48.11.182   <none>          8082/TCP                     20m
-argo-cd-argocd-dex-server               ClusterIP      10.48.6.215    <none>          5556/TCP,5557/TCP            20m
-argo-cd-argocd-redis                    ClusterIP      10.48.11.229   <none>          6379/TCP                     20m
-argo-cd-argocd-repo-server              ClusterIP      10.48.11.14    <none>          8081/TCP                     20m
-argo-cd-argocd-server                   LoadBalancer   10.48.6.160    34.84.196.132   80:30442/TCP,443:30360/TCP   20m
+NAME                                    TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)                      AGE
+argo-cd-argocd-application-controller   ClusterIP      10.48.13.200   <none>         8082/TCP                     2m55s
+argo-cd-argocd-dex-server               ClusterIP      10.48.0.207    <none>         5556/TCP,5557/TCP            2m55s
+argo-cd-argocd-redis                    ClusterIP      10.48.9.140    <none>         6379/TCP                     2m55s
+argo-cd-argocd-repo-server              ClusterIP      10.48.8.132    <none>         8081/TCP                     2m55s
+argo-cd-argocd-server                   LoadBalancer   10.48.10.158   34.85.78.201   80:30177/TCP,443:32249/TCP   2m55s
 ```
 
 ```kubectlコマンド
 $ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-inKunXwanIjNhqKs
+qAGYKIRoLiMsIEby
 ```
 
 ```argocdコマンド
-$ argocd --insecure login 34.84.196.132 --username admin
+$ argocd --insecure login 34.85.78.201 --username admin
 Password:
 'admin:login' logged in successfully
-Context '34.84.196.132' updated
+Context '34.85.78.201' updated
 ```
 
 ```argocdコマンド
@@ -515,7 +515,7 @@ $ argocd  account update-password --account admin
 *** Enter new password:
 *** Confirm new password:
 Password updated
-Context '34.84.196.132' updated
+Context '34.85.78.201' updated
 ```
 
 ## 7.6 GitOpsの実行
@@ -531,8 +531,8 @@ Hello GitOps!!
 
 ```kubectlコマンド
 $ kubectl get service gitops-service
-NAME             TYPE           CLUSTER-IP    EXTERNAL-IP    PORT(S)        AGE
-gitops-service   LoadBalancer   10.48.6.196   34.84.23.176   80:32756/TCP   2m24s
+NAME             TYPE           CLUSTER-IP    EXTERNAL-IP     PORT(S)        AGE
+gitops-service   LoadBalancer   10.48.13.12   34.84.113.170   80:32558/TCP   9m45s
 ```
 
 ```linuxコマンド
@@ -560,8 +560,7 @@ $ git add .
 
 ```gitコマンド
 $ git commit -m "Hello Argo CD"
-git commit -m "Hello Argo CDgit add ."
-[main b1b92e4] Hello Argo CDgit add .
+[main ce79239] Hello Argo CD
  1 file changed, 2 insertions(+), 2 deletions(-)
 ```
 
@@ -575,11 +574,11 @@ Enumerating objects: 7, done.
 Counting objects: 100% (7/7), done.
 Delta compression using up to 4 threads
 Compressing objects: 100% (4/4), done.
-Writing objects: 100% (4/4), 404 bytes | 404.00 KiB/s, done.
+Writing objects: 100% (4/4), 393 bytes | 393.00 KiB/s, done.
 Total 4 (delta 1), reused 0 (delta 0)
 remote: Resolving deltas: 100% (1/1), completed with 1 local object.
 To https://github.com/cyberblack28/code.git
-   65c69be..b1b92e4  main -> main
+   842cd35..ce79239  main -> main
 Branch 'main' set up to track remote branch 'main' from 'origin'.
 ```
 
