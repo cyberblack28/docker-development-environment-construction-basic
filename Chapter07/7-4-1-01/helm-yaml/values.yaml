@@ -1,0 +1,14 @@
+#Common
+label: giops
+
+#Deployment
+replicas: 3
+image:
+  repository: docker.io/cyberblack28/gitops-go-app
+  tag: 0
+
+imageConfig:
+  pullPolicy: IfNotPresent
+
+#Service
+service_type: LoadBalancer

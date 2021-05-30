@@ -1,0 +1,65 @@
+name: GitHub Actions CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: GitOps Workflow
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+        # イメージビルド
+      - name: Build an image from Dockerfile
+        run: |
+          # Dockerビルド
+          DOCKER_BUILDKIT=1 docker build . -f app/Dockerfile --tag ${{ secrets.USERNAME }}/gitops-go-app:${{ github.run_number }}
+
+        # Trivyによるイメージスキャン
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ secrets.USERNAME }}/gitops-go-app:${{ github.run_number }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+
+        # イメージをDocker Hubにプッシュ
+      - name: Push image to Docker Hub
+        run: |
+          # Docker Hub ログイン
+          docker login docker.io --username ${{ secrets.USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}
+          # イメージプッシュ
+          docker push ${{ secrets.USERNAME }}/gitops-go-app:${{ github.run_number }}
+
+        # values.yamlの更新、新規ブランチ作成、プッシュ、プルリクエスト
+      - name: Update values.yaml & Pull Request to Config Repository
+        env:
+          # PERSONAL_ACCESS_TOKENをGITHUB_TOKEN変数に格納
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        run: |
+          # GitHubログイン
+          echo -e "machine github.com\nlogin ${{ secrets.USERNAME }}\npassword ${{ secrets.GH_PASSWORD }}" > ~/.netrc
+          # 「config」リポジトリからクローン
+          git clone https://github.com/${{ secrets.USERNAME }}/config.git
+          # values.yamlファイルの更新処理
+          cd config/gitops-helm
+          git config --global user.email "${{ secrets.EMAIL }}"
+          git config --global user.name "${{ secrets.USERNAME }}"
+          # 新規ブランチ作成
+          git branch feature/${{ github.run_number }}
+          git checkout feature/${{ github.run_number }}
+          # values.yamlのタグ番号を更新
+          sed -i 's/tag: [0-9]*/tag: ${{ github.run_number }}/g' values.yaml
+          # プッシュ処理
+          git add values.yaml
+          git commit -m "Update tag ${{ github.run_number }}"
+          git push origin feature/${{ github.run_number }}
+          # プルリクエスト処理
+          echo $GITHUB_TOKEN > token.txt
+          gh auth login --with-token < token.txt
+          gh pr create  --title "Update Tag ${{ github.run_number }}" --body "Please Merge !!"
