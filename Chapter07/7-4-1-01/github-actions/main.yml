@@ -57,6 +57,6 @@ jobs:
           git commit -m "Update tag ${{ github.run_number }}"
           git push origin feature/${{ github.run_number }}
           # プルリクエスト処理
-          echo $GITHUB_TOKEN > token.txt
+          echo ${{ secrets.PERSONAL_ACCESS_TOKEN }} > token.txt
           gh auth login --with-token < token.txt
           gh pr create  --title "Update Tag ${{ github.run_number }}" --body "Please Merge !!"
