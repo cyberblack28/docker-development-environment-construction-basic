@@ -6,6 +6,14 @@
 
 #### Dockerfileの作成
 
+```gitコマンド
+# git clone https://github.com/cyberblack28/container-develop-environment-construction-guide
+```
+
+```unixコマンド
+# cd container-develop-environment-construction-guide/Chapter03/3-1-1-01
+```
+
 ```linuxコマンド
 # cat Dockerfile
 #CentOS7のベースイメージをPull
@@ -566,6 +574,10 @@ c39fdd92f3fc   12 minutes ago   /bin/sh -c yum -y install nginx                 
 #### Go 言語のサンプルアプリケーションの作成
 
 ```linuxコマンド
+# cd ../3-1-3-01
+```
+
+```linuxコマンド
 # cat main.go
 package main
 
@@ -573,6 +585,7 @@ import "fmt"
 
 func main() {
         fmt.Println("Let's start multi-stage builds !!")
+}
 ```
 
 ```linuxコマンド
@@ -852,8 +865,11 @@ centos                      7                   8652b9f0cb4c   5 months ago     
 
 #### Image Tag
 
-```dockerコマンド
+```linuxコマンド
 # cd ../3-2-4-01
+```
+
+```dockerコマンド
 # cat index.html
 <!DOCTYPE html>
 <html>
@@ -1370,6 +1386,9 @@ centos                      7                   8652b9f0cb4c   5 months ago     
 
 ```dockerコマンド
 # docker image tag 59cb9dc6b0e2 cyberblack28/sample-nginx:1.0
+```
+
+```dockerコマンド
 # docker image ls
 REPOSITORY                  TAG                 IMAGE ID       CREATED          SIZE
 cyberblack28/sample-nginx   latest              d487de1ee98f   10 minutes ago   558MB
@@ -1390,17 +1409,6 @@ The push refers to repository [docker.io/cyberblack28/sample-nginx]
 8ec59fb6f8fd: Layer already exists
 174f56854903: Layer already exists
 1.0: digest: sha256:c80b9c9ef042fecee96e7bd4b4e8456d113757133fe575adfe61768a434aaae7 size: 1161
-```
-
-```dockerコマンド
-# docker image push cyberblack28/sample-nginx
-Using default tag: latest
-The push refers to repository [docker.io/cyberblack28/sample-nginx]
-a5401e6c2b2e: Pushed
-ba4774984f5f: Pushed
-2e7dbae908e5: Pushed
-174f56854903: Layer already exists
-latest: digest: sha256:0c1a50b2607da40143ab7bf61f48c89ca9a72451c85be399e95aefec156a98d7 size: 1161
 ```
 
 ### 3.3.2 コンテナ起動と操作
@@ -1468,6 +1476,9 @@ c04bf6b03914   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   6 minutes 
 
 ```linuxコマンド
 # cd ../3-3-2-01
+```
+
+```linuxコマンド
 # cat copy.html
 <!DOCTYPE html>
 <html>
@@ -1480,8 +1491,11 @@ c04bf6b03914   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   6 minutes 
 </html>
 ```
 
-```linuxコマンド
+```dockerコマンド
 # docker container cp copy.html sample-nginx:/usr/share/nginx/html
+```
+
+```linuxコマンド
 # curl http://localhost:8080/copy.html
 <!DOCTYPE html>
 <html>
@@ -1765,8 +1779,11 @@ CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 
 #### docker container logs
 
-```dockerコマンド
+```linuxコマンド
 # cd ../3-3-2-02
+```
+
+```dockerコマンド
 # cat Dockerfile
 #CentOS7のベースイメージをPull
 FROM centos:7
@@ -1867,8 +1884,11 @@ CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 
 #### バインドマウントの作成
 
-```dockerコマンド
+```linuxコマンド
 # cd ../3-3-4-01
+```
+
+```dockerコマンド
 # cat htdocs/index.html
 <!DOCTYPE html>
 <html>
@@ -1894,6 +1914,9 @@ cf16cd8e71e0: Pull complete
 Digest: sha256:75a55d33ecc73c2a242450a9f1cc858499d468f077ea942867e662c247b5e412
 Status: Downloaded newer image for nginx:latest
 1d92e100abcfb9301c2f77cc5f707d44820e19bcb970a9f56b96cfaa3be8ee1a
+```
+
+```linuxコマンド
 # curl http://localhost:8080/index.html
 <!DOCTYPE html>
 <html>
@@ -1932,6 +1955,10 @@ aaab73a2a5de468200062b5ddcd42bb3e4c4a801053a5341a84a00a13176bf5b
 ```
 
 #### マウントファイルの変更
+
+```linuxコマンド
+# vim htdocs/index.html
+```
 
 ```dockerコマンド
 # curl http://localhost:8080/index.html
@@ -1986,6 +2013,10 @@ local htdocs
 ```linuxコマンド
 # ls /var/lib/docker/volumes/htdocs/_data/
 50x.html  index.html
+```
+
+```linuxコマンド
+cp -p /root/container-develop-environment-construction-guide/Chapter03/3-3-4-02/volume.html /var/lib/docker/volumes/htdocs/_data/volume.html
 ```
 
 ```linuxコマンド
@@ -2052,9 +2083,29 @@ tmpfs-nginx
 tmpfs-nginx
 ```
 
-### 3・3・7 データボリュームコンテナ（Data Volume Container）
+#### 3・3・7 データボリュームコンテナ（Data Volume Container）
 
-#### 作業ディレクトリの作成
+### 作業ディレクトリの作成
+
+```linuxコマンド
+# cd /root
+```
+
+```linuxコマンド
+# mkdir /tmp/data-volume
+```
+
+```linuxコマンド
+# cd /tmp/data-volume
+```
+
+```linuxコマンド
+# mkdir share
+```
+
+```linuxコマンド
+# touch share/share-file.txt
+```
 
 ```dockerコマンド
 # docker run -it -d --name ubuntu -v /tmp/data-volume/share:/tmp/data ubuntu
@@ -2197,12 +2248,12 @@ e0d035cf8c1d   wordpress-network   bridge    local
 
 ```dockerコマンド
 # docker run -d --name mysql \
-> --network wordpress-network \
-> -e MYSQL_ROOT_PASSWORD=wordpress \
-> -e MYSQL_DATABASE=wordpress \
-> -e MYSQL_USER=wordpress \
-> -e MYSQL_PASSWORD=wordpress \
-> mysql:8.0.25
+--network wordpress-network \
+-e MYSQL_ROOT_PASSWORD=wordpress \
+-e MYSQL_DATABASE=wordpress \
+-e MYSQL_USER=wordpress \
+-e MYSQL_PASSWORD=wordpress \
+mysql:8.0.25
 Unable to find image 'mysql:8.0.25' locally
 8.0.25: Pulling from library/mysql
 69692152171a: Pull complete
@@ -2224,13 +2275,13 @@ Status: Downloaded newer image for mysql:8.0.25
 
 ```dockerコマンド
 # docker run -d --name wordpress \
-> --network wordpress-network \
-> -p 8080:80 \
-> -e WORDPRESS_DB_HOST=mysql:3306 \
-> -e WORDPRESS_DB_NAME=wordpress \
-> -e WORDPRESS_DB_USER=wordpress \
-> -e WORDPRESS_DB_PASSWORD=wordpress \
-> wordpress:php7.4-apache
+--network wordpress-network \
+-p 8080:80 \
+-e WORDPRESS_DB_HOST=mysql:3306 \
+-e WORDPRESS_DB_NAME=wordpress \
+-e WORDPRESS_DB_USER=wordpress \
+-e WORDPRESS_DB_PASSWORD=wordpress \
+wordpress:php7.4-apache
 Unable to find image 'wordpress:php7.4-apache' locally
 php7.4-apache: Pulling from library/wordpress
 69692152171a: Already exists
@@ -2550,6 +2601,11 @@ deleted: sha256:c7cdd6ac183911c469eaf9b2e8d1932d65eb52eb292471c22f80174a304aa281
 deleted: sha256:722a834ff95bfd3dac4bc5aae498c245eb76b98108ed9de4293df2596e60cf1a
 
 Total reclaimed space: 2.148GB
+```
+
+```dockerコマンド
+# docker image ls
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```
 
 ```linuxコマンド
