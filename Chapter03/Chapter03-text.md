@@ -2183,16 +2183,16 @@ d2180dcb719e   none      null      local
 
 ```dockerコマンド
 # docker network create wordpress-network
-cd3191e5450a2424063c869d3b9326b9d07ab8d13c0bd0856c9651c67dc69082
+e0d035cf8c1dda9485db8226ecd50b4877e0cf730c0e3a97a93b950ace59f073
 ```
 
 ```dockerコマンド
 # docker network ls
 NETWORK ID     NAME                DRIVER    SCOPE
-2572d881e2b2   bridge              bridge    local
-10be770dee84   host                host      local
-d2180dcb719e   none                null      local
-cd3191e5450a   wordpress-network   bridge    local
+f041f9a7a51c   bridge              bridge    local
+0db81ad2118c   host                host      local
+6d25324cb0e8   none                null      local
+e0d035cf8c1d   wordpress-network   bridge    local
 ```
 
 ```dockerコマンド
@@ -2202,24 +2202,24 @@ cd3191e5450a   wordpress-network   bridge    local
 > -e MYSQL_DATABASE=wordpress \
 > -e MYSQL_USER=wordpress \
 > -e MYSQL_PASSWORD=wordpress \
-> mysql:8.0.22
-Unable to find image 'mysql:8.0.22' locally
-8.0.22: Pulling from library/mysql
-a076a628af6f: Pull complete
-f6c208f3f991: Pull complete
-88a9455a9165: Pull complete
-406c9b8427c6: Pull complete
-7c88599c0b25: Pull complete
-25b5c6debdaf: Pull complete
-43a5816f1617: Pull complete
-69dd1fbf9190: Pull complete
-5346a60dcee8: Pull complete
-ef28da371fc9: Pull complete
-fd04d935b852: Pull complete
-050c49742ea2: Pull complete
-Digest: sha256:0fd2898dc1c946b34dceaccc3b80d38b1049285c1dab70df7480de62265d6213
-Status: Downloaded newer image for mysql:8.0.22
-792043e00948185a7b6ce8237613b0ee4f5361173c5d07236ab7de82afba5a65
+> mysql:8.0.25
+Unable to find image 'mysql:8.0.25' locally
+8.0.25: Pulling from library/mysql
+69692152171a: Pull complete
+1651b0be3df3: Pull complete
+951da7386bc8: Pull complete
+0f86c95aa242: Pull complete
+37ba2d8bd4fe: Pull complete
+6d278bb05e94: Pull complete
+497efbd93a3e: Pull complete
+f7fddf10c2c2: Pull complete
+16415d159dfb: Pull complete
+0e530ffc6b73: Pull complete
+b0a4a1a77178: Pull complete
+cd90f92aa9ef: Pull complete
+Digest: sha256:d50098d7fcb25b1fcb24e2d3247cae3fc55815d64fec640dc395840f8fa80969
+Status: Downloaded newer image for mysql:8.0.25
+35d594a48e41d87f3cb820e8e4e7d7f8afbce65615f5a74aaa64c2fb66336f2a
 ```
 
 ```dockerコマンド
@@ -2233,44 +2233,37 @@ Status: Downloaded newer image for mysql:8.0.22
 > wordpress:php7.4-apache
 Unable to find image 'wordpress:php7.4-apache' locally
 php7.4-apache: Pulling from library/wordpress
-f7ec5a41d630: Already exists
-941223b59841: Pull complete
-a5f2415e5a0c: Pull complete
-b9844b87f0e3: Pull complete
-5a07de50525b: Pull complete
-caeca1337a66: Pull complete
-5dbe0d7f8481: Pull complete
-b5287b60e185: Pull complete
-a3bdca77fbaf: Pull complete
-e3edcade6aa2: Pull complete
-703ba034e6f0: Pull complete
-36ef47972442: Pull complete
-4acb239a9263: Pull complete
-e74d610ba693: Pull complete
-97f505d02f6f: Pull complete
-d6dd6701aaec: Pull complete
-43ef3ceb4f4b: Pull complete
-a59b940a007f: Pull complete
-714359ef8f41: Pull complete
-24b7e9a8c62d: Pull complete
-b400ea29ad59: Pull complete
-Digest: sha256:208def35d7fcbbfd76df18997ce6cd5a5221c0256221b7fdaba41c575882d4f0
+69692152171a: Already exists
+2040822db325: Pull complete
+9b4ca5ae9dfa: Pull complete
+ac1fe7c6d966: Pull complete
+5b26fc9ce030: Pull complete
+3492f4769444: Pull complete
+1dec05775a74: Pull complete
+77107a42338e: Pull complete
+f58e4093c52a: Pull complete
+d32715f578d3: Pull complete
+7a73fb2558ce: Pull complete
+667b573fcff7: Pull complete
+75e2da936ffe: Pull complete
+759622df3a7b: Pull complete
+c2f98ef02756: Pull complete
+50e11300b0a6: Pull complete
+de37513870b9: Pull complete
+f25501789abc: Pull complete
+0cf8e3442952: Pull complete
+d45ce270a7e6: Pull complete
+534cdc5a6ea6: Pull complete
+Digest: sha256:e9da0d6c867249f364cd2292ea0dd01d7281e8dfbcc3e4b39b823f9a790b237b
 Status: Downloaded newer image for wordpress:php7.4-apache
-acce6750e7d013358be9cf6d61e6f4fd504bd24c118d5bd0568315754a1db282
+534c3dabf55661cf2914d21caa1b242e4074a80082884c58b2101122bbbc5f32
 ```
 
 ```dockerコマンド
 # docker container ls
-CONTAINER ID   IMAGE                     COMMAND                  CREATED              STATUS              PORTS                                   NAMES
-acce6750e7d0   wordpress:php7.4-apache   "docker-entrypoint.s…"   3 minutes ago   Up 3 minutes   0.0.0.0:8080->80/tcp, :::8080->80/tcp   wordpress
-792043e00948   mysql:8.0.22              "docker-entrypoint.s…"   7 minutes ago   Up 7 minutes   3306/tcp, 33060/tcp                     mysql
-```
-
-```dockerコマンド
-# docker container ls
-CONTAINER ID   IMAGE                     COMMAND                  CREATED              STATUS              PORTS                                   NAMES
-acce6750e7d0   wordpress:php7.4-apache   "docker-entrypoint.s…"   3 minutes ago   Up 3 minutes   0.0.0.0:8080->80/tcp, :::8080->80/tcp   wordpress
-792043e00948   mysql:8.0.22              "docker-entrypoint.s…"   7 minutes ago   Up 7 minutes   3306/tcp, 33060/tcp                     mysql
+CONTAINER ID   IMAGE                     COMMAND                  CREATED          STATUS          PORTS                                   NAMES
+534c3dabf556   wordpress:php7.4-apache   "docker-entrypoint.s…"   9 minutes ago    Up 9 minutes    0.0.0.0:8080->80/tcp, :::8080->80/tcp   wordpress
+35d594a48e41   mysql:8.0.25              "docker-entrypoint.s…"   10 minutes ago   Up 10 minutes   3306/tcp, 33060/tcp                     mysql
 ```
 
 ```dockerコマンド
@@ -2282,11 +2275,11 @@ acce6750e7d0   wordpress:php7.4-apache   "docker-entrypoint.s…"   3 minutes ag
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="robots" content="noindex,nofollow" />
         <title>WordPress &rsaquo; Installation</title>
-        <link rel='stylesheet' id='dashicons-css'  href='http://localhost:8080/wp-includes/css/dashicons.min.css?ver=5.7.1' type='text/css' media='all' />
-<link rel='stylesheet' id='buttons-css'  href='http://localhost:8080/wp-includes/css/buttons.min.css?ver=5.7.1' type='text/css' media='all' />
-<link rel='stylesheet' id='forms-css'  href='http://localhost:8080/wp-admin/css/forms.min.css?ver=5.7.1' type='text/css' media='all' />
-<link rel='stylesheet' id='l10n-css'  href='http://localhost:8080/wp-admin/css/l10n.min.css?ver=5.7.1' type='text/css' media='all' />
-<link rel='stylesheet' id='install-css'  href='http://localhost:8080/wp-admin/css/install.min.css?ver=5.7.1' type='text/css' media='all' />
+        <link rel='stylesheet' id='dashicons-css'  href='http://localhost:8080/wp-includes/css/dashicons.min.css?ver=5.7.2' type='text/css' media='all' />
+<link rel='stylesheet' id='buttons-css'  href='http://localhost:8080/wp-includes/css/buttons.min.css?ver=5.7.2' type='text/css' media='all' />
+<link rel='stylesheet' id='forms-css'  href='http://localhost:8080/wp-admin/css/forms.min.css?ver=5.7.2' type='text/css' media='all' />
+<link rel='stylesheet' id='l10n-css'  href='http://localhost:8080/wp-admin/css/l10n.min.css?ver=5.7.2' type='text/css' media='all' />
+<link rel='stylesheet' id='install-css'  href='http://localhost:8080/wp-admin/css/install.min.css?ver=5.7.2' type='text/css' media='all' />
 </head>
 <body class="wp-core-ui language-chooser">
 <p id="logo">WordPress</p>
@@ -2298,8 +2291,8 @@ acce6750e7d0   wordpress:php7.4-apache   "docker-entrypoint.s…"   3 minutes ag
 <option value="ar" lang="ar" data-continue="المتابعة">العربية</option>
 <option value="ary" lang="ar" data-continue="المتابعة">العربية المغربية</option>
 <option value="as" lang="as" data-continue="Continue">অসমীয়া</option>
-<option value="az" lang="az" data-continue="Davam">Azərbaycan dili</option>
 <option value="azb" lang="az" data-continue="Continue">گؤنئی آذربایجان</option>
+<option value="az" lang="az" data-continue="Davam">Azərbaycan dili</option>
 <option value="bel" lang="be" data-continue="Працягнуць">Беларуская мова</option>
 <option value="bg_BG" lang="bg" data-continue="Продължение">Български</option>
 <option value="bn_BD" lang="bn" data-continue="এগিয়ে চল.">বাংলা</option>
@@ -2311,39 +2304,39 @@ acce6750e7d0   wordpress:php7.4-apache   "docker-entrypoint.s…"   3 minutes ag
 <option value="cy" lang="cy" data-continue="Parhau">Cymraeg</option>
 <option value="da_DK" lang="da" data-continue="Forts&#230;t">Dansk</option>
 <option value="de_DE" lang="de" data-continue="Fortfahren">Deutsch</option>
+<option value="de_DE_formal" lang="de" data-continue="Fortfahren">Deutsch (Sie)</option>
 <option value="de_CH" lang="de" data-continue="Fortfahren">Deutsch (Schweiz)</option>
 <option value="de_CH_informal" lang="de" data-continue="Weiter">Deutsch (Schweiz, Du)</option>
-<option value="de_DE_formal" lang="de" data-continue="Fortfahren">Deutsch (Sie)</option>
 <option value="de_AT" lang="de" data-continue="Weiter">Deutsch (Österreich)</option>
 <option value="dsb" lang="dsb" data-continue="Dalej">Dolnoserbšćina</option>
 <option value="dzo" lang="dz" data-continue="Continue">རྫོང་ཁ</option>
 <option value="el" lang="el" data-continue="Συνέχεια">Ελληνικά</option>
-<option value="en_ZA" lang="en" data-continue="Continue">English (South Africa)</option>
-<option value="en_NZ" lang="en" data-continue="Continue">English (New Zealand)</option>
-<option value="en_CA" lang="en" data-continue="Continue">English (Canada)</option>
 <option value="en_AU" lang="en" data-continue="Continue">English (Australia)</option>
+<option value="en_ZA" lang="en" data-continue="Continue">English (South Africa)</option>
 <option value="en_GB" lang="en" data-continue="Continue">English (UK)</option>
+<option value="en_CA" lang="en" data-continue="Continue">English (Canada)</option>
+<option value="en_NZ" lang="en" data-continue="Continue">English (New Zealand)</option>
 <option value="eo" lang="eo" data-continue="Daŭrigi">Esperanto</option>
-<option value="es_MX" lang="es" data-continue="Continuar">Español de México</option>
-<option value="es_AR" lang="es" data-continue="Continuar">Español de Argentina</option>
-<option value="es_CR" lang="es" data-continue="Continuar">Español de Costa Rica</option>
 <option value="es_UY" lang="es" data-continue="Continuar">Español de Uruguay</option>
 <option value="es_VE" lang="es" data-continue="Continuar">Español de Venezuela</option>
+<option value="es_ES" lang="es" data-continue="Continuar">Español</option>
+<option value="es_MX" lang="es" data-continue="Continuar">Español de México</option>
 <option value="es_EC" lang="es" data-continue="Continuar">Español de Ecuador</option>
+<option value="es_AR" lang="es" data-continue="Continuar">Español de Argentina</option>
+<option value="es_CL" lang="es" data-continue="Continuar">Español de Chile</option>
+<option value="es_CO" lang="es" data-continue="Continuar">Español de Colombia</option>
+<option value="es_CR" lang="es" data-continue="Continuar">Español de Costa Rica</option>
 <option value="es_PE" lang="es" data-continue="Continuar">Español de Perú</option>
 <option value="es_PR" lang="es" data-continue="Continuar">Español de Puerto Rico</option>
 <option value="es_GT" lang="es" data-continue="Continuar">Español de Guatemala</option>
-<option value="es_ES" lang="es" data-continue="Continuar">Español</option>
-<option value="es_CO" lang="es" data-continue="Continuar">Español de Colombia</option>
-<option value="es_CL" lang="es" data-continue="Continuar">Español de Chile</option>
 <option value="et" lang="et" data-continue="Jätka">Eesti</option>
 <option value="eu" lang="eu" data-continue="Jarraitu">Euskara</option>
-<option value="fa_AF" lang="fa" data-continue="ادامه">(فارسی (افغانستان</option>
 <option value="fa_IR" lang="fa" data-continue="ادامه">فارسی</option>
+<option value="fa_AF" lang="fa" data-continue="ادامه">(فارسی (افغانستان</option>
 <option value="fi" lang="fi" data-continue="Jatka">Suomi</option>
-<option value="fr_BE" lang="fr" data-continue="Continuer">Français de Belgique</option>
-<option value="fr_CA" lang="fr" data-continue="Continuer">Français du Canada</option>
 <option value="fr_FR" lang="fr" data-continue="Continuer">Français</option>
+<option value="fr_CA" lang="fr" data-continue="Continuer">Français du Canada</option>
+<option value="fr_BE" lang="fr" data-continue="Continuer">Français de Belgique</option>
 <option value="fur" lang="fur" data-continue="Continue">Friulian</option>
 <option value="gd" lang="gd" data-continue="Lean air adhart">Gàidhlig</option>
 <option value="gl_ES" lang="gl" data-continue="Continuar">Galego</option>
@@ -2372,28 +2365,24 @@ acce6750e7d0   wordpress:php7.4-apache   "docker-entrypoint.s…"   3 minutes ag
 <option value="lv" lang="lv" data-continue="Turpināt">Latviešu valoda</option>
 <option value="mk_MK" lang="mk" data-continue="Продолжи">Македонски јазик</option>
 <option value="ml_IN" lang="ml" data-continue="തുടരുക">മലയാളം</option>
-<option value="lt_LT" lang="lt" data-continue="Tęsti">Lietuvių kalba</option>
-<option value="lv" lang="lv" data-continue="Turpināt">Latviešu valoda</option>
-<option value="mk_MK" lang="mk" data-continue="Продолжи">Македонски јазик</option>
-<option value="ml_IN" lang="ml" data-continue="തുടരുക">മലയാളം</option>
 <option value="mn" lang="mn" data-continue="Үргэлжлүүлэх">Монгол</option>
 <option value="mr" lang="mr" data-continue="सुरु ठेवा">मराठी</option>
 <option value="ms_MY" lang="ms" data-continue="Teruskan">Bahasa Melayu</option>
 <option value="my_MM" lang="my" data-continue="ဆက်လက်လုပ်ေဆာင်ပါ။">ဗမာစာ</option>
 <option value="nb_NO" lang="nb" data-continue="Fortsett">Norsk bokmål</option>
 <option value="ne_NP" lang="ne" data-continue="जारीराख्नु ">नेपाली</option>
-<option value="nl_BE" lang="nl" data-continue="Doorgaan">Nederlands (België)</option>
 <option value="nl_NL_formal" lang="nl" data-continue="Doorgaan">Nederlands (Formeel)</option>
+<option value="nl_BE" lang="nl" data-continue="Doorgaan">Nederlands (België)</option>
 <option value="nl_NL" lang="nl" data-continue="Doorgaan">Nederlands</option>
 <option value="nn_NO" lang="nn" data-continue="Hald fram">Norsk nynorsk</option>
 <option value="oci" lang="oc" data-continue="Contunhar">Occitan</option>
 <option value="pa_IN" lang="pa" data-continue="ਜਾਰੀ ਰੱਖੋ">ਪੰਜਾਬੀ</option>
 <option value="pl_PL" lang="pl" data-continue="Kontynuuj">Polski</option>
 <option value="ps" lang="ps" data-continue="دوام">پښتو</option>
-<option value="pt_PT_ao90" lang="pt" data-continue="Continuar">Português (AO90)</option>
-<option value="pt_BR" lang="pt" data-continue="Continuar">Português do Brasil</option>
 <option value="pt_PT" lang="pt" data-continue="Continuar">Português</option>
 <option value="pt_AO" lang="pt" data-continue="Continuar">Português de Angola</option>
+<option value="pt_BR" lang="pt" data-continue="Continuar">Português do Brasil</option>
+<option value="pt_PT_ao90" lang="pt" data-continue="Continuar">Português (AO90)</option>
 <option value="rhg" lang="rhg" data-continue="Continue">Ruáinga</option>
 <option value="ro_RO" lang="ro" data-continue="Continuă">Română</option>
 <option value="ru_RU" lang="ru" data-continue="Продолжить">Русский</option>
@@ -2428,7 +2417,7 @@ acce6750e7d0   wordpress:php7.4-apache   "docker-entrypoint.s…"   3 minutes ag
 <p class="step"><span class="spinner"></span><input id="language-continue" type="submit" class="button button-primary button-large" value="Continue" /></p></form><script type="text/javascript">var t = document.getElementById('weblog_title'); if (t){ t.focus(); }</script>
         <script type='text/javascript' src='http://localhost:8080/wp-includes/js/jquery/jquery.min.js?ver=3.5.1' id='jquery-core-js'></script>
 <script type='text/javascript' src='http://localhost:8080/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.3.2' id='jquery-migrate-js'></script>
-<script type='text/javascript' src='http://localhost:8080/wp-admin/js/language-chooser.min.js?ver=5.7.1' id='language-chooser-js'></script>
+<script type='text/javascript' src='http://localhost:8080/wp-admin/js/language-chooser.min.js?ver=5.7.2' id='language-chooser-js'></script>
 <script type="text/javascript">
 jQuery( function( $ ) {
         $( '.hide-if-no-js' ).removeClass( 'hide-if-no-js' );
