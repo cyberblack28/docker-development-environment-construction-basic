@@ -603,7 +603,8 @@ RUN go build -o /msb ./main.go
 FROM alpine:3.13
 #ビルドイメージからビルド成果物のmsbをコピーして配置
 COPY --from=builder /msb /usr/local/bin/msb
-#msbの実
+#msbの実行
+ENTRYPOINT ["/usr/local/bin/msb"]
 ```
 
 ```dockerコマンド
