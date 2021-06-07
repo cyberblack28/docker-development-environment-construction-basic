@@ -1902,6 +1902,8 @@ CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 </html>
 ```
 
+以下結果は同じになります。どちらか実行してください。
+
 ```dockerコマンド
 # docker run --name bind-nginx -d -p 8080:80 --mount type=bind,source=/root/docker-development-environment-construction-basic/Chapter03/3-3-4-01/htdocs,target=/usr/share/nginx/html nginx
 Unable to find image 'nginx:latest' locally
@@ -1998,6 +2000,8 @@ htdocs
 DRIVER VOLUME NAME
 local htdocs
 ```
+
+以下結果は同じです。どちらかで実行してください。
 
 ```dockerコマンド
 # docker container run --name volume-nginx -d -p 8080:80 --mount source=htdocs,target=/usr/share/nginx/html nginx
@@ -2617,3 +2621,5 @@ logout
 Connection to 34.84.148.90 closed.
 $
 ```
+
+仮想マシンの削除方法は、[「2-2. Docker 環境のセットアップ」](../Chapter02/Chapter02-text.md)を参照してください。
