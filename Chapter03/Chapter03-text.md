@@ -7,11 +7,11 @@
 #### Dockerfileの作成
 
 ```gitコマンド
-# git clone https://github.com/cyberblack28/container-develop-environment-construction-guide
+# git clone https://github.com/cyberblack28/docker-development-environment-construction-basic
 ```
 
 ```unixコマンド
-# cd container-develop-environment-construction-guide/Chapter03/3-1-1-01
+# cd docker-development-environment-construction-basic/Chapter03/3-1-1-01
 ```
 
 ```linuxコマンド
@@ -1902,7 +1902,7 @@ CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
 ```dockerコマンド
-# docker run --name bind-nginx -d -p 8080:80 --mount type=bind,source=/root/container-develop-environment-construction-guide/Chapter03/3-3-4-01/htdocs,target=/usr/share/nginx/html nginx
+# docker run --name bind-nginx -d -p 8080:80 --mount type=bind,source=/root/docker-development-environment-construction-basic/Chapter03/3-3-4-01/htdocs,target=/usr/share/nginx/html nginx
 Unable to find image 'nginx:latest' locally
 latest: Pulling from library/nginx
 f7ec5a41d630: Pull complete
@@ -1929,7 +1929,7 @@ Status: Downloaded newer image for nginx:latest
 ```
 
 ```dockerコマンド
-# docker run --name bind-nginx -d -p 8080:80 -v /root/container-develop-environment-construction-guide/Chapter03/3-3-4-01/htdocs:/usr/share/nginx/html nginx
+# docker run --name bind-nginx -d -p 8080:80 -v /root/docker-development-environment-construction-basic/Chapter03/3-3-4-01/htdocs:/usr/share/nginx/html nginx
 aaab73a2a5de468200062b5ddcd42bb3e4c4a801053a5341a84a00a13176bf5b
 # curl http:////localhost:8080/index.html
 <!DOCTYPE html>
@@ -2016,7 +2016,7 @@ local htdocs
 ```
 
 ```linuxコマンド
-cp -p /root/container-develop-environment-construction-guide/Chapter03/3-3-4-02/volume.html /var/lib/docker/volumes/htdocs/_data/volume.html
+cp -p /root/docker-development-environment-construction-basic/Chapter03/3-3-4-02/volume.html /var/lib/docker/volumes/htdocs/_data/volume.html
 ```
 
 ```linuxコマンド

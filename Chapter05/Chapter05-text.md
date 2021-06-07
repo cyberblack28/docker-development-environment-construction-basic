@@ -712,7 +712,7 @@ status: {}
 
 ```linuxコマンド
 $ cd
-$ cd container-develop-environment-construction-guide/Chapter05/5-1-5-01
+$ cd docker-development-environment-construction-basic/Chapter05/5-1-5-01
 ```
 
 #### Podの作成
@@ -2594,7 +2594,7 @@ wordpress_service:
 ```helmコマンド
 $ helm install wordpress --debug --dry-run wordpress
 install.go:173: [debug] Original chart version: ""
-install.go:190: [debug] CHART PATH: /home/iyutaka2020/container-develop-environment-construction-guide/Chapter05/5-3-2-01/wordpress
+install.go:190: [debug] CHART PATH: /home/iyutaka2020/docker-development-environment-construction-basic/Chapter05/5-3-2-01/wordpress
 
 NAME: wordpress
 LAST DEPLOYED: Sun May 23 07:22:58 2021
@@ -2855,7 +2855,7 @@ $ helm lint wordpress
 
 ```helmコマンド
 $ helm package wordpress
-Successfully packaged chart and saved it to: /home/iyutaka2020/container-develop-environment-construction-guide/Chapter05/5-3-2-01/wordpress-0.1.0.tgz
+Successfully packaged chart and saved it to: /home/iyutaka2020/docker-development-environment-construction-basic/Chapter05/5-3-2-01/wordpress-0.1.0.tgz
 ```
 
 ```helmコマンド

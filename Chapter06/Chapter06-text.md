@@ -305,7 +305,7 @@ Practice Skaffold!!
 ```
 
 ```linuxコマンド
-$ cd container-develop-environment-construction-guide/Chapter06/6-2-3-01
+$ cd docker-development-environment-construction-basic/Chapter06/6-2-3-01
 ```
 
 ```linuxコマンド

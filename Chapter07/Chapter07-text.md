@@ -49,7 +49,7 @@ $ cd code
 
 ```gitコマンド
 $ git init
-Initialized empty Git repository in /home/iyutaka2021/container-develop-environment-construction-guide/Chapter07/7-4-1-01/code/.git/
+Initialized empty Git repository in /home/iyutaka2021/docker-development-environment-construction-basic/Chapter07/7-4-1-01/code/.git/
 ```
 
 ```gitコマンド
@@ -195,7 +195,7 @@ service_type: LoadBalancer
 
 ```gitコマンド
 $ git init
-Initialized empty Git repository in /home/iyutaka2021/container-develop-environment-construction-guide/Chapter07/7-4-1-01/config/.git/
+Initialized empty Git repository in /home/iyutaka2021/docker-development-environment-construction-basic/Chapter07/7-4-1-01/config/.git/
 ```
 
 ```gitコマンド
