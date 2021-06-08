@@ -943,7 +943,7 @@ metadata:
   uid: 53ff63a7-fa03-4c82-ab05-de7cee63a9b7
 ```
 
-#### マニフェストファイルの編集
+#### マニフェストファイルの確認
 
 ```linuxコマンド
 $ cat nginx-configmap3.yaml
