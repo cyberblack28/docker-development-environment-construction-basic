@@ -128,6 +128,10 @@ No resources found in default namespace.
 #### マニフェストファイルの作成
 
 ```kubectlコマンド
+$ kubectl run nginx --image=nginx --restart=Never --dry-run=client -o yaml > nginx.yaml
+```
+
+```kubectlコマンド
 $ cat nginx.yaml
 apiVersion: v1
 kind: Pod
@@ -176,6 +180,10 @@ No resources found in default namespace.
 #### マニフェストファイルの作成
 
 ```kubectlコマンド
+$ kubectl create deployment nginx --image=nginx:1.19.10 --dry-run=client -o yaml > nginx-deployment.yaml
+```
+
+```kubectlコマンド
 $ vim nginx-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -185,7 +193,7 @@ metadata:
     app: nginx
   name: nginx
 spec:
-  replicas: 2
+  replicas: 1 #「replicas: 1」を「replicas: 2」に変更
   selector:
     matchLabels:
       app: nginx
@@ -651,6 +659,16 @@ service/nginx created
 pod/nginx created
 ```
 
+```kubectlコマンド
+$ kubectl delete service nginx
+service "nginx" deleted
+```
+
+```kubectlコマンド
+$ kubectl delete pod nginx
+pod "nginx" deleted
+```
+
 ### 5.1.5 ConfigMap
 
 #### ConfigMapの作成
@@ -683,14 +701,18 @@ metadata:
   uid: 20bfdae8-5bfd-467a-a4b5-67923d5f5725
 ```
 
-#### マニフェストファイルの編集
+#### マニフェストファイルの確認
 
-```kubectlコマンド
-$ kubectl run --restart=Never nginx --image=nginx -o yaml --dry-run=client > nginx-configmap1.yaml
+```linuxコマンド
+$ cd
 ```
 
 ```linuxコマンド
-$ vim nginx-configmap1.yaml
+$ cd docker-development-environment-construction-basic/Chapter05/5-1-5-01
+```
+
+```linuxコマンド
+$ cat nginx-configmap1.yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -703,16 +725,12 @@ spec:
   - image: nginx
     name: nginx
     resources: {}
-    envFrom:
+    envFrom:　　　　　　　　　　# envFrom:以降の3 行が参照するための設定
     - configMapRef:
         name: sample-config1
   dnsPolicy: ClusterFirst
   restartPolicy: Never
 status: {}
-
-```linuxコマンド
-$ cd
-$ cd docker-development-environment-construction-basic/Chapter05/5-1-5-01
 ```
 
 #### Podの作成
@@ -770,6 +788,20 @@ kube-root-ca.crt   1      26m
 
 #### 作成したファイルからConfigMapを作成
 
+```linuxコマンド
+$ cd
+```
+
+```linuxコマンド
+$ cd docker-development-environment-construction-basic/Chapter05/5-5-1-01
+```
+
+```linuxコマンド
+$ cat sample-config2.env
+var3=istio
+var4=envoy
+```
+
 ```kubectlコマンド
 $ kubectl create configmap sample-config2 --from-env-file=sample-config2.env
 configmap/sample-config2 created
@@ -799,6 +831,10 @@ metadata:
 ```
 
 #### PodからKeyを参照
+
+```kubectlコマンド
+$ kubectl run --restart=Never nginx --image=nginx -o yaml --dry-run=client > nginx-configmap2.yaml
+```
 
 ```kubectlコマンド
 $ cat nginx-configmap2.yaml
