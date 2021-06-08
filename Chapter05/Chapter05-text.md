@@ -789,14 +789,6 @@ kube-root-ca.crt   1      26m
 #### 作成したファイルからConfigMapを作成
 
 ```linuxコマンド
-$ cd
-```
-
-```linuxコマンド
-$ cd docker-development-environment-construction-basic/Chapter05/5-5-1-01
-```
-
-```linuxコマンド
 $ cat sample-config2.env
 var3=istio
 var4=envoy
@@ -831,10 +823,6 @@ metadata:
 ```
 
 #### PodからKeyを参照
-
-```kubectlコマンド
-$ kubectl run --restart=Never nginx --image=nginx -o yaml --dry-run=client > nginx-configmap2.yaml
-```
 
 ```kubectlコマンド
 $ cat nginx-configmap2.yaml
