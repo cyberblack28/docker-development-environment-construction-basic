@@ -1,5 +1,5 @@
 #Common
-label: giops
+label: gitops
 
 #Deployment
 replicas: 3
