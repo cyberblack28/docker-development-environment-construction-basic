@@ -1946,6 +1946,7 @@ wordpress-67b55cd4bd-blmcx    1/1     Running   0          31s
 wordpress-67b55cd4bd-bxglw    1/1     Running   0          14s
 wordpress-67b55cd4bd-gnbnn    1/1     Running   0          13s
 wordpress-67b55cd4bd-mn9hl    1/1     Running   0          31s
+```
 
 ```kubectlコマンド
 $ kubectl edit deployment wordpress
