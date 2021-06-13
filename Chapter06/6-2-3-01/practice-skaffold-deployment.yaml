@@ -14,4 +14,4 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: DOCKER_USER/practice-skaffold # 変更箇所 DOCKER_USER
+        image: DOCKERHUB_USER/practice-skaffold # 変更箇所 DOCKERHUB_USER
