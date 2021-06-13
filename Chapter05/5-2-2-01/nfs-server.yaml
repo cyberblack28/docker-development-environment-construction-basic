@@ -26,9 +26,8 @@ spec:
           privileged: true
         volumeMounts:
           - mountPath: /exports
-            name: nfs
+            name: nfs-local-storage
       volumes:
-        - name: nfs
-          gcePersistentDisk:
-            pdName: nfs-disk
-            fsType: ext4
+        - name: nfs-local-storage
+          persistentVolumeClaim:
+            claimName: nfs-pvc

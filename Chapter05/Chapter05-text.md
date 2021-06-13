@@ -560,7 +560,6 @@ kubernetes   35.200.23.27:443   11h
 nginx        10.0.1.19:80       2m4s
 ```
 
-
 #### busybox Podの作成
 
 ```kubectlコマンド
@@ -1913,9 +1912,9 @@ spec:
         - image: wordpress
           name: wordpress
           env:
-          - name: WORDPRESS_DB_HOST         //cmt{# Service名「//tt{mysql-service//}」を定義//}
+          - name: WORDPRESS_DB_HOST         # Service名「mysql-service」を定義
             value: mysql-service
-          - name: WORDPRESS_DB_PASSWORD     //cmt{# MySQLのデータベースパスワードを参照する定義//}
+          - name: WORDPRESS_DB_PASSWORD     # MySQLのデータベースパスワードを参照する定義
             valueFrom:
               secretKeyRef:
                 name: mysql
@@ -1923,10 +1922,10 @@ spec:
           ports:
             - containerPort: 80
               name: wordpress
-          volumeMounts:                     //cmt{# Podのマウントパス定義//}
+          volumeMounts:                     # Podのマウントパス定義
             - name: wordpress-local-storage
               mountPath: /var/www/html
-      volumes:                              //cmt{# 「//tt{wordpress-pvc//}」を指定する定義//}
+      volumes:                              #「wordpress-pvc」を指定する定義
         - name: wordpress-local-storage
           persistentVolumeClaim:
             claimName: wordpress-pvc
