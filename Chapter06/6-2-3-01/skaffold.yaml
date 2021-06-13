@@ -2,7 +2,7 @@ apiVersion: skaffold/v2alpha3
 kind: Config
 build:
   artifacts:
-  - image: DOCKER_USER/practice-skaffold
+  - image: DOCKERHUB_USER/practice-skaffold # 変更箇所 DOCKERHUB_USER
     docker:
       dockerfile: ./Dockerfile
   tagPolicy:

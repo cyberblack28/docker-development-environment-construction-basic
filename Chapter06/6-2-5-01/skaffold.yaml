@@ -1,0 +1,18 @@
+kind: Config
+build:
+  artifacts:
+  - image: docker.io/DOCKERHUB_USER/practice-skaffold # 変更箇所 DOCKERHUB_USER
+    docker:
+      dockerfile: ./Dockerfile
+  tagPolicy:
+    dateTime: {}
+  local:
+    push: true
+deploy:
+  helm:
+    releases:
+    - name: practice-skaffold
+      chartPath: skaffold-helm
+      valuesFiles: [ skaffold-helm/values.yaml ]
+      artifactOverrides:
+        image: docker.io/DOCKERHUB_USER/practice-skaffold # 変更箇所 DOCKERHUB_USER
