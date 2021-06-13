@@ -14,4 +14,4 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: DOCKER_USER/sample-skaffold
+        image: DOCKER_USER/practice-skaffold
