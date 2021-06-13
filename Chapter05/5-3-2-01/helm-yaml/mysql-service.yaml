@@ -7,6 +7,8 @@ metadata:
 spec:
   type: {{ .Values.mysql_service.type }}
   ports:
-    - port: {{ .Values.mysql_service.port }}
+    - protocol: {{ .Values.mysql_service.protocol }}
+      port: {{ .Values.mysql_service.port }}
+      targetPort: {{ .Values.mysql_service.targetPort }}
   selector:
     app: mysql

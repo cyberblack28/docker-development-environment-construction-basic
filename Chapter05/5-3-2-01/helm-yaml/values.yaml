@@ -45,7 +45,9 @@ mysql:
 mysql_service:
   name: mysql-service
   type: ClusterIP
+  protocol: TCP
   port: 3306
+  targetPort: 3306
 
 #wordpress
 wordpress:
@@ -61,6 +63,6 @@ wordpress:
 wordpress_service:
   name: wordpress-service
   type: LoadBalancer
+  protocol: TCP
   port: 80
   targetPort: 80
-  protocol: TCP
