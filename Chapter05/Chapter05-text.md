@@ -1754,7 +1754,9 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: 3306
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
   selector:
     app: mysql
 ```
@@ -1837,9 +1839,9 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - port: 80
+    - protocol: TCP
+      port: 80
       targetPort: 80
-      protocol: TCP
   selector:
     app: wordpress
 ```
@@ -2465,7 +2467,9 @@ metadata:
 spec:
   type: {{ .Values.mysql_service.type }}
   ports:
-    - port: {{ .Values.mysql_service.port }}
+    - protocol: {{ .Values.mysql_service.protocol }}
+      port: {{ .Values.mysql_service.port }}
+      targetPort: {{ .Values.mysql_service.targetPort }}
   selector:
     app: mysql
 ```
@@ -2530,9 +2534,9 @@ metadata:
 spec:
   type: {{ .Values.wordpress_service.type }}
   ports:
-    - port: {{ .Values.wordpress_service.port }}
+    - protocol: {{ .Values.wordpress_service.protocol }}
+      port: {{ .Values.wordpress_service.port }}
       targetPort: {{ .Values.wordpress_service.targetPort }}
-      protocol: {{ .Values.wordpress_service.protocol }}
   selector:
     app: wordpress
 ```
@@ -2592,13 +2596,15 @@ mysql:
 mysql_service:
   name: mysql-service
   type: ClusterIP
+  protocol: TCP
   port: 3306
+  targetPort: 3306
 
 #wordpress
 wordpress:
   name: wordpress
   replicas: 1
-  image: wordpress:5.6.2
+  image: wordpress
   value: mysql-service
   containerPort: 80
   mountPath: /var/www/html
@@ -2608,9 +2614,9 @@ wordpress:
 wordpress_service:
   name: wordpress-service
   type: LoadBalancer
+  protocol: TCP
   port: 80
   targetPort: 80
-  protocol: TCP
 ```
 
 #### Chartのデバッグ
