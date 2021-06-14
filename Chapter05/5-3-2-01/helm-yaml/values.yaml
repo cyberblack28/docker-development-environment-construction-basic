@@ -53,7 +53,7 @@ mysql_service:
 wordpress:
   name: wordpress
   replicas: 1
-  image: wordpress
+  image: wordpress:5.6.2
   value: mysql-service
   containerPort: 80
   mountPath: /var/www/html
