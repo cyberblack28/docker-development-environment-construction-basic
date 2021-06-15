@@ -28,7 +28,7 @@ jobs:
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
 
-        # イメージをDocker Hubにプッシュ
+        # コンテナイメージをDocker Hubにプッシュ
       - name: Push image to Docker Hub
         run: |
           # Docker Hub ログイン
