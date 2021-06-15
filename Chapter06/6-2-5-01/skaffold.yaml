@@ -2,7 +2,7 @@ apiVersion: skaffold/v2beta10
 kind: Config
 build:
   artifacts:
-  - image: docker.io/DOCKERHUB_USER/practice-skaffold # 変更箇所 DOCKERHUB_USER
+  - image: docker.io/DOCKERHUB_REPO_NAME/practice-skaffold # 変更箇所 DOCKERHUB_REPO_NAME
     docker:
       dockerfile: ./Dockerfile
   tagPolicy:
@@ -16,4 +16,4 @@ deploy:
       chartPath: skaffold-helm
       valuesFiles: [ skaffold-helm/values.yaml ]
       artifactOverrides:
-        image: docker.io/DOCKERHUB_USER/practice-skaffold # 変更箇所 DOCKERHUB_USER
+        image: docker.io/DOCKERHUB_REPO_NAME/practice-skaffold # 変更箇所 DOCKERHUB_REPO_NAME
