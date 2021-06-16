@@ -6,7 +6,7 @@ import (
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello GitOps!!")　//変更箇所
+	fmt.Fprintf(w, "Hello GitOps!!") //GitOpsの実行時に変更する箇所
 }
 
 func main() {
