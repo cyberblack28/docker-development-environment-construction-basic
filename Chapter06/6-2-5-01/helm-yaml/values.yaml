@@ -4,7 +4,7 @@ label: practice-skaffold
 #Deployment
 replicas: 3
 image:
-  repository: docker.io/cyberblack28/
+  repository: docker.io/DOCKERHUB_REPO_NAME/ # 変更箇所 ご自身のリポジトリ名に変更
   name: practice-skaffold
 imageConfig:
   pullPolicy: IfNotPresent

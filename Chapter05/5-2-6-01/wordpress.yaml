@@ -5,7 +5,7 @@ metadata:
   labels:
     app: wordpress
 spec:
-  replicas: 5
+  replicas: 5  #「replicas」を5に変更
   selector:
     matchLabels:
       app: wordpress
