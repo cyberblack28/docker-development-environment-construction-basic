@@ -8,6 +8,7 @@ spec:
     storage: 10Gi
   accessModes:
     - ReadWriteOnce
+  #「gcePersistentDisk」を指定する定義
   gcePersistentDisk:
     pdName: nfs-disk
     fsType: ext4

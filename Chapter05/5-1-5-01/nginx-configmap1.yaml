@@ -10,6 +10,7 @@ spec:
   - image: nginx
     name: nginx
     resources: {}
+    #envFrom:以降の3行が参照するための設定
     envFrom:
     - configMapRef:
         name: sample-config1

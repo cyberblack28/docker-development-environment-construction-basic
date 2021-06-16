@@ -27,6 +27,7 @@ spec:
         volumeMounts:
           - mountPath: /exports
             name: nfs-local-storage
+      #「nfs-pvc」を指定する定義
       volumes:
         - name: nfs-local-storage
           persistentVolumeClaim:

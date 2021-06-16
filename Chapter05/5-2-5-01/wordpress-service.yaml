@@ -5,6 +5,7 @@ metadata:
   labels:
     app: wordpress
 spec:
+  #type: LoadBalancerを定義
   type: LoadBalancer
   ports:
     - protocol: TCP

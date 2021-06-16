@@ -17,6 +17,7 @@ spec:
       containers:
         - image: mysql:5.6
           name: mysql
+          #MySQLのrootパスワードを参照する定義
           env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
@@ -26,9 +27,11 @@ spec:
           ports:
             - containerPort: 3306
               name: mysql
+          #Podのマウントパス定義
           volumeMounts:
             - name: mysql-local-storage
               mountPath: /var/lib/mysql
+      #mysql-pvc」を指定する定義
       volumes:
         - name: mysql-local-storage
           persistentVolumeClaim:

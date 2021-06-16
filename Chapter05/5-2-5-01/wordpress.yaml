@@ -18,8 +18,10 @@ spec:
         - image: wordpress:5.6.2
           name: wordpress
           env:
+          #Service名「mysql-service」を定義
           - name: WORDPRESS_DB_HOST
             value: mysql-service
+          #MySQLのデータベースパスワードを参照する定義
           - name: WORDPRESS_DB_PASSWORD
             valueFrom:
               secretKeyRef:
@@ -28,9 +30,11 @@ spec:
           ports:
             - containerPort: 80
               name: wordpress
+          #Podのマウントパス定義
           volumeMounts:
             - name: wordpress-local-storage
               mountPath: /var/www/html
+      #「wordpress-pvc」を指定する定義
       volumes:
         - name: wordpress-local-storage
           persistentVolumeClaim:

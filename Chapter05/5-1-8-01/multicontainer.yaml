@@ -6,21 +6,27 @@ metadata:
     run: nginx-pod
   name: nginx-pod
 spec:
+  #emptyDirの定義
   volumes:
   - name: share-data
     emptyDir: {}
   containers:
   - image: nginx:1.20.0
     name: nginx
+    #/usr/share/nginx/html ドキュメントルートをマウントパスとして定義
     volumeMounts:
     - name: share-data
       mountPath: /usr/share/nginx/html
     resources: {}
+    #2つ目のコンテナの定義
   - name: work-container
+    #busyboxのコンテナイメージを定義
     image: busybox
     volumeMounts:
     - name: share-data
+      #マウントパスを定義
       mountPath: /data
+    #コマンドでマウントパスにindex.htmlを作成と同時に共有Volumeに格納
     command: ["/bin/sh"]
     args: ["-c", "echo Hello from the work-container > /data/index.html;sleep 2400"]
   dnsPolicy: ClusterFirst
