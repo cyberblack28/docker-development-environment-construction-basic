@@ -44,7 +44,7 @@ docker  default  INGRESS    1000      tcp          False
 ```gcloudコマンド
 $ gcloud projects list
 PROJECT_ID              NAME              PROJECT_NUMBER
-mercurial-shape-278704  My First Project  540200718496
+mercurial-shape-278704  My First Project  xxxxxxxxxxxx
 ```
 
 ```gcloudコマンド
@@ -86,11 +86,11 @@ $
 
 ```gcloudコマンド
 $ sudo passwd root
-New password:dockerpractice2020
-Retype new password:dockerpractice2020
+New password:dockerpractice2021
+Retype new password:dockerpractice2021
 passwd: password updated successfully
 $ su -
-Password:dockerpractice2020
+Password:dockerpractice2021
 ```
 
 【4】仮想マシンの削除
