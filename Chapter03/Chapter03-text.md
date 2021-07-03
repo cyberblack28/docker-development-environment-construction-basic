@@ -565,7 +565,7 @@ centos                      7         8652b9f0cb4c   5 months ago     204MB
 #### レイヤの確認
 
 ```
-docker image history cyberblack28/sample-nginx
+docker image history ${DOCKERHUB_REPO_NAME}/sample-nginx
 ```
 ```
 IMAGE          CREATED          CREATED BY                                      SIZE      COMMENT
