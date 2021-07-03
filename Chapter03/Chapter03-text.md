@@ -57,7 +57,7 @@ export DOCKERHUB_REPO_NAME="cyberblack28"
 ```
 
 ```
-docker image build -t cyberblack28/sample-nginx .
+docker image build -t ${DOCKERHUB_REPO_NAME}/sample-nginx .
 ```
 ```
 Sending build context to Docker daemon  3.072kB
@@ -823,7 +823,7 @@ Login Succeeded
 #### Pushコマンドの実行
 
 ```
-docker image push cyberblack28/sample-nginx
+docker image push ${DOCKERHUB_REPO_NAME}/sample-nginx
 ```
 ```
 Using default tag: latest
@@ -884,7 +884,7 @@ centos       7                   8652b9f0cb4c   5 months ago     204MB
 #### Pullコマンドの実行
 
 ```
-docker image pull cyberblack28/sample-nginx
+docker image pull ${DOCKERHUB_REPO_NAME}/sample-nginx
 ```
 ```
 Using default tag: latest
