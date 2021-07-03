@@ -1575,7 +1575,7 @@ c04bf6b03914   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   About a mi
 ```
 docker container exec -it sample-nginx /bin/bash
 ```
-コマンド結果
+コマンド & 結果
 ```
 [root@c04bf6b03914 /]# ls
 anaconda-post.log  bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
@@ -2332,7 +2332,7 @@ curl http://localhost:8080/volume.html
 ```
 docker container exec -it volume-nginx /bin/bash
 ```
-コマンド結果
+コマンド & 結果
 ```
 root@978821cb0c6c:/# touch /usr/share/nginx/html/test
 root@978821cb0c6c:/# ls /usr/share/nginx/html/
@@ -2385,7 +2385,7 @@ docker run -itd --name tmpfs-nginx --mount type=tmpfs,destination=/root/tmp,tmpf
 ```
 docker container exec -it tmpfs-nginx /bin/bash
 ```
-コマンド結果
+コマンド & 結果
 ```
 root@8708997d938d:/# ls /root
 tmp
