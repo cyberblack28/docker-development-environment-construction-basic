@@ -106,7 +106,7 @@ other instances or the `--keep-disks` flag is given and specifies them
 
 Do you want to continue (Y/n)?  Y
 
-Deleted [https:////www.googleapis.com/compute/v1/projects/mercurial-shape-278704/zones/asia-northeast1-b/instances/docker].
+Deleted [https://www.googleapis.com/compute/v1/projects/mercurial-shape-278704/zones/asia-northeast1-b/instances/docker].
 ```
 
 【5】ファイアウォールの削除
@@ -118,7 +118,7 @@ The following firewalls will be deleted:
 
 Do you want to continue (Y/n)?  Y
 
-Deleted [https:////www.googleapis.com/compute/v1/projects/mercurial-shape-278704/global/firewalls/docker].
+Deleted [https://www.googleapis.com/compute/v1/projects/mercurial-shape-278704/global/firewalls/docker].
 ```
 
 ### 2.2.3 Dockerのインストール

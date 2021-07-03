@@ -16,7 +16,7 @@
 
 ```linuxコマンド
 # cat Dockerfile
-#CentOS7のベースイメージをPull
+#CentOS7のベースイメージを取得
 FROM centos:7
 
 #yumでepel-releaseをインストール
