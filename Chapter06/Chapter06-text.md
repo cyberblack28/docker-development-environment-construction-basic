@@ -6,13 +6,21 @@
 
 #### Kubernetes クラスタの構築
 
-```skaffoldコマンド
-$ skaffold version
+コマンド
+```
+skaffold version
+```
+コマンド結果
+```
 v1.24.1
 ```
 
-```dockerコマンド
-$ docker version
+コマンド
+```
+docker version
+```
+コマンド結果
+```
 Client: Docker Engine - Community
  Version:           20.10.6
  API version:       1.41
@@ -47,13 +55,22 @@ Server: Docker Engine - Community
 
 #### Dockerfile の作成
 
-```linuxコマンド
-$ cd ../Chapter06
-$ cd 6-2-3-01
+コマンド
+```
+cd
 ```
 
-```linuxコマンド
-$ cat main.go
+コマンド
+```
+cd docker-development-environment-construction-basic/Chapter06/6-2-3-01
+```
+
+コマンド
+```
+cat main.go
+```
+コマンド結果
+```
 package main
 
 import (
@@ -71,8 +88,12 @@ func main() {
 }
 ```
 
-```linuxコマンド
-$ cat Dockerfile
+コマンド
+```
+cat Dockerfile
+```
+コマンド結果
+```
 #Stage-1
 FROM golang:1.16 as builder
 COPY ./main.go ./
@@ -87,8 +108,12 @@ ENTRYPOINT ["./sample-go-app"]
 
 #### マニフェストの作成
 
-```linuxコマンド
-$ vim practice-skaffold-deployment.yaml
+コマンド
+```
+vim practice-skaffold-deployment.yaml
+```
+コマンド結果
+```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -105,11 +130,15 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: DOCKERHUB_USER/practice-skaffold
+        image: DOCKERHUB_REPO_NAME/practice-skaffold # 変更箇所 DOCKERHUB_REPO_NAME
 ```
 
-```linuxコマンド
-$ cat practice-skaffold-service.yaml
+コマンド
+```
+cat practice-skaffold-service.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: Service
 metadata:
@@ -127,13 +156,17 @@ spec:
 
 #### Skaffoldの設定ファイル作成
 
-```linuxコマンド
-$ vim skaffold.yaml
+コマンド
+```
+vim skaffold.yaml
+```
+コマンド結果
+```
 apiVersion: skaffold/v2alpha3
 kind: Config
 build:
   artifacts:
-  - image: cyberblack28/practice-skaffold
+  - image: DOCKERHUB_REPO_NAME/practice-skaffold # 変更箇所 DOCKERHUB_REPO_NAME
     docker:
       dockerfile: ./Dockerfile
   tagPolicy:
@@ -148,8 +181,12 @@ deploy:
 
 #### 6.2.4 Skaffoldの実行
 
-```dockerコマンド
-$ docker login
+コマンド
+```
+docker login
+```
+コマンド結果
+```
 Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID,
 head over to https://hub.docker.com to create one.
 Username: cyberblack28
@@ -161,8 +198,12 @@ https://docs.docker.com/engine/reference/commandline/login/#credentials-store
 Login Succeeded
 ```
 
-```skaffoldコマンド
-$ skaffold dev -f skaffold.yaml
+コマンド
+```
+skaffold dev -f skaffold.yaml
+```
+コマンド結果
+```
 Listing files to watch...
  - cyberblack28/practice-skaffold
 Generating tags...
@@ -269,56 +310,87 @@ WARN[0069] Ignoring image referenced by digest: [cyberblack28/practice-skaffold:
 WARN[0069] Ignoring image referenced by digest: [cyberblack28/practice-skaffold:2021-05-26_16-56-02.521_UTC@sha256:21ac6053b7624e66cee5be05474c427d26723879ff0ba3690265646fee13739b]
 ```
 
-```kubectlコマンド
-$ kubectl get deployment
+コマンド
+```
+kubectl get deployments
+```
+コマンド結果
+```
 NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
 practice-skaffold-deployment   3/3     3            3           3m59s
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 NAME                                            READY   STATUS    RESTARTS   AGE
 practice-skaffold-deployment-5d988cb499-b8rsx   1/1     Running   0          2m54s
 practice-skaffold-deployment-5d988cb499-ggrmr   1/1     Running   0          2m55s
 practice-skaffold-deployment-5d988cb499-vmgr9   1/1     Running   0          2m55s
 ```
 
-```kubectlコマンド
-$ kubectl get deployments practice-skaffold-deployment -o jsonpath="{.spec.template.spec.containers[].image}"
+コマンド
+```
+kubectl get deployments practice-skaffold-deployment -o jsonpath="{.spec.template.spec.containers[].image}"
+```
+コマンド結果
+```
 cyberblack28/practice-skaffold:2021-05-26_16-56-02.521_UTC@sha256:21ac6053b7624e66cee5be05474c427d26723879ff0ba3690265646fee13739b
 ```
 
-```kubectlコマンド
-$ kubectl get service
+コマンド
+```
+kubectl get services
+```
+コマンド結果
+```
 NAME                        TYPE           CLUSTER-IP     EXTERNAL-IP     PORT(S)        AGE
 kubernetes                  ClusterIP      10.48.0.1      <none>          443/TCP        96m
-practice-skaffold-service   LoadBalancer   10.48.10.160   35.200.102.72   80:30529/TCP   6m2s
+practice-skaffold-service   LoadBalancer   10.48.10.160   35.xx.xx.xx     80:30529/TCP   6m2s
 ```
 
-```linuxコマンド
-$ LB_EXIP=$(kubectl get service practice-skaffold-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+コマンド
+```
+LB_EXIP=$(kubectl get service practice-skaffold-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 ```
 
-```linuxコマンド
-$ curl http://${LB_EXIP}
+コマンド
+```
+curl http://${LB_EXIP}
+```
+コマンド結果
+```
 Practice Skaffold!!
 ```
 
-```linuxコマンド
-$ cd docker-development-environment-construction-basic/Chapter06/6-2-3-01
+コマンド
+```
+cd docker-development-environment-construction-basic/Chapter06/6-2-3-01
 ```
 
-```linuxコマンド
-$ sed -i -e 's|Practice Skaffold!!|Convenience Skaffold!!|' main.go
+コマンド
+```
+sed -i -e 's|Practice Skaffold!!|Convenience Skaffold!!|' main.go
 ```
 
-```kubectlコマンド
-$ curl http://${LB_EXIP}
+コマンド
+```
+curl http://${LB_EXIP}
+```
+コマンド結果
+```
 Convenience Skaffold!!
 ```
 
-```kubectlコマンド
-$ kubectl get deployments practice-skaffold-deployment -o jsonpath="{.spec.template.spec.containers[].image}"
+コマンド
+```
+kubectl get deployments practice-skaffold-deployment -o jsonpath="{.spec.template.spec.containers[].image}"
+```
+コマンド結果
+```
 cyberblack28/practice-skaffold:d7bed2d-dirty@sha256:37888b93ca6f42fa4f6dd7d6cb97736fc2bf34a6c4cc5fb29c1f0b2fe9a89378
 ```
 
@@ -326,25 +398,35 @@ cyberblack28/practice-skaffold:d7bed2d-dirty@sha256:37888b93ca6f42fa4f6dd7d6cb97
 
 #### テンプレートの作成
 
-```linuxコマンド
-$ cd ../6-2-5-01
+```
+cd ../6-2-5-01
 ```
 
-```helmコマンド
-$ helm create skaffold-helm
+コマンド
+```
+helm create skaffold-helm
+```
+コマンド結果
+```
 Creating skaffold-helm
 ```
 
-```linuxコマンド
-$ rm -rf skaffold-helm/templates/*
+コマンド
+```
+rm -rf skaffold-helm/templates/*
 ```
 
-```linuxコマンド
-$ cp -p helm-yaml/practice-skaffold-deployment.yaml skaffold-helm/templates
+コマンド
+```
+cp -p helm-yaml/practice-skaffold-deployment.yaml skaffold-helm/templates
 ```
 
-```linuxコマンド
-$ cat skaffold-helm/templates/practice-skaffold-deployment.yaml
+コマンド
+```
+cat skaffold-helm/templates/practice-skaffold-deployment.yaml
+```
+コマンド結果
+```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -365,12 +447,17 @@ spec:
         imagePullPolicy: {{ .Values.imageConfig.pullPolicy }}
 ```
 
-```linuxコマンド
-$ cp -p helm-yaml/practice-skaffold-service.yaml skaffold-helm/templates
+コマンド
+```
+cp -p helm-yaml/practice-skaffold-service.yaml skaffold-helm/templates
 ```
 
-```linuxコマンド
-$ cat skaffold-helm/templates/practice-skaffold-service.yaml
+コマンド
+```
+cat skaffold-helm/templates/practice-skaffold-service.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: Service
 metadata:
@@ -388,23 +475,29 @@ spec:
 
 #### values.yamlの作成
 
-```linuxコマンド
-$ echo "" > skaffold-helm/values.yaml
+コマンド
+```
+echo "" > skaffold-helm/values.yaml
 ```
 
-```linuxコマンド
-$ cp -p helm-yaml/values.yaml skaffold-helm
+コマンド
+```
+cp -p helm-yaml/values.yaml skaffold-helm
 ```
 
-```linuxコマンド
-$ cat skaffold-helm/values.yaml
+コマンド
+```
+cat skaffold-helm/values.yaml
+```
+コマンド結果
+```
 #Common
 label: practice-skaffold
 
 #Deployment
 replicas: 3
 image:
-  repository: docker.io/cyberblack28/
+  repository: docker.io/DOCKERHUB_REPO_NAME/ # 変更箇所 ご自身のリポジトリ名に変更
   name: practice-skaffold
 imageConfig:
   pullPolicy: IfNotPresent
@@ -415,13 +508,17 @@ service_type: LoadBalancer
 
 #### skaffold.yamlの編集
 
-```linuxコマンド
-$ cat skaffold.yaml
+コマンド
+```
+cat skaffold.yaml
+```
+コマンド結果
+```
 apiVersion: skaffold/v2beta10
 kind: Config
 build:
   artifacts:
-  - image: docker.io/cyberblack28/practice-skaffold
+  - image: docker.io/DOCKERHUB_REPO_NAME/practice-skaffold # 変更箇所 DOCKERHUB_REPO_NAME
     docker:
       dockerfile: ./Dockerfile
   tagPolicy:
@@ -435,12 +532,17 @@ deploy:
       chartPath: skaffold-helm
       valuesFiles: [ skaffold-helm/values.yaml ]
       artifactOverrides:
-        image: docker.io/cyberblack28/practice-skaffold
+        image: docker.io/DOCKERHUB_REPO_NAME/practice-skaffold # 変更箇所 DOCKERHUB_REPO_NAME
 ```
 
-```linuxコマンド
-$ cat main.go
+コマンド
+```
+cat main.go
+```
+コマンド結果
+```
 package main
+
 import (
   "fmt"
   "net/http"
@@ -456,8 +558,12 @@ func main() {
 
 #### skaffoldの実行
 
-```skaffoldコマンド
-$ skaffold dev -f skaffold.yaml
+コマンド
+```
+skaffold dev -f skaffold.yaml
+```
+コマンド結果
+```
 Listing files to watch...
  - docker.io/cyberblack28/practice-skaffold
 Generating tags...
@@ -483,22 +589,31 @@ Press Ctrl+C to exit
 Watching for changes...
 ```
 
-```linuxコマンド
-$ LB_EXIP=$(kubectl get service practice-skaffold-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+コマンド
+```
+LB_EXIP=$(kubectl get service practice-skaffold-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 ```
 
-```linuxコマンド
-$ curl http://${LB_EXIP}
+コマンド
+```
+curl http://${LB_EXIP}
+```
+コマンド結果
+```
 Skaffold & Helm!!
 ```
 
-```kubectlコマンド
-$ kubectl get deployments practice-skaffold-deployment -o jsonpath="{.spec.template.spec.containers[].image}"
+コマンド
+```
+kubectl get deployments practice-skaffold-deployment -o jsonpath="{.spec.template.spec.containers[].image}"
+```
+コマンド結果
+```
 docker.io/cyberblack28/practice-skaffold:2021-05-27_09-37-37.748_UTC@sha256:cedbecd4937b48b4a7bd7bf3274b748b76f4f6cf8ef1f23707e4b9496ab68eea
 ```
 
-
-```linuxコマンド
+コマンド結果
+```
 Listing files to watch...
  - docker.io/cyberblack28/practice-skaffold
 Generating tags...

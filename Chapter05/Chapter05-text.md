@@ -2,28 +2,39 @@
 
 ## 5.1 kubectlコマンド
 
-### 5.1.2 Podの作成
+### 5.1.1 Podの作成
 
-#### リスタートポリシー
+#### Podの起動
 
-```kubectlコマンド
-$ kubectl run nginx --image=nginx --restart=Never
-PROJECT_ID              NAME              PROJECT_NUMBER
+コマンド
+```
+kubectl run nginx --image=nginx
+```
+コマンド結果
+```
 pod/nginx created
 ```
 
 #### Podステータスの確認
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 NAME    READY   STATUS    RESTARTS   AGE
 nginx   1/1     Running   0          17s
 ```
 
-#### ClusterIPアドレスの確認
+#### PodのIPアドレス確認
 
-```kubectlコマンド
-$ kubectl describe pod nginx
+コマンド
+```
+kubectl describe pod nginx
+```
+コマンド結果
+```
 Name:         nginx
 Namespace:    default
 Priority:     0
@@ -76,8 +87,12 @@ Events:
 
 #### busyboxイメージの利用
 
-```kubectlコマンド
-$ kubectl run busybox --image=busybox --restart=Never -it --rm -- sh
+コマンド
+```
+kubectl run busybox --image=busybox -it --rm -- sh
+```
+コマンド結果
+```
 If you don't see a command prompt, try pressing enter.
 / # wget -O- 10.0.1.7
 Connecting to 10.0.1.7 (10.0.1.7:80)
@@ -115,24 +130,37 @@ pod "busybox" deleted
 
 #### Podの削除
 
-```kubectlコマンド
-$ kubectl delete pod nginx
+コマンド
+```
+kubectl delete pod nginx
+```
+コマンド結果
+```
 pod "nginx" deleted
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 No resources found in default namespace.
 ```
 
-#### マニフェストファイルの作成
+#### マニフェストの作成
 
-```kubectlコマンド
-$ kubectl run nginx --image=nginx --restart=Never --dry-run=client -o yaml > nginx.yaml
+コマンド
+```
+kubectl run nginx --image=nginx --dry-run=client -o yaml > nginx.yaml
 ```
 
-```kubectlコマンド
-$ cat nginx.yaml
+コマンド
+```
+cat nginx.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -150,41 +178,64 @@ spec:
 status: {}
 ```
 
-#### Pod の作成
+#### Podの作成
 
-```kubectlコマンド
-$ kubectl apply -f nginx.yaml
+コマンド
+```
+kubectl apply -f nginx.yaml
+```
+コマンド結果
+```
 pod/nginx created
 ```
 
-```kubectlコマンド
-$ kubectl get pod nginx
+コマンド
+```
+kubectl get pod nginx
+```
+コマンド結果
+```
 NAME    READY   STATUS    RESTARTS   AGE
 nginx   1/1     Running   0          69s
 ```
 
-#### マニフェストファイルを指定したPod の削除
+#### マニフェストを指定したPodの削除
 
-```kubectlコマンド
-$ kubectl delete -f nginx.yaml
+コマンド
+```
+kubectl delete -f nginx.yaml
+```
+コマンド結果
+```
 pod "nginx" deleted
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 No resources found in default namespace.
 ```
 
-### 5.1.3 Deployment
+### 5.1.2 Deployment
 
-#### マニフェストファイルの作成
+#### マニフェストの作成
 
-```kubectlコマンド
-$ kubectl create deployment nginx --image=nginx:1.19.10 --dry-run=client -o yaml > nginx-deployment.yaml
+コマンド
+```
+kubectl create deployment nginx --image=nginx:1.19.10 --dry-run=client -o yaml > nginx-deployment.yaml
 ```
 
-```kubectlコマンド
-$ vim nginx-deployment.yaml
+#### レプリカ数の指定
+
+コマンド
+```
+vim nginx-deployment.yaml
+```
+コマンド結果
+```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -193,7 +244,7 @@ metadata:
     app: nginx
   name: nginx
 spec:
-  replicas: 1 #「replicas: 1」を「replicas: 2」に変更
+  replicas: 2 #「replicas: 1」を「replicas: 2」に変更
   selector:
     matchLabels:
       app: nginx
@@ -213,33 +264,53 @@ status: {}
 
 #### Deploymentの作成
 
-```kubectlコマンド
-$ kubectl apply -f nginx-deployment.yaml
+コマンド
+```
+kubectl apply -f nginx-deployment.yaml
+```
+コマンド結果
+```
 deployment.apps/nginx created
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 NAME                    READY   STATUS    RESTARTS   AGE
 nginx-f589cd57f-5hsbt   1/1     Running   0          11s
 nginx-f589cd57f-jkhmq   1/1     Running   0          11s
 ```
 
-```kubectlコマンド
-$ kubectl get deployment
+コマンド
+```
+kubectl get deployments
+```
+コマンド結果
+```
 NAME    READY   UP-TO-DATE   AVAILABLE   AGE
 nginx   2/2     2            2           39s
 ```
 
 #### セルフヒーリング機能の確認
 
-```kubectlコマンド
-$ kubectl delete pod nginx-f589cd57f-5hsbt
+コマンド
+```
+kubectl delete pod nginx-f589cd57f-5hsbt
+```
+コマンド結果
+```
 pod "nginx-f589cd57f-5hsbt" deleted
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 NAME                    READY   STATUS    RESTARTS   AGE
 nginx-f589cd57f-dbkns   1/1     Running   0          32s
 nginx-f589cd57f-jkhmq   1/1     Running   0          2m4s
@@ -247,13 +318,21 @@ nginx-f589cd57f-jkhmq   1/1     Running   0          2m4s
 
 #### ローリングアップデート
 
-```kubectlコマンド
-$ kubectl set image deployment nginx nginx=nginx:1.20.0
+コマンド
+```
+kubectl set image deployment nginx nginx=nginx:1.20.0
+```
+コマンド結果
+```
 deployment.apps/nginx image updated
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 NAME                     READY   STATUS    RESTARTS   AGE
 nginx-7d994954c4-bs8jm   1/1     Running   0          48s
 nginx-7d994954c4-nwvfl   1/1     Running   0          47s
@@ -261,8 +340,12 @@ nginx-7d994954c4-nwvfl   1/1     Running   0          47s
 
 #### Podの詳細確認
 
-```kubectlコマンド
-$ kubectl describe pod nginx-7d994954c4-bs8jm
+コマンド
+```
+kubectl describe pod nginx-7d994954c4-bs8jm
+```
+コマンド結果
+```
 Name:         nginx-7d994954c4-bs8jm
 Namespace:    default
 Priority:     0
@@ -316,8 +399,12 @@ Events:
 
 #### リビジョンの確認
 
-```kubectlコマンド
-$ kubectl rollout history deployment nginx
+コマンド
+```
+kubectl rollout history deployment nginx
+```
+コマンド結果
+```
 deployment.apps/nginx
 REVISION  CHANGE-CAUSE
 1         <none>
@@ -326,8 +413,12 @@ REVISION  CHANGE-CAUSE
 
 #### 各リビジョンの確認
 
-```kubectlコマンド
-$ kubectl rollout history deployment nginx --revision=1
+コマンド
+```
+kubectl rollout history deployment nginx --revision=1
+```
+コマンド結果
+```
 deployment.apps/nginx with revision #1
 Pod Template:
   Labels:       app=nginx
@@ -342,8 +433,12 @@ Pod Template:
   Volumes:      <none>
 ```
 
-```kubectlコマンド
-$ kubectl rollout history deployment nginx --revision=2
+コマンド
+```
+kubectl rollout history deployment nginx --revision=2
+```
+コマンド結果
+```
 deployment.apps/nginx with revision #2
 Pod Template:
   Labels:       app=nginx
@@ -360,15 +455,23 @@ Pod Template:
 
 #### ロールバックの実行
 
-```kubectlコマンド
-$ kubectl rollout undo deployment nginx
+コマンド
+```
+kubectl rollout undo deployment nginx
+```
+コマンド結果
+```
 deployment.apps/nginx rolled back
 ```
 
 #### kubectl describeコマンドによるDeploymentの確認
 
-```kubectlコマンド
-$ kubectl describe deployment nginx
+コマンド
+```
+kubectl describe deployment nginx
+```
+コマンド結果
+```
 Name:                   nginx
 Namespace:              default
 CreationTimestamp:      Sun, 16 May 2021 04:25:42 +0000
@@ -411,13 +514,21 @@ Events:
 
 #### 再度ロールバックを実行
 
-```kubectlコマンド
-$ kubectl rollout undo deployment nginx --to-revision=2
+コマンド
+```
+kubectl rollout undo deployment nginx --to-revision=2
+```
+コマンド結果
+```
 deployment.apps/nginx rolled back
 ```
 
-```kubectlコマンド
-$ kubectl describe deployment nginx
+コマンド
+```
+kubectl describe deployment nginx
+```
+コマンド結果
+```
 Name:                   nginx
 Namespace:              default
 CreationTimestamp:      Sun, 16 May 2021 04:25:42 +0000
@@ -460,32 +571,52 @@ Events:
 
 #### Deploymentの削除
 
-```kubectlコマンド
-$ kubectl delete deployment nginx
+コマンド
+```
+kubectl delete deployment nginx
+```
+コマンド結果
+```
 deployment.apps "nginx" deleted
 ```
 
-```kubectlコマンド
-$ kubectl delete -f nginx-deployment.yaml
+コマンド
+```
+kubectl delete -f nginx-deployment.yaml
+```
+コマンド結果
+```
 deployment.apps "nginx" deleted
 ```
 
-```kubectlコマンド
-$ kubectl get deployment
+コマンド
+```
+kubectl get deployments
+```
+コマンド結果
+```
 No resources found in default namespace.
 ```
 
-### 5.1.4 Service
+### 5.1.3 Service
 
 #### Podの作成
 
-```kubectlコマンド
-$ kubectl run nginx --image=nginx:1.20.0 --restart=Never --port=80
+コマンド
+```
+kubectl run nginx --image=nginx:1.20.0 --port=80
+```
+コマンド結果
+```
 pod/nginx created
 ```
 
-```kubectlコマンド
-$ kubectl describe pod nginx
+コマンド
+```
+kubectl describe pod nginx
+```
+コマンド結果
+```
 Name:         nginx
 Namespace:    default
 Priority:     0
@@ -494,9 +625,9 @@ Start Time:   Sun, 16 May 2021 14:48:24 +0000
 Labels:       run=nginx
 Annotations:  <none>
 Status:       Running
-IP:           10.0.1.19
+IP:           10.0.6.6
 IPs:
-  IP:  10.0.1.19
+  IP:  10.0.6.6
 Containers:
   nginx:
     Container ID:   docker://5eac6fee54bd6a2bc14b7e10379cc0c2af8fea40efad02816c32cd675bace4b2
@@ -537,15 +668,23 @@ Events:
 
 #### Serviceの作成
 
-```kubectlコマンド
-$ kubectl expose pod nginx --name=nginx --port=80 --target-port=80
+コマンド
+```
+kubectl expose pod nginx --name=nginx --port=80 --target-port=80
+```
+コマンド結果
+```
 service/nginx exposed
 ```
 
 #### ClusterIPアドレスの確認
 
-```kubectlコマンド
-$ kubectl get service
+コマンド
+```
+kubectl get services
+```
+コマンド結果
+```
 NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
 kubernetes   ClusterIP   10.3.240.1     <none>        443/TCP   11h
 nginx        ClusterIP   10.3.248.150   <none>        80/TCP    73s
@@ -553,17 +692,34 @@ nginx        ClusterIP   10.3.248.150   <none>        80/TCP    73s
 
 #### PodのIPアドレスの確認
 
-```kubectlコマンド
-$ kubectl get ep
-NAME         ENDPOINTS          AGE
-kubernetes   35.200.23.27:443   11h
-nginx        10.0.1.19:80       2m4s
+コマンド
+```
+kubectl describe pod nginx
+```
+コマンド結果
+```
+：
+：（ 省略）
+：
+Labels: run=nginx
+Annotations: <none>
+Status: Running
+IP: 10.0.6.6
+IPs:
+IP: 10.0.6.6
+：
+：（ 省略）
+：
 ```
 
-#### busybox Podの作成
+#### Busybox Podの作成
 
-```kubectlコマンド
-$ kubectl run busybox --image=busybox --restart=Never --rm -it /bin/sh
+コマンド
+```
+kubectl run busybox --image=busybox --rm -it /bin/sh
+```
+コマンド結果
+```
 If you don't see a command prompt, try pressing enter.
 / # wget -O- 10.3.248.150
 Connecting to 10.3.248.150 (10.3.248.150:80)
@@ -595,8 +751,8 @@ Commercial support is available at
 </html>
 -                    100% |*****************************************************************************************************************************************************|   612  0:00:00 ETA
 written to stdout
-/ # wget -O- 10.0.1.19:80
-Connecting to 10.0.1.19:80 (10.0.1.19:80)
+/ # wget -O- 10.0.6.6:80
+Connecting to 10.0.6.6:80 (10.0.6.6:80)
 writing to stdout
 <!DOCTYPE html>
 <html>
@@ -631,61 +787,101 @@ pod "busybox" deleted
 
 #### ServiceとPodの削除
 
-```kubectlコマンド
-$ kubectl delete service nginx
+コマンド
+```
+kubectl delete service nginx
+```
+コマンド結果
+```
 service "nginx" deleted
 ```
 
-```kubectlコマンド
-$ kubectl delete pod nginx
+コマンド
+```
+kubectl delete pod nginx
+```
+コマンド結果
+```
 pod "nginx" deleted
 ```
 
-```kubectlコマンド
-$ kubectl get service
+コマンド
+```
+kubectl get service
+```
+コマンド結果
+```
 NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
 kubernetes   ClusterIP   10.3.240.1   <none>        443/TCP   11h
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 No resources found in default namespace.
 ```
 
-```kubectlコマンド
-$ kubectl run nginx --image=nginx:1.20.0 --port=80 --expose
+コマンド
+```
+kubectl run nginx --image=nginx:1.20.0 --port=80 --expose
+```
+コマンド結果
+```
 service/nginx created
 pod/nginx created
 ```
 
-```kubectlコマンド
-$ kubectl delete service nginx
+コマンド
+```
+kubectl delete service nginx
+```
+コマンド結果
+```
 service "nginx" deleted
 ```
 
-```kubectlコマンド
-$ kubectl delete pod nginx
+コマンド
+```
+kubectl delete pod nginx
+```
+コマンド結果
+```
 pod "nginx" deleted
 ```
 
-### 5.1.5 ConfigMap
+### 5.1.4 ConfigMap
 
 #### ConfigMapの作成
 
-```kubectlコマンド
-$ kubectl create configmap sample-config1 --from-literal=var1=docker --from-literal=var2=kubernetes
+コマンド
+```
+kubectl create configmap sample-config1 --from-literal=var1=docker --from-literal=var2=kubernetes
+```
+コマンド結果
+```
 configmap/sample-config1 created
 ```
 
-```kubectlコマンド
-$ kubectl get configmap
+コマンド
+```
+kubectl get configmaps
+```
+コマンド結果
+```
 NAME               DATA   AGE
 kube-root-ca.crt   1      4m31s
 sample-config1     2      82s
 ```
 
-```kubectlコマンド
-$ kubectl get configmap sample-config1 -o yaml
+コマンド
+```
+kubectl get configmap sample-config1 -o yaml
+```
+コマンド結果
+```
 apiVersion: v1
 data:
   var1: docker
@@ -700,18 +896,24 @@ metadata:
   uid: 20bfdae8-5bfd-467a-a4b5-67923d5f5725
 ```
 
-#### マニフェストファイルの確認
+#### マニフェストの確認
 
-```linuxコマンド
+コマンド
+```
 $ cd
 ```
 
-```linuxコマンド
+コマンド
+```
 $ cd docker-development-environment-construction-basic/Chapter05/5-1-5-01
 ```
 
-```linuxコマンド
-$ cat nginx-configmap1.yaml
+コマンド
+``` 
+cat nginx-configmap1.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -734,15 +936,23 @@ status: {}
 
 #### Podの作成
 
-```kubectlコマンド
-$ kubectl create -f nginx-configmap1.yaml
+コマンド
+```
+kubectl create -f nginx-configmap1.yaml
+```
+コマンド結果
+```
 pod/nginx created
 ```
 
 #### 環境変数の確認
 
-```kubectlコマンド
-$ kubectl exec -it nginx -- env
+コマンド
+```
+kubectl exec -it nginx -- env
+```
+コマンド結果
+```
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 HOSTNAME=nginx
 TERM=xterm
@@ -764,49 +974,81 @@ HOME=/root
 
 #### PodとConfigMapの削除
 
-```kubectlコマンド
-$ kubectl delete -f nginx-configmap1.yaml
+コマンド
+```
+kubectl delete -f nginx-configmap1.yaml
+```
+コマンド結果
+```
 pod "nginx" deleted
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 No resources found in default namespace.
 ```
 
-```kubectlコマンド
-$ kubectl delete configmap sample-config1
+コマンド
+```
+kubectl delete configmap sample-config1
+```
+コマンド結果
+```
 configmap "sample-config1" deleted
 ```
 
-```kubectlコマンド
-$ kubectl get configmap
+コマンド
+```
+kubectl get configmaps
+```
+コマンド結果
+```
 NAME               DATA   AGE
 kube-root-ca.crt   1      26m
 ```
 
 #### 作成したファイルからConfigMapを作成
 
-```linuxコマンド
-$ cat sample-config2.env
+コマンド
+```
+cat sample-config2.env
+```
+コマンド結果
+```
 var3=istio
 var4=envoy
 ```
 
-```kubectlコマンド
-$ kubectl create configmap sample-config2 --from-env-file=sample-config2.env
+コマンド
+```
+kubectl create configmap sample-config2 --from-env-file=sample-config2.env
+```
+コマンド結果
+```
 configmap/sample-config2 created
 ```
 
-```kubectlコマンド
-$ kubectl get configmap
+コマンド
+```
+kubectl get configmaps
+```
+コマンド結果
+```
 NAME               DATA   AGE
 kube-root-ca.crt   1      91m
 sample-config2     2      112s
 ```
 
-```kubectlコマンド
-$ kubectl get configmap sample-config2 -o yaml
+コマンド
+```
+kubectl get configmap sample-config2 -o yaml
+```
+コマンド結果
+```
 apiVersion: v1
 data:
   var3: istio
@@ -823,8 +1065,12 @@ metadata:
 
 #### PodからKeyを参照
 
-```kubectlコマンド
-$ cat nginx-configmap2.yaml
+コマンド
+```
+cat nginx-configmap2.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -848,13 +1094,21 @@ spec:
 status: {}
 ```
 
-```kubectlコマンド
-$ kubectl apply -f nginx-configmap2.yaml
+コマンド
+```
+kubectl apply -f nginx-configmap2.yaml
+```
+コマンド結果
+```
 pod/nginx created
 ```
 
-```kubectlコマンド
-$ kubectl exec -it nginx -- env
+コマンド
+```
+kubectl exec -it nginx -- env
+```
+コマンド結果
+```
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 HOSTNAME=nginx
 TERM=xterm
@@ -875,55 +1129,88 @@ HOME=/root
 
 #### PodとConfigMapの削除
 
-```kubectlコマンド
-$ kubectl delete -f nginx-configmap2.yaml
+コマンド
+```
+kubectl delete -f nginx-configmap2.yaml
+```
+コマンド結果
+```
 pod "nginx" deleted
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 No resources found in default namespace.
 ```
 
-```kubectlコマンド
-$ kubectl delete configmap sample-config2
+コマンド
+```
+kubectl delete configmap sample-config2
+```
+コマンド結果
+```
 configmap "sample-config2" deleted
 ```
 
-```kubectlコマンド
-$ kubectl get configmap
+コマンド
+```
+kubectl get configmaps
+```
+コマンド結果
+```
 NAME               DATA   AGE
 kube-root-ca.crt   1      114m
 ```
 
-### 5.1.6 ConfigMapとKeyの参照
+### 5.1.5 ConfigMapとKeyの参照
 
-```linuxコマンド
-$ cd ../5-1-6-01
+コマンド
+```
+cd ../5-1-6-01
 ```
 
-```linuxコマンド
-$ cat sample-config3.txt
+コマンド
+```
+cat sample-config3.txt
+```
+コマンド結果
+```
 rook
 vitess
 containerd
 helm
 ```
 
-```kubectlコマンド
-$ kubectl create configmap sample-cmvolume --from-file=sample-config3=sample-config3.txt
+コマンド
+```
+kubectl create configmap sample-cmvolume --from-file=sample-config3=sample-config3.txt
+```
+コマンド結果
+```
 configmap/sample-cmvolume created
 ```
 
-```kubectlコマンド
-$ kubectl get configmap
+コマンド
+```
+kubectl get configmaps
+```
+コマンド結果
+```
 NAME               DATA   AGE
 kube-root-ca.crt   1      39h
 sample-cmvolume    1      119s
 ```
 
-```kubectlコマンド
-$ kubectl get configmap sample-cmvolume -o yaml
+コマンド
+```
+kubectl get configmap sample-cmvolume -o yaml
+```
+コマンド結果
+```
 apiVersion: v1
 data:
   sample-config3: |-
@@ -942,10 +1229,14 @@ metadata:
   uid: 53ff63a7-fa03-4c82-ab05-de7cee63a9b7
 ```
 
-#### マニフェストファイルの確認
+#### マニフェストの確認
 
-```linuxコマンド
-$ cat nginx-configmap3.yaml
+コマンド
+```
+cat nginx-configmap3.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -972,30 +1263,64 @@ status: {}
 
 #### Podの作成
 
-```kubectlコマンド
-$ kubectl apply -f nginx-configmap3.yaml
+コマンド
+```
+kubectl apply -f nginx-configmap3.yaml
+```
+コマンド結果
+```
 pod/nginx created
 ```
 
-```kubectlコマンド
-$ kubectl exec -it nginx -- cat /configmap/sample-config3
+コマンド
+```
+kubectl exec -it nginx -- cat /configmap/sample-config3
+```
+コマンド結果
+```
 rook
 vitess
 containerd
 helm
 ```
 
-### 5.1.7 Secret
+コマンド
+```
+kubectl delete pod nginx
+```
+コマンド結果
+```
+pod "nginx" deleted
+```
+
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
+No resources found in default namespace.
+```
+
+### 5.1.6 Secret
 
 #### Secretの作成
 
-```kubectlコマンド
-$ kubectl create secret generic sample-secret1 --from-literal=password=testp@ss
+コマンド
+```
+kubectl create secret generic sample-secret1 --from-literal=password=testp@ss
+```
+コマンド結果
+```
 secret/sample-secret1 created
 ```
 
-```kubectlコマンド
-$ kubectl get secret
+コマンド
+```
+kubectl get secrets
+```
+コマンド結果
+```
 NAME                  TYPE                                  DATA   AGE
 default-token-dmlps   kubernetes.io/service-account-token   3      39h
 sample-secret1        Opaque                                1      118s
@@ -1003,8 +1328,12 @@ sample-secret1        Opaque                                1      118s
 
 #### マニフェストの確認
 
-```kubectlコマンド
-$ kubectl get secret sample-secret1 -o yaml
+コマンド
+```
+kubectl get secret sample-secret1 -o yaml
+```
+コマンド結果
+```
 apiVersion: v1
 data:
   password: dGVzdHBAc3M=
@@ -1019,59 +1348,78 @@ metadata:
 type: Opaque
 ```
 
-```linuxコマンド
-$ echo dGVzdHBAc3M= | base64 -d
+コマンド
+```
+echo dGVzdHBAc3M= | base64 -d
+```
+コマンド結果
+```
 testp@ss
 ```
 
-#### SecretとPodの削除
+#### Secretの削除
 
-```kubectlコマンド
-$ kubectl delete secret sample-secret1
+コマンド
+```
+kubectl delete secret sample-secret1
+```
+コマンド結果
+```
 secret "sample-secret1" deleted
 ```
 
-```kubectlコマンド
-$ kubectl get secret
+コマンド
+```
+kubectl get secrets
+```
+コマンド結果
+```
 NAME                  TYPE                                  DATA   AGE
 default-token-dmlps   kubernetes.io/service-account-token   3      39h
 ```
 
-```kubectlコマンド
-$ kubectl delete pod nginx
-pod "nginx" deleted
-```
-
-```kubectlコマンド
-$ kubectl get pod
-No resources found in default namespace.
-```
-
 #### envファイルからSecretを作成
 
-```linuxコマンド
-$ cd ../5-1-7-01
+コマンド
+```
+cd ../5-1-7-01
 ```
 
-```linuxコマンド
-$ cat sample-secret2.env
+コマンド
+```
+cat sample-secret2.env
+```
+コマンド結果
+```
 password=p@ssw0rd
 ```
 
-```kubectlコマンド
-$ kubectl create secret generic sample-secret2 --from-env-file=sample-secret2.env
+コマンド
+```
+kubectl create secret generic sample-secret2 --from-env-file=sample-secret2.env
+```
+コマンド結果
+```
 secret/sample-secret2 created
 ```
 
-```kubectlコマンド
-$ kubectl get secret
+コマンド
+```
+kubectl get secrets
+```
+コマンド結果
+```
 NAME                  TYPE                                  DATA   AGE
 default-token-dmlps   kubernetes.io/service-account-token   3      39h
 sample-secret2        Opaque                                1      85s
 ```
 
-```kubectlコマンド
-$ kubectl get secret sample-secret2 -o yaml
+コマンド
+```
+kubectl get secret sample-secret2 -o yaml
+```
+コマンド結果
+```
 apiVersion: v1
 data:
   password: cEBzc3cwcmQ=
@@ -1088,8 +1436,12 @@ type: Opaque
 
 #### マニフェストの作成
 
-```linuxコマンド
-$ cat nginx-secret.yaml
+コマンド
+```
+cat nginx-secret.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -1115,13 +1467,21 @@ status: {}
 
 #### Podの作成とSecretの参照確認
 
-```kubectlコマンド
-$ kubectl apply -f nginx-secret.yaml
+コマンド
+```
+kubectl apply -f nginx-secret.yaml
+```
+コマンド結果
+```
 pod/nginx created
 ```
 
-```kubectlコマンド
-$ kubectl describe pod nginx
+コマンド
+```
+kubectl describe pod nginx
+```
+コマンド結果
+```
 Name:         nginx
 Namespace:    default
 Priority:     0
@@ -1173,57 +1533,93 @@ Events:
   Normal  Started    21s   kubelet            Started container nginx
 ```
 
-```kubectlコマンド
-$ kubectl exec -it nginx -- env | grep PASSWORD
+コマンド
+```
+kubectl exec -it nginx -- env | grep PASSWORD
+```
+コマンド結果
+```
 PASSWORD=p@ssw0rd
 ```
 
 #### SecretとPodの削除
 
-```kubectlコマンド
-$ kubectl delete secret sample-secret2
+コマンド
+```
+kubectl delete secret sample-secret2
+```
+コマンド結果
+```
 secret "sample-secret2" deleted
 ```
 
-```kubectlコマンド
-$ kubectl get secret
+コマンド
+```
+kubectl get secrets
+```
+コマンド結果
+```
 NAME                  TYPE                                  DATA   AGE
 default-token-dmlps   kubernetes.io/service-account-token   3      40h
 ```
 
-```kubectlコマンド
-$ kubectl delete pod nginx
+コマンド
+```
+kubectl delete pod nginx
+```
+コマンド結果
+```
 pod "nginx" deleted
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 No resources found in default namespace.
 ```
 
 #### Secretの作成とVolumeデータの参照
 
-```kubectlコマンド
-$ cat sample-secret3.txt
+コマンド
+```
+cat sample-secret3.txt
+```
+コマンド結果
+```
 admin=86asnNlW
 operator=po89SYin
 user=oshu894LD
 ```
 
-```kubectlコマンド
-$ kubectl create secret generic sample-secret3 --from-file=sample-secret3.txt
+コマンド
+```
+kubectl create secret generic sample-secret3 --from-file=sample-secret3.txt
+```
+コマンド結果
+```
 secret/sample-secret3 created
 ```
 
-```kubectlコマンド
-$ kubectl get secret
+コマンド
+```
+kubectl get secrets
+```
+コマンド結果
+```
 NAME                  TYPE                                  DATA   AGE
 default-token-dmlps   kubernetes.io/service-account-token   3      40h
 sample-secret3        Opaque                                1      39s
 ```
 
-```kubectlコマンド
-$ kubectl get secret sample-secret3 -o yaml
+コマンド
+```
+kubectl get secret sample-secret3 -o yaml
+```
+コマンド結果
+```
 apiVersion: v1
 data:
   sample-secret3.txt: YWRtaW49ODZhc25ObFcKb3BlcmF0b3I9cG84OVNZaW4KdXNlcj1vc2h1ODk0TEQK
@@ -1240,8 +1636,12 @@ type: Opaque
 
 #### マニフェストの作成（Volumeの定義）
 
-```linuxコマンド
-$ cat nginx-secret2.yaml
+コマンド
+```
+cat nginx-secret2.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -1266,13 +1666,21 @@ spec:
 status: {}
 ```
 
-```kubectlコマンド
-$ kubectl apply -f nginx-secret2.yaml
+コマンド
+```
+kubectl apply -f nginx-secret2.yaml
+```
+コマンド結果
+```
 pod/nginx created
 ```
 
-```kubectlコマンド
-$ kubectl exec -it nginx -- cat /secret/sample-secret3.txt
+コマンド
+```
+kubectl exec -it nginx -- cat /secret/sample-secret3.txt
+```
+コマンド結果
+```
 admin=86asnNlW
 operator=po89SYin
 user=oshu894LD
@@ -1280,35 +1688,56 @@ user=oshu894LD
 
 #### SecretとPodの削除
 
-```kubectlコマンド
-$ kubectl delete secret sample-secret3
+コマンド
+```
+kubectl delete secret sample-secret3
+```
+コマンド結果
+```
 secret "sample-secret3" deleted
 ```
 
-```kubectlコマンド
-$ kubectl get secret
+コマンド
+```
+kubectl get secrets
+```
+コマンド結果
+```
 NAME                  TYPE                                  DATA   AGE
 default-token-dmlps   kubernetes.io/service-account-token   3      41h
 ```
 
-```kubectlコマンド
-$ kubectl delete pod nginx
+コマンド
+```
+kubectl delete pod nginx
+```
+コマンド結果
+```
 pod "nginx" deleted
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 No resources found in default namespace.
 ```
 
-### 5.1.8 Multi Container Pod
+### 5.1.7 Multi Container Pod
 
-```linuxコマンド
-$ cd ../5-1-8-01
+コマンド
+```
+cd ../5-1-8-01
 ```
 
-```kubectlコマンド
-$ cat multicontainer.yaml
+コマンド
+```
+cat multicontainer.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -1339,19 +1768,31 @@ spec:
 status: {}
 ```
 
-```kubectlコマンド
-$ kubectl apply -f multicontainer.yaml
+コマンド
+```
+kubectl apply -f multicontainer.yaml
+```
+コマンド結果
+```
 pod/nginx-pod created
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 NAME        READY   STATUS    RESTARTS   AGE
 nginx-pod   2/2     Running   0          3m26s
 ```
 
-```kubectlコマンド
-$ kubectl exec -it nginx-pod -c nginx -- /bin/sh
+コマンド
+```
+kubectl exec -it nginx-pod -c nginx -- /bin/sh
+```
+コマンド & 結果
+```
 # curl localhost
 Hello from the work-container
 # ls /usr/share/nginx/html
@@ -1359,59 +1800,100 @@ index.html
 # exit
 ```
 
-```kubectlコマンド
-$ kubectl delete pod nginx-pod
+コマンド
+```
+kubectl delete pod nginx-pod
+```
+コマンド結果
+```
 pod "nginx-pod" deleted
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 No resources found in default namespace.
 ```
 
-### 5.1.9 createとapply
+### 5.1.8 createとapply
 
-```linuxコマンド
-$ cd ../5-1-9-01
+コマンド
+```
+cd ../5-1-9-01
 ```
 
-```kubectlコマンド
-$ kubectl create -f nginx.yaml
+コマンド
+```
+kubectl create -f nginx.yaml
+```
+コマンド結果
+```
 pod/nginx created
 ```
 
-```kubectlコマンド
-$ kubectl create -f nginx.yaml
+コマンド
+```
+kubectl create -f nginx.yaml
+```
+コマンド結果
+```
 Error from server (AlreadyExists): error when creating "nginx.yaml": pods "nginx" already exists
 ```
 
-```kubectlコマンド
-$ kubectl delete -f nginx.yaml
+コマンド
+```
+kubectl delete -f nginx.yaml
+```
+コマンド結果
+```
 pod "nginx" deleted
 ```
 
-```kubectlコマンド
-$ kubectl apply -f nginx.yaml
+コマンド
+```
+kubectl apply -f nginx.yaml
+```
+コマンド結果
+```
 pod/nginx created
 ```
 
-```kubectlコマンド
-$ kubectl apply -f nginx.yaml
+コマンド
+```
+kubectl apply -f nginx.yaml
+```
+コマンド結果
+```
 pod/nginx configured
 ```
 
-```kubectlコマンド
-$ kubectl delete -f nginx.yaml
+コマンド
+```
+kubectl delete -f nginx.yaml
+```
+コマンド結果
+```
 pod "nginx" deleted
 ```
 
-```kubectlコマンド
-$ kubectl delete pod nginx
+コマンド
+```
+kubectl delete pod nginx
+```
+コマンド結果
+```
 pod "nginx" deleted
 ```
 
-```kubectlコマンド
-＄ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 No resources found in default namespace.
 ```
 
@@ -1421,8 +1903,12 @@ No resources found in default namespace.
 
 #### gcePersistentDiskの作成
 
-```gcloudコマンド
-$ gcloud compute disks create nfs-disk --size=10GB --zone=asia-northeast1-a
+コマンド
+```
+gcloud compute disks create nfs-disk --size=10GB --zone=asia-northeast1-a
+```
+コマンド結果
+```
 WARNING: You have selected a disk size of under [200GB]. This may result in poor I/O performance. For more information, see: https://developers.google.com/compute/docs/disks#performance.
 Created [https://www.googleapis.com/compute/v1/projects/mercurial-shape-278704/zones/asia-northeast1-a/disks/nfs-disk].
 NAME      ZONE               SIZE_GB  TYPE         STATUS
@@ -1433,8 +1919,12 @@ can be used. You can find instructions on how to do this at:
 https://cloud.google.com/compute/docs/disks/add-persistent-disk#formatting
 ```
 
-```gcloudコマンド
-$ gcloud compute disks describe --zone=asia-northeast1-a nfs-disk
+コマンド
+```
+gcloud compute disks describe --zone=asia-northeast1-a nfs-disk
+```
+コマンド結果
+```
 creationTimestamp: '2021-05-22T05:09:11.734-07:00'
 id: '6161119284946094728'
 kind: compute#disk
@@ -1448,14 +1938,95 @@ type: https://www.googleapis.com/compute/v1/projects/mercurial-shape-278704/zone
 zone: https://www.googleapis.com/compute/v1/projects/mercurial-shape-278704/zones/asia-northeast1-a
 ```
 
-#### NFSサーバのDeploymentとServiceの作成
+#### NFS サーバのPersistentVolumeとPersistentVolumeClaimの作成
 
-```linuxコマンド
-$ cd ../5-2-2-01
+コマンド
+```
+cd ../5-2-2-01
 ```
 
-```linuxコマンド
-$ cat nfs-server.yaml
+コマンド
+```
+cat nfs-pv.yaml
+```
+コマンド結果
+```
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-pv
+spec:
+  storageClassName: nfs
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  gcePersistentDisk: #「gcePersistentDisk」を指定する定義
+    pdName: nfs-disk
+    fsType: ext4
+```
+
+コマンド
+```
+kubectl apply -f nfs-pv.yaml
+```
+コマンド結果
+```
+persistentvolume/nfs-pv created
+```
+
+コマンド
+```
+kubectl get persistentvolume nfs-pv
+```
+コマンド結果
+```
+```
+
+コマンド
+```
+cat nfs-pvc.yaml
+```
+コマンド結果
+```
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-pvc
+spec:
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+```
+
+コマンド
+```
+kubectl apply -f nfs-pvc.yaml
+```
+コマンド結果
+```
+persistentvolumeclaim/nfs-pvc created
+```
+
+コマンド
+```
+kubectl get persistentvolumes,persistentvolumeclaims
+```
+コマンド結果
+```
+```
+
+#### NFS サーバのDeploymentとServiceの作成
+
+コマンド
+```
+cat nfs-server.yaml
+```
+コマンド結果
+```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1484,27 +2055,38 @@ spec:
           privileged: true
         volumeMounts:
           - mountPath: /exports
-            name: nfs
-      volumes:
-        - name: nfs
-          gcePersistentDisk:
-            pdName: nfs-disk
-            fsType: ext4
+            name: nfs-local-storage
+      volumes:  #「nfs-pvc」を指定する定義
+        - name: nfs-local-storage
+          persistentVolumeClaim:
+            claimName: nfs-pvc
 ```
 
-```kubectlコマンド
-$ kubectl apply -f nfs-server.yaml
+コマンド
+```
+kubectl apply -f nfs-server.yaml
+```
+コマンド結果
+```
 deployment.apps/nfs-server created
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 NAME                          READY   STATUS    RESTARTS   AGE
 nfs-server-6f7fc97dfd-6kzmm   1/1     Running   0          2m45s
 ```
 
-```linuxコマンド
-$ cat nfs-service.yaml
+コマンド
+```
+cat nfs-service.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: Service
 metadata:
@@ -1521,13 +2103,21 @@ spec:
     role: nfs-server
 ```
 
-```kubectlコマンド
-$ kubectl apply -f nfs-service.yaml
+コマンド
+```
+kubectl apply -f nfs-service.yaml
+```
+コマンド結果
+```
 service/nfs-service created
 ```
 
-```kubectlコマンド
-$ kubectl get service
+コマンド
+```
+kubectl get services
+```
+コマンド結果
+```
 NAME          TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                      AGE
 kubernetes    ClusterIP   10.48.0.1    <none>        443/TCP                      11m
 nfs-service   ClusterIP   10.48.4.25   <none>        2049/TCP,20048/TCP,111/TCP   10s
@@ -1535,20 +2125,32 @@ nfs-service   ClusterIP   10.48.4.25   <none>        2049/TCP,20048/TCP,111/TCP 
 
 ### 5.2.3 Secretの作成
 
-```kubectlコマンド
-$ kubectl create secret generic mysql --from-literal=password=mysqlp@ssw0d
+コマンド
+```
+kubectl create secret generic mysql --from-literal=password=mysqlp@ssw0d
+```
+コマンド結果
+```
 secret/mysql created
 ```
 
-```kubectlコマンド
-$ kubectl get secret
+コマンド
+```
+kubectl get secrets
+```
+コマンド結果
+```
 NAME                  TYPE                                  DATA   AGE
 default-token-lm5kz   kubernetes.io/service-account-token   3      14m
 mysql                 Opaque                                1      12s
 ```
 
-```kubectlコマンド
-$ kubectl get secret mysql -o yaml
+コマンド
+```
+kubectl get secret mysql -o yaml
+```
+コマンド結果
+```
 apiVersion: v1
 data:
   password: bXlzcWxwQHNzdzBk
@@ -1567,12 +2169,17 @@ type: Opaque
 
 #### PersistentVolumeの作成
 
-```linuxコマンド
-$ cd ../5-2-4-01
+コマンド
+```
+cd ../5-2-4-01
 ```
 
-```linuxコマンド
-$ vim mysql-pv.yaml
+コマンド
+```
+vim mysql-pv.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -1586,17 +2193,25 @@ spec:
   accessModes:
     - ReadWriteMany
   nfs:
-    server: 10.3.252.83
+    server: 10.48.4.25 #「nfs-service」のCLUSTER-IP を定義
     path: /
 ```
 
-```kubectlコマンド
-$ kubectl apply -f mysql-pv.yaml
+コマンド
+```
+kubectl apply -f mysql-pv.yaml
+```
+コマンド結果
+```
 persistentvolume/mysql-pv created
 ```
 
-```linuxコマンド
-$ vim wordpress-pv.yaml
+コマンド
+```
+vim wordpress-pv.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -1610,17 +2225,25 @@ spec:
   accessModes:
     - ReadWriteMany
   nfs:
-    server: 10.3.252.83
+    server: 10.48.4.25 #「nfs-service」のCLUSTER-IP を定義
     path: /
 ```
 
-```kubectlコマンド
-$ kubectl apply -f wordpress-pv.yaml
+コマンド
+```
+kubectl apply -f wordpress-pv.yaml
+```
+コマンド結果
+```
 persistentvolume/wordpress-pv created
 ```
 
-```kubectlコマンド
-$ kubectl get persistentvolume
+コマンド
+```
+kubectl get persistentvolumea
+```
+コマンド結果
+```
 NAME           CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
 mysql-pv       10Gi       RWX            Retain           Available           mysql                   66s
 wordpress-pv   10Gi       RWX            Retain           Available           wordpress               9s
@@ -1628,8 +2251,12 @@ wordpress-pv   10Gi       RWX            Retain           Available           wo
 
 #### PersistentVolumeClaimの作成
 
-```linuxコマンド
-$ cat mysql-pvc.yaml
+コマンド
+```
+cat mysql-pvc.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -1646,13 +2273,21 @@ spec:
       storage: 5Gi
 ```
 
-```kubectlコマンド
-$ kubectl apply -f mysql-pvc.yaml
+コマンド
+```
+kubectl apply -f mysql-pvc.yaml
+```
+コマンド結果
+```
 persistentvolumeclaim/mysql-pvc created
 ```
 
-```linuxコマンド
-$ cat wordpress-pvc.yaml
+コマンド
+```
+cat wordpress-pvc.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -1669,13 +2304,21 @@ spec:
       storage: 5Gi
 ```
 
-```kubectlコマンド
-$ kubectl apply -f wordpress-pvc.yaml
+コマンド
+```
+kubectl apply -f wordpress-pvc.yaml
+```
+コマンド結果
+```
 persistentvolumeclaim/wordpress-pvc created
 ```
 
-```kubectlコマンド
-$ kubectl get persistentvolume,persistentvolumeclaim
+コマンド
+```
+kubectl get persistentvolumes,persistentvolumeclaims
+```
+コマンド結果
+```
 NAME                            CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                   STORAGECLASS   REASON   AGE
 persistentvolume/mysql-pv       10Gi       RWX            Retain           Bound    default/mysql-pvc       mysql                   3m2s
 persistentvolume/wordpress-pv   10Gi       RWX            Retain           Bound    default/wordpress-pvc   wordpress               2m5s
@@ -1689,12 +2332,17 @@ persistentvolumeclaim/wordpress-pvc   Bound    wordpress-pv   10Gi       RWX    
 
 #### MySQLのDeploymentとServiceの作成
 
-```linuxコマンド
-$ cd ../5-2-5-01
+コマンド
+```
+cd ../5-2-5-01
 ```
 
-```linuxコマンド
-$ cat mysql.yaml
+コマンド
+```
+cat mysql.yaml
+```
+コマンド結果
+```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1732,19 +2380,31 @@ spec:
             claimName: mysql-pvc
 ```
 
-```kubectlコマンド
-$ kubectl apply -f mysql.yaml
+コマンド
+```
+kubectl apply -f mysql.yaml
+```
+コマンド結果
+```
 deployment.apps/mysql created
 ```
 
-```kubectlコマンド
-$ kubectl get pod -l app=mysql
+コマンド
+```
+kubectl get pod -l app=mysql
+```
+コマンド結果
+```
 NAME                     READY   STATUS    RESTARTS   AGE
 mysql-656fbb9446-jw9kh   1/1     Running   0          13s
 ```
 
-```linuxコマンド
-$ cat mysql-service.yaml
+コマンド
+```
+cat mysql-service.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: Service
 metadata:
@@ -1761,13 +2421,21 @@ spec:
     app: mysql
 ```
 
-```kubectlコマンド
-$ kubectl apply -f mysql-service.yaml
+コマンド
+```
+kubectl apply -f mysql-service.yaml
+```
+コマンド結果
+```
 service/mysql-service created
 ```
 
-```kubectlコマンド
-$ kubectl get service
+コマンド
+```
+kubectl get services
+```
+コマンド結果
+```
 NAME            TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)                      AGE
 kubernetes      ClusterIP   10.48.0.1     <none>        443/TCP                      30m
 mysql-service   ClusterIP   10.48.14.45   <none>        3306/TCP                     7s
@@ -1776,8 +2444,12 @@ nfs-service     ClusterIP   10.48.4.25    <none>        2049/TCP,20048/TCP,111/T
 
 #### WordPressのDeploymentとServiceの作成
 
-```linuxコマンド
-$ cat wordpress.yaml
+コマンド
+```
+cat wordpress.yaml
+```
+コマンド結果
+```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1817,19 +2489,31 @@ spec:
             claimName: wordpress-pvc
 ```
 
-```kubectlコマンド
-$ kubectl apply -f wordpress.yaml
+コマンド
+```
+kubectl apply -f wordpress.yaml
+```
+コマンド結果
+```
 deployment.apps/wordpress created
 ```
 
-```kubectlコマンド
-$ kubectl get pod -l app=wordpress
+コマンド
+```
+kubectl get pod -l app=wordpress
+```
+コマンド結果
+```
 NAME                         READY   STATUS    RESTARTS   AGE
 wordpress-59fcd9d75f-n6jst   1/1     Running   0          29s
 ```
 
-```linuxコマンド
-$ cat wordpress-service.yaml
+コマンド
+```
+cat wordpress-service.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: Service
 metadata:
@@ -1846,13 +2530,21 @@ spec:
     app: wordpress
 ```
 
-```kubectlコマンド
-$ kubectl apply -f wordpress-service.yaml
+コマンド
+```
+kubectl apply -f wordpress-service.yaml
+```
+コマンド結果
+```
 service/wordpress-service created
 ```
 
-```kubectlコマンド
-$ kubectl get service
+コマンド
+```
+kubectl get services
+```
+コマンド結果
+```
 NAME                TYPE           CLUSTER-IP    EXTERNAL-IP      PORT(S)                      AGE
 kubernetes          ClusterIP      10.48.0.1     <none>           443/TCP                      34m
 mysql-service       ClusterIP      10.48.14.45   <none>           3306/TCP                     4m3s
@@ -1864,13 +2556,21 @@ wordpress-service   LoadBalancer   10.48.6.192   35.194.109.124   80:31367/TCP  
 
 #### kubectlコマンドによるPodの追加
 
-```kubectlコマンド
-$ kubectl scale deployment wordpress --replicas 10
+コマンド
+```
+kubectl scale deployment wordpress --replicas 10
+```
+コマンド結果
+```
 deployment.apps/wordpress scaled
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 NAME                          READY   STATUS    RESTARTS   AGE
 mysql-656fbb9446-jw9kh        1/1     Running   0          8m14s
 nfs-server-6f7fc97dfd-6kzmm   1/1     Running   0          26m
@@ -1886,14 +2586,19 @@ wordpress-59fcd9d75f-xz5qb    1/1     Running   0          33s
 wordpress-59fcd9d75f-z9mnw    1/1     Running   0          33s
 ```
 
-#### マニフェストファイルの編集によるPod数の変更
+#### マニフェストの編集によるPod数の変更
 
-```linuxコマンド
-$ cd ../5-2-6-01
+コマンド
+```
+cd ../5-2-6-01
 ```
 
-```linuxコマンド
-$ cat wordpress.yaml
+コマンド
+```
+cat wordpress.yaml
+```
+コマンド結果
+```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1933,13 +2638,21 @@ spec:
             claimName: wordpress-pvc
 ```
 
-```kubectlコマンド
-$ kubectl apply -f wordpress.yaml
+コマンド
+```
+kubectl apply -f wordpress.yaml
+```
+コマンド結果
+```
 deployment.apps/wordpress configured
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 NAME                          READY   STATUS    RESTARTS   AGE
 mysql-656fbb9446-jw9kh        1/1     Running   0          12m
 nfs-server-6f7fc97dfd-6kzmm   1/1     Running   0          31m
@@ -1950,8 +2663,12 @@ wordpress-67b55cd4bd-gnbnn    1/1     Running   0          13s
 wordpress-67b55cd4bd-mn9hl    1/1     Running   0          31s
 ```
 
-```kubectlコマンド
-$ kubectl edit deployment wordpress
+コマンド
+```
+kubectl edit deployment wordpress
+```
+コマンド結果
+```
 # Please edit the object below. Lines beginning with a '#' will be ignored,
 # and an empty file will abort the edit. If an error occurs while saving this file will be
 # reopened with the relevant failures.
@@ -2161,69 +2878,112 @@ status:
 deployment.apps/wordpress edited
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 NAME                          READY   STATUS    RESTARTS   AGE
 mysql-656fbb9446-jw9kh        1/1     Running   0          34m
 nfs-server-6f7fc97dfd-6kzmm   1/1     Running   0          53m
 wordpress-67b55cd4bd-blmcx    1/1     Running   0          22m
 ```
 
-```linuxコマンド
-$ cd ../
+### 5.2.7 アプリケーションの削除
+
+コマンド
+```
+cd ../
 ```
 
-```kubectlコマンド
-$ kubectl delete -f 5-2-5-01
+コマンド
+```
+kubectl delete -f 5-2-5-01
+```
+コマンド結果
+```
 service "mysql-service" deleted
 deployment.apps "mysql" deleted
 service "wordpress-service" deleted
 deployment.apps "wordpress" deleted
 ```
 
-```kubectlコマンド
-$ kubectl delete -f 5-2-4-01
+コマンド
+```
+kubectl delete -f 5-2-4-01
+```
+コマンド結果
+```
 persistentvolume "mysql-pv" deleted
 persistentvolumeclaim "mysql-pvc" deleted
 persistentvolume "wordpress-pv" deleted
 persistentvolumeclaim "wordpress-pvc" deleted
 ```
 
-```kubectlコマンド
-$ kubectl delete -f 5-2-2-01
+コマンド
+```
+kubectl delete -f 5-2-2-01
+```
+コマンド結果
+```
 deployment.apps "nfs-server" deleted
 service "nfs-service" deleted
 ```
 
-```kubectlコマンド
-$ kubectl delete secret mysql
+コマンド
+```
+kubectl delete secret mysql
+```
+コマンド結果
+```
 secret "mysql" deleted
 ```
 
-```kubectlコマンド
-$ kubectl get deployment
+コマンド
+```
+kubectl get deployments
+```
+コマンド結果
+```
 No resources found in default namespace.
 ```
 
-```kubectlコマンド
-$ kubectl get service
+コマンド
+```
+kubectl get services
+```
+コマンド結果
+```
 NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
 kubernetes   ClusterIP   10.48.0.1    <none>        443/TCP   73m
 ```
 
-```kubectlコマンド
-$ kubectl get persistentvolume,persistentvolumeclaim
+コマンド
+```
+kubectl get persistentvolumes,persistentvolumeclaims
+```
+コマンド結果
+```
 No resources found
 ```
 
-```kubectlコマンド
-$ kubectl get secret
+コマンド
+```
+kubectl get secrets
+```
+コマンド結果
+```
 NAME                  TYPE                                  DATA   AGE
 default-token-lm5kz   kubernetes.io/service-account-token   3      77m
 ```
 
-```gcloudコマンド
-$ gcloud compute disks delete nfs-disk --zone=asia-northeast1-a
+コマンド
+```
+gcloud compute disks delete nfs-disk --zone=asia-northeast1-a
+```
+コマンド結果
+```
 The following disks will be deleted:
  - [nfs-disk] in [asia-northeast1-a]
 
@@ -2238,20 +2998,27 @@ Deleted [https://www.googleapis.com/compute/v1/projects/mercurial-shape-278704/z
 
 #### Helm クライアントのインストール
 
-```linuxコマンド
-$ cd 5-3-2-01
+コマンド
+```
+cd 5-3-2-01
 ```
 
-```linuxコマンド
-$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+コマンド
+```
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
 ```
 
-```linuxコマンド
-$ chmod 700 get_helm.sh
+コマンド
+```
+chmod 700 get_helm.sh
 ```
 
-```linuxコマンド
-$ ./get_helm.sh
+コマンド
+```
+./get_helm.sh
+```
+コマンド結果
+```
 Helm v3.5.4 is available. Changing from version v3.5.0.
 Downloading https://get.helm.sh/helm-v3.5.4-linux-amd64.tar.gz
 Verifying checksum... Done.
@@ -2259,51 +3026,78 @@ Preparing to install helm into /usr/local/bin
 helm installed into /usr/local/bin/helm
 ```
 
-```helmコマンド
-$ helm version
+コマンド
+```
+helm version
+```
+コマンド結果
+```
 version.BuildInfo{Version:"v3.5.4", GitCommit:"1b5edb69df3d3a08df77c9902dc17af864ff05d1", GitTreeState:"clean", GoVersion:"go1.15.11"}
 ```
 
 #### Chartの雛形の作成
 
-```helmコマンド
-$ helm create wordpress
+コマンド
+```
+helm create wordpress
+```
+コマンド結果
+```
 Creating wordpress
 ```
 
-```linuxコマンド
-$ ls wordpress
+コマンド
+```
+ls wordpress
+```
+コマンド結果
+```
 charts  Chart.yaml  templates  values.yaml
 ```
 
-```linuxコマンド
-$ ls wordpress/templates/
+コマンド
+```
+ls wordpress/templates/
+```
+コマンド結果
+```
 deployment.yaml  _helpers.tpl  hpa.yaml  ingress.yaml  NOTES.txt  serviceaccount.yaml  service.yaml  tests
 ```
 
-```linuxコマンド
-$ ls wordpress/templates/tests
+コマンド
+```
+ls wordpress/templates/tests
+```
+コマンド結果
+```
 test-connection.yaml
 ```
 
 #### WordPressの独自Chartの作成
 
-```linuxコマンド
-$ rm -rf wordpress/templates/*
+コマンド
+```
+rm -rf wordpress/templates/*
 ```
 
-```linuxコマンド
-$ ls wordpress/templates/
+コマンド
+```
+ls wordpress/templates/
 ```
 
 #### Secret マニフェストテンプレートの作成
 
-```linuxコマンド
-$ cp -p helm-yaml/mysql-secret.yaml wordpress/templates
+コマンド
+```
+cp -p helm-yaml/mysql-secret.yaml wordpress/templates
 ```
 
-```linuxコマンド
-$ cat wordpress/templates/mysql-secret.yaml
+コマンド
+```
+cat wordpress/templates/mysql-secret.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: Secret
 metadata:
@@ -2315,12 +3109,17 @@ data:
 
 #### PersistentVolume、PersistentVolumeClaimの作成
 
-```linuxコマンド
-$ cp -p helm-yaml/mysql-pv.yaml wordpress/templates
+コマンド
+```
+cp -p helm-yaml/mysql-pv.yaml wordpress/templates
 ```
 
-```linuxコマンド
-$ cat wordpress/templates/mysql-pv.yaml
+コマンド
+```
+cat wordpress/templates/mysql-pv.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -2339,12 +3138,17 @@ spec:
     path: {{ .Values.mysql_pv.hostPath }}
 ```
 
-```linuxコマンド
-$ cp -p helm-yaml/wordpress-pv.yaml wordpress/templates
+コマンド
+```
+cp -p helm-yaml/wordpress-pv.yaml wordpress/templates
 ```
 
-```linuxコマンド
-$ cat wordpress/templates/wordpress-pv.yaml
+コマンド
+```
+cat wordpress/templates/wordpress-pv.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -2363,12 +3167,17 @@ spec:
     path: {{ .Values.wordpress_pv.hostPath }}
 ```
 
-```linuxコマンド
-$ cp -p helm-yaml/mysql-pvc.yaml wordpress/templates
+コマンド
+```
+cp -p helm-yaml/mysql-pvc.yaml wordpress/templates
 ```
 
-```linuxコマンド
-$ cat wordpress/templates/mysql-pvc.yaml
+コマンド
+```
+cat wordpress/templates/mysql-pvc.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -2385,12 +3194,17 @@ spec:
       storage: {{ .Values.mysql_pvc.storage }}
 ```
 
-```linuxコマンド
-$ cp -p helm-yaml/wordpress-pvc.yaml wordpress/templates
+コマンド
+```
+cp -p helm-yaml/wordpress-pvc.yaml wordpress/templates
 ```
 
-```linuxコマンド
-$ cat wordpress/templates/wordpress-pvc.yaml
+コマンド
+```
+cat wordpress/templates/wordpress-pvc.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -2409,12 +3223,17 @@ spec:
 
 #### DeploymentとServiceの作成
 
-```linuxコマンド
-$ cp -p helm-yaml/mysql.yaml wordpress/templates
+コマンド
+```
+cp -p helm-yaml/mysql.yaml wordpress/templates
 ```
 
-```linuxコマンド
-$ cat wordpress/templates/mysql.yaml
+コマンド
+```
+cat wordpress/templates/mysql.yaml
+```
+コマンド結果
+```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -2452,12 +3271,17 @@ spec:
             claimName: {{ .Values.mysql.claimName }}
 ```
 
-```linuxコマンド
-$ cp -p helm-yaml/mysql-service.yaml wordpress/templates
+コマンド
+```
+cp -p helm-yaml/mysql-service.yaml wordpress/templates
 ```
 
-```linuxコマンド
-$ cat wordpress/templates/mysql-service.yaml
+コマンド
+```
+cat wordpress/templates/mysql-service.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: Service
 metadata:
@@ -2474,12 +3298,17 @@ spec:
     app: mysql
 ```
 
-```linuxコマンド
-$ cp -p helm-yaml/wordpress.yaml wordpress/templates
+コマンド
+```
+cp -p helm-yaml/wordpress.yaml wordpress/templates
 ```
 
-```linuxコマンド
-$ cat helm-yaml/wordpress.yaml
+コマンド
+```
+cat helm-yaml/wordpress.yaml
+```
+コマンド結果
+```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -2519,12 +3348,17 @@ spec:
             claimName: {{ .Values.wordpress.claimName }}
 ```
 
-```linuxコマンド
-$ cp -p helm-yaml/wordpress-service.yaml wordpress/templates
+コマンド
+```
+cp -p helm-yaml/wordpress-service.yaml wordpress/templates
 ```
 
-```linuxコマンド
-$ cat wordpress/templates/wordpress-service.yaml
+コマンド
+```
+cat wordpress/templates/wordpress-service.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: Service
 metadata:
@@ -2543,12 +3377,17 @@ spec:
 
 #### values.yaml の作成
 
-```linuxコマンド
-$ cp -p helm-yaml/values.yaml wordpress
+コマンド
+```
+cp -p helm-yaml/values.yaml wordpress
 ```
 
-```linuxコマンド
-$ cat wordpress/values.yaml
+コマンド
+```
+cat wordpress/values.yaml
+```
+コマンド結果
+```
 #mysql-secret
 mysql_secret:
   password: bXlzcWxwQHNzdzBk
@@ -2604,7 +3443,7 @@ mysql_service:
 wordpress:
   name: wordpress
   replicas: 1
-  image: wordpress
+  image: wordpress:5.6.2
   value: mysql-service
   containerPort: 80
   mountPath: /var/www/html
@@ -2621,8 +3460,12 @@ wordpress_service:
 
 #### Chartのデバッグ
 
-```helmコマンド
-$ helm install wordpress --debug --dry-run wordpress
+コマンド
+```
+helm install wordpress --debug --dry-run wordpress
+```
+コマンド結果
+```
 install.go:173: [debug] Original chart version: ""
 install.go:190: [debug] CHART PATH: /home/iyutaka2020/docker-development-environment-construction-basic/Chapter05/5-3-2-01/wordpress
 
@@ -2659,6 +3502,8 @@ mysql_secret:
 mysql_service:
   name: mysql-service
   port: 3306
+  protocol: TCP
+  targetPort: 3306
   type: ClusterIP
 wordpress:
   claimName: wordpress-pvc
@@ -2776,7 +3621,9 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: 3306
+    - port: 3305
+      targetPort: 3306
+      protocol: TCP
   selector:
     app: mysql
 ---
@@ -2873,8 +3720,12 @@ spec:
             claimName: wordpress-pvc
 ```
 
-```helmコマンド
-$ helm lint wordpress
+コマンド
+```
+helm lint wordpress
+```
+コマンド結果
+```
 ==> Linting wordpress
 [INFO] Chart.yaml: icon is recommended
 
@@ -2883,17 +3734,26 @@ $ helm lint wordpress
 
 #### Chartのパッケージ化
 
-```helmコマンド
-$ helm package wordpress
+コマンド
+```
+helm package wordpress
+```
+コマンド結果
+```
 Successfully packaged chart and saved it to: /home/iyutaka2020/docker-development-environment-construction-basic/Chapter05/5-3-2-01/wordpress-0.1.0.tgz
 ```
 
-```helmコマンド
-$ helm repo index .
+コマンド
+```
+helm repo index .
 ```
 
-```linuxコマンド
-$ cat index.yaml
+コマンド
+```
+cat index.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 entries:
   wordpress:
@@ -2912,8 +3772,12 @@ generated: "2021-05-25T14:22:24.43791071Z"
 
 #### WordPressのインストール
 
-```helmコマンド
-$ helm install wordpress ./wordpress
+コマンド
+```
+helm install wordpress ./wordpress
+```
+コマンド結果
+```
 NAME: wordpress
 LAST DEPLOYED: Tue May 25 14:24:13 2021
 NAMESPACE: default
@@ -2922,15 +3786,23 @@ REVISION: 1
 TEST SUITE: None
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 NAME                         READY   STATUS    RESTARTS   AGE
 mysql-656fbb9446-cnvwz       1/1     Running   0          16s
 wordpress-59fcd9d75f-6qbc9   1/1     Running   0          16s
 ```
 
-```kubectlコマンド
-$ kubectl get persistentvolume,persistentvolumeclaim
+コマンド
+```
+kubectl get persistentvolumes,persistentvolumeclaims
+```
+コマンド結果
+```
 NAME                            CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                   STORAGECLASS   REASON   AGE
 persistentvolume/mysql-pv       10Gi       RWO            Retain           Bound    default/mysql-pvc       mysql                   48s
 persistentvolume/wordpress-pv   10Gi       RWO            Retain           Bound    default/wordpress-pvc   wordpress               48s
@@ -2940,8 +3812,12 @@ persistentvolumeclaim/mysql-pvc       Bound    mysql-pv       10Gi       RWO    
 persistentvolumeclaim/wordpress-pvc   Bound    wordpress-pv   10Gi       RWO            wordpress      48s
 ```
 
-```kubectlコマンド
-$ kubectl get service
+コマンド
+```
+kubectl get services
+```
+コマンド結果
+```
 NAME                TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)        AGE
 kubernetes          ClusterIP      10.48.0.1      <none>           443/TCP        95m
 mysql-service       ClusterIP      10.48.5.133    <none>           3306/TCP       2m48s
@@ -2950,23 +3826,39 @@ wordpress-service   LoadBalancer   10.48.15.236   35.243.121.176   80:30690/TCP 
 
 #### WordPressのアンインストール
 
-```helmコマンド
-$ helm uninstall wordpress
+コマンド
+```
+helm uninstall wordpress
+```
+コマンド結果
+```
 release "wordpress" uninstalled
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 No resources found in default namespace.
 ```
 
-```kubectlコマンド
-$ kubectl get persistentvolume,persistentvolumeclaim
+コマンド
+```
+kubectl get persistentvolumes,persistentvolumeclaims
+```
+コマンド結果
+```
 No resources found
 ```
 
-```kubectlコマンド
-$ kubectl get service
+コマンド
+```
+kubectl get services
+```
+コマンド結果
+```
 NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
 kubernetes   ClusterIP   10.48.0.1    <none>        443/TCP   96m
 ```
@@ -2975,32 +3867,52 @@ kubernetes   ClusterIP   10.48.0.1    <none>        443/TCP   96m
 
 ### リポジトリの操作
 
-```helmコマンド
-$ helm repo add bitnami https://charts.bitnami.com/bitnami
+コマンド
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+```
+コマンド結果
+```
 "bitnami" has been added to your repositories
 ```
 
-```helmコマンド
-$ helm repo list
+コマンド
+```
+helm repo list
+```
+コマンド結果
+```
 NAME            URL
 bitnami         https://charts.bitnami.com/bitnami
 ```
 
-```helmコマンド
-$ helm repo update
+コマンド
+```
+helm repo update
+```
+コマンド結果
+```
 Hang tight while we grab the latest from your chart repositories...
 ...Successfully got an update from the "bitnami" chart repository
 Update Complete. ⎈Happy Helming!⎈
 ```
 
-```helmコマンド
-$ helm search repo wordpress
+コマンド
+```
+helm search repo wordpress
+```
+コマンド結果
+```
 NAME                    CHART VERSION   APP VERSION     DESCRIPTION
 bitnami/wordpress       11.0.9          5.7.2           Web publishing platform for building blogs and ...
 ```
 
-```helmコマンド
-$ helm search hub wordpress
+コマンド
+```
+helm search hub wordpress
+```
+コマンド結果
+```
 URL                                                     CHART VERSION   APP VERSION     DESCRIPTION
 https://artifacthub.io/packages/helm/bitnami/wo...      11.0.9          5.7.2           Web publishing platform for building blogs and ...
 https://artifacthub.io/packages/helm/groundhog2...      0.3.7           5.7.2-apache    A Helm chart for Wordpress on Kubernetes
@@ -3016,8 +3928,12 @@ https://artifacthub.io/packages/helm/presslabs/...      0.11.0-rc.2     v0.11.0-
 https://artifacthub.io/packages/helm/wordpressm...      0.1.0           1.1
 ```
 
-```helmコマンド
-$ helm show values bitnami/wordpress --version 10.6.10
+コマンド
+```
+helm show values bitnami/wordpress --version 10.6.10
+```
+コマンド結果
+```
 ## Global Docker image parameters
 ## Please, note that this will override the image parameters, including dependencies, configured to use the global value
 ## Current available global Docker image parameters: imageRegistry and imagePullSecrets
@@ -3767,8 +4683,10 @@ volumePermissions:
     runAsUser: 0
 ```
 
-```helmコマンド
-$ helm install wordpress bitnami/wordpress --version 10.6.10 --set wordpressUsername=admin --set wordpressPassword=wpp@ss
+```
+helm install wordpress bitnami/wordpress --version 10.6.10 --set wordpressUsername=admin --set wordpressPassword=wpp@ss
+```
+```
 NAME: wordpress
 LAST DEPLOYED: Tue May 25 14:47:00 2021
 NAMESPACE: default
@@ -3800,8 +4718,12 @@ To access your WordPress site from outside the cluster follow the steps below:
   echo Password: $(kubectl get secret --namespace default wordpress -o jsonpath="{.data.wordpress-password}" | base64 --decode)
 ```
 
-```helmコマンド
-$ helm install wordpress bitnami/wordpress --values values.yaml
+コマンド
+```
+helm install wordpress bitnami/wordpress --values values.yaml
+```
+コマンド結果
+```
 NAME: wordpress
 LAST DEPLOYED: Sun May 23 11:28:10 2021
 NAMESPACE: default
@@ -3833,53 +4755,68 @@ To access your WordPress site from outside the cluster follow the steps below:
   echo Password: $(kubectl get secret --namespace default wordpress -o jsonpath="{.data.wordpress-password}" | base64 --decode)
 ```
 
-```kubectlコマンド
-$ kubectl get secret
-NAME                              TYPE                                  DATA   AGE
-default-token-lm5kz               kubernetes.io/service-account-token   3      120m
-sh.helm.release.v1.wordpress.v1   helm.sh/release.v1                    1      5m48s
-wordpress                         Opaque                                1      5m48s
-wordpress-mariadb                 Opaque                                2      5m48s
-wordpress-mariadb-token-nq2qg     kubernetes.io/service-account-token   3      5m48s
+コマンド
 ```
-
-```helmコマンド
-$ helm list
+helm list
+```
+コマンド結果
+```
 NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
 wordpress       default         1               2021-05-25 14:47:00.71429811 +0000 UTC  deployed        wordpress-10.6.10       5.6.2
 ```
 
-```linuxコマンド
-$ export SERVICE_IP=$(kubectl get svc --namespace default wordpress --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
+コマンド
+```
+export SERVICE_IP=$(kubectl get svc --namespace default wordpress --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
 ```
 
-```linuxコマンド
-$ echo "WordPress Admin URL: http://$SERVICE_IP/admin"
-WordPress Admin URL: http://35.194.109.124/admin
+コマンド
+```
+echo "WordPress Admin URL: http://$SERVICE_IP/admin"
+```
+コマンド結果
+```
+WordPress Admin URL: http://35.xx.xx.xx/admin
 ```
 
-```kubectlコマンド
-$ kubectl get service
+コマンド
+```
+kubectl get service
+```
+コマンド結果
+```
 NAME                TYPE           CLUSTER-IP    EXTERNAL-IP      PORT(S)                      AGE
 kubernetes          ClusterIP      10.48.0.1     <none>           443/TCP                      124m
-wordpress           LoadBalancer   10.48.1.22    35.194.109.124   80:30633/TCP,443:31049/TCP   9m32s
+wordpress           LoadBalancer   10.48.1.22    35.xx.xx.xx      80:30633/TCP,443:31049/TCP   9m32s
 wordpress-mariadb   ClusterIP      10.48.6.162   <none>           3306/TCP                     9m32s
 ```
 
-```linuxコマンド
-$ echo Password: $(kubectl get secret --namespace default wordpress -o jsonpath="{.data.wordpress-password}" | base64 --decode)
+コマンド
+```
+echo Password: $(kubectl get secret --namespace default wordpress -o jsonpath="{.data.wordpress-password}" | base64 --decode)
+```
+コマンド結果
+```
 Password: wpp@ss
 ```
 
-```kubectlコマンド
-$ kubectl get pod
+コマンド
+```
+kubectl get pods
+```
+コマンド結果
+```
 NAME                         READY   STATUS    RESTARTS   AGE
 wordpress-7c9fcf495f-mkkvn   1/1     Running   0          11m
 wordpress-mariadb-0          1/1     Running   0          11m
 ```
 
-```kubectlコマンド
-$ kubectl get persistentvolume,persistentvolumeclaim
+コマンド
+```
+kubectl get persistentvolumes,persistentvolumeclaims
+```
+コマンド結果
+```
 NAME                                                        CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                              STORAGECLASS   REASON   AGE
 persistentvolume/pvc-2aed2ea9-1077-4164-8d8e-9894ea85e093   10Gi       RWO            Delete           Bound    default/wordpress                  standard                11m
 persistentvolume/pvc-b2217342-7e51-4ad9-8c85-b660f1393cad   8Gi        RWO            Delete           Bound    default/data-wordpress-mariadb-0   standard                11m
@@ -3889,13 +4826,21 @@ persistentvolumeclaim/data-wordpress-mariadb-0   Bound    pvc-b2217342-7e51-4ad9
 persistentvolumeclaim/wordpress                  Bound    pvc-2aed2ea9-1077-4164-8d8e-9894ea85e093   10Gi       RWO            standard       11m
 ```
 
-```helmコマンド
-$ helm uninstall wordpress
+コマンド
+```
+helm uninstall wordpress
+```
+コマンド結果
+```
 release "wordpress" uninstalled
 ```
 
-```helmコマンド
-$ helm list
+コマンド
+```
+helm list
+```
+コマンド結果
+```
 NAME    NAMESPACE       REVISION        UPDATED STATUS  CHART   APP VERSION
 ```
 
