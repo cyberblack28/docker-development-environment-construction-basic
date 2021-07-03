@@ -6,12 +6,22 @@
 
 #### Codeリポジトリの作成
 
-```linuxコマンド
-$ cd ../../Chapter07/7-4-1-01
+コマンド
+```
+cd
 ```
 
-```linuxコマンド
-$ cat code/app/main.go
+コマンド
+```
+cd docker-development-environment-construction-basic/Chapter07/7-4-1-01
+```
+
+コマンド
+```
+cat code/app/main.go
+```
+コマンド結果
+```
 package main
 
 import (
@@ -29,8 +39,12 @@ func main() {
 }
 ```
 
-```linuxコマンド
-$ cat code/app/Dockerfile
+コマンド
+```
+cat code/app/Dockerfile
+```
+コマンド結果
+```
 #Stage-1
 FROM golang:1.16 as builder
 COPY ./app/main.go ./
@@ -43,45 +57,73 @@ COPY --from=builder /gitops-go-app /.
 ENTRYPOINT ["./gitops-go-app"]
 ```
 
-```linuxコマンド
-$ cd code
+コマンド
+```
+export GITCONFIG_EMAIL="you@example.com"
 ```
 
-```gitコマンド
-$ git init
+コマンド
+```
+export GITCONFIG_USER_NAME="User Name"
+```
+
+コマンド
+```
+cd code
+```
+
+コマンド
+```
+git init
+```
+コマンド結果
+```
 Initialized empty Git repository in /home/iyutaka2021/docker-development-environment-construction-basic/Chapter07/7-4-1-01/code/.git/
 ```
 
-```gitコマンド
-$ git config --global user.email "you@example.com"
+コマンド
+```
+git config --global user.email "${GITCONFIG_EMAIL}"
 ```
 
-```gitコマンド
-$ git config --global user.name "Your Name"
+コマンド
+```
+git config --global user.name "${GITCONFIG_USER_NAME}"
 ```
 
-```gitコマンド
-$ git add .
+コマンド
+```
+git add .
 ```
 
-```gitコマンド
-$ git commit -m "first commit"
+コマンド
+```
+git commit -m "first commit"
+```
+コマンド結果
+```
 [master (root-commit) 2f0ec0b] first commit
  2 files changed, 25 insertions(+)
  create mode 100644 app/Dockerfile
  create mode 100644 app/main.go
 ```
 
-```gitコマンド
-$ git branch -M main
+コマンド
+```
+git branch -M main
 ```
 
-```gitコマンド
-$ git remote add origin https://github.com/cyberblack28/code.git
+コマンド
+```
+git remote add origin https://github.com/${GITCONFIG_USER_NAME}/code.git
 ```
 
-```gitコマンド
-$ git push -u origin main
+コマンド
+```
+git push -u origin main
+```
+コマンド結果
+```
 Username for 'https://github.com': cyberblack28
 Password for 'https://cyberblack28@github.com':
 Enumerating objects: 5, done.
@@ -95,39 +137,48 @@ To https://github.com/cyberblack28/code.git
 Branch 'main' set up to track remote branch 'main' from 'origin'.
 ```
 
-```gitコマンド
-$ git config --global credential.helper 'cache --timeout=28800'
-```
-
 #### Configリポジトリの作成
 
-```linuxコマンド
-$ cd ../
+コマンド
+```
+cd ../
 ```
 
-```helmコマンド
-$ mkdir config
+コマンド
+```
+mkdir config
 ```
 
-```helmコマンド
-$ cd config
+コマンド
+```
+cd config
 ```
 
-```helmコマンド
-$ helm create gitops-helm
+コマンド
+```
+helm create gitops-helm
+```
+コマンド結果
+```
 Creating gitops-helm
 ```
 
-```linuxコマンド
-$ rm -rf gitops-helm/templates/*
+コマンド
+```
+rm -rf gitops-helm/templates/*
 ```
 
-```linuxコマンド
-$ cp -p ../helm-yaml/gitops-deployment.yaml gitops-helm/templates
+コマンド
+```
+cp -p ../helm-yaml/gitops-deployment.yaml gitops-helm/templates
 ```
 
-```linuxコマンド
-$ cat  gitops-helm/templates/gitops-deployment.yaml
+コマンド
+```
+cat  gitops-helm/templates/gitops-deployment.yaml
+```
+コマンド結果
+```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -148,12 +199,17 @@ spec:
         imagePullPolicy: {{ .Values.imageConfig.pullPolicy }}
 ```
 
-```linuxコマンド
-$ cp -p ../helm-yaml/gitops-service.yaml gitops-helm/templates
+コマンド
+```
+cp -p ../helm-yaml/gitops-service.yaml gitops-helm/templates
 ```
 
-```linuxコマンド
-$ cat  gitops-helm/templates/gitops-service.yaml
+コマンド
+```
+cat  gitops-helm/templates/gitops-service.yaml
+```
+コマンド結果
+```
 apiVersion: v1
 kind: Service
 metadata:
@@ -171,19 +227,24 @@ spec:
 
 #### values.yamlの作成
 
-```linuxコマンド
-$ cp -p ../helm-yaml/values.yaml gitops-helm
+コマンド
+```
+cp -p ../helm-yaml/values.yaml gitops-helm
 ```
 
-```linuxコマンド
-$ cat  gitops-helm/values.yaml
+コマンド
+```
+vim gitops-helm/values.yaml
+```
+コマンド結果
+```
 #Common
-label: giops
+label: gitops
 
 #Deployment
 replicas: 3
 image:
-  repository: docker.io/cyberblack28/gitops-go-app
+  repository: docker.io/DOCKERHUB_REPO_NAME/gitops-go-app # 変更箇所 DOCKERHUB_REPO_NAME
   tag: 0
 
 imageConfig:
@@ -193,17 +254,26 @@ imageConfig:
 service_type: LoadBalancer
 ```
 
-```gitコマンド
-$ git init
+コマンド
+```
+git init
+```
+コマンド結果
+```
 Initialized empty Git repository in /home/iyutaka2021/docker-development-environment-construction-basic/Chapter07/7-4-1-01/config/.git/
 ```
 
-```gitコマンド
-$ git add .
+コマンド
+```
+git add .
 ```
 
-```gitコマンド
-$ git commit -m "first commit"
+コマンド
+```
+git commit -m "first commit"
+```
+コマンド結果
+```
 [master (root-commit) 5395a9a] first commit
  5 files changed, 92 insertions(+)
  create mode 100644 gitops-helm/.helmignore
@@ -213,16 +283,22 @@ $ git commit -m "first commit"
  create mode 100644 gitops-helm/values.yaml
 ```
 
-```gitコマンド
-$ git branch -M main
+コマンド
+```
+git branch -M main
 ```
 
-```gitコマンド
-$ git remote add origin https://github.com/cyberblack28/config.git
+コマンド
+```
+git remote add origin https://github.com/${GITCONFIG_USER_NAME}/config.git
 ```
 
-```gitコマンド
-$ git push -u origin main
+コマンド
+```
+git push -u origin main
+```
+コマンド結果
+```
 Enumerating objects: 9, done.
 Counting objects: 100% (9/9), done.
 Delta compression using up to 4 threads
@@ -236,12 +312,17 @@ Branch 'main' set up to track remote branch 'main' from 'origin'.
 
 #### ローカルリポジトリとの同期
 
-```linuxコマンド
-$ cd ../code
+コマンド
+```
+cd ../code
 ```
 
-```gitコマンド
-$ git pull
+コマンド
+```
+git pull
+```
+コマンド結果
+```
 remote: Enumerating objects: 6, done.
 remote: Counting objects: 100% (6/6), done.
 remote: Compressing objects: 100% (3/3), done.
@@ -256,8 +337,12 @@ Fast-forward
  create mode 100644 .github/workflows/main.yml
 ```
 
-```linuxコマンド
-$ ls -la
+コマンド
+```
+ls -la
+```
+コマンド結果
+```
 total 20
 drwxr-xr-x 5 iyutaka2021 iyutaka2021 4096 May 30 14:10 .
 drwxr-xr-x 6 iyutaka2021 iyutaka2021 4096 May 30 14:05 ..
@@ -270,12 +355,17 @@ drwxr-xr-x 3 iyutaka2021 iyutaka2021 4096 May 30 14:10 .github
 
 #### main.ymlの作成
 
-```linuxコマンド
-$ cp -p ../github-actions/main.yml .github/workflows/
+コマンド
+```
+cp -p ../github-actions/main.yml .github/workflows/
 ```
 
-```linuxコマンド
-$ cat .github/workflows/main.yml
+コマンド
+```
+cat .github/workflows/main.yml
+```
+コマンド結果
+```
 name: GitHub Actions CI
 
 on:
@@ -294,7 +384,7 @@ jobs:
       - name: Build an image from Dockerfile
         run: |
           # Dockerビルド
-          DOCKER_BUILDKIT=1 docker build . -f app/Dockerfile --tag ${{ secrets.USERNAME }}/gitops-go-app:${{ github.run_number }}
+          DOCKER_BUILDKIT=1 docker image build . -f app/Dockerfile --tag ${{ secrets.USERNAME }}/gitops-go-app:${{ github.run_number }}
 
         # Trivyによるイメージスキャン
       - name: Run Trivy vulnerability scanner
@@ -306,13 +396,13 @@ jobs:
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
 
-        # イメージをDocker Hubにプッシュ
+        # コンテナイメージをDocker Hubにプッシュ
       - name: Push image to Docker Hub
         run: |
           # Docker Hub ログイン
           docker login docker.io --username ${{ secrets.USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}
           # イメージプッシュ
-          docker push ${{ secrets.USERNAME }}/gitops-go-app:${{ github.run_number }}
+          docker image push ${{ secrets.USERNAME }}/gitops-go-app:${{ github.run_number }}
 
         # values.yamlの更新、新規ブランチ作成、プッシュ、プルリクエスト
       - name: Update values.yaml & Pull Request to Config Repository
@@ -340,23 +430,33 @@ jobs:
           gh pr create  --title "Update Tag ${{ github.run_number }}" --body "Please Merge !!"
 ```
 
-```gitコマンド
-$ git add .
+コマンド
+```
+git add .
 ```
 
-```gitコマンド
-$ git commit -m "create main.yml"
+コマンド
+```
+git commit -m "create main.yml"
+```
+コマンド結果
+```
 [main 842cd35] create main.yml
  1 file changed, 62 insertions(+), 36 deletions(-)
  rewrite .github/workflows/main.yml (90%)
 ```
 
-```gitコマンド
-$ git branch -M main
+コマンド
+```
+git branch -M main
 ```
 
-```gitコマンド
-$ git push -u origin main
+コマンド
+```
+git push -u origin main
+```
+コマンド結果
+```
 Enumerating objects: 9, done.
 Counting objects: 100% (9/9), done.
 Delta compression using up to 4 threads
@@ -372,68 +472,66 @@ Branch 'main' set up to track remote branch 'main' from 'origin'.
 
 ### 7.5.2 Argo CDのインストール
 
-#### Argo CD Clientのインストール
-
-```linuxコマンド
-$ VERSION=$(curl --silent "https://api.github.com/repos/argoproj/argo-cd/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
-```
-
-```linuxコマンド
-$ sudo curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/$VERSION/argocd-linux-amd64
-```
-
-```linuxコマンド
-$ sudo chmod +x /usr/local/bin/argocd
-```
-
-```argocdコマンド
-$ argocd version
-argocd: v2.0.3+8d2b13d
-  BuildDate: 2021-05-27T17:38:37Z
-  GitCommit: 8d2b13d733e1dff7d1ad2c110ed31be4804406e2
-  GitTreeState: clean
-  GoVersion: go1.16
-  Compiler: gc
-  Platform: linux/amd64
-FATA[0000] Failed to establish connection to 34.84.196.132:443: dial tcp 34.84.196.132:443: connect: connection refused
-```
-
 #### Argo CDサーバのインストール
 
-```helmコマンド
-$ helm repo add argo https://argoproj.github.io/argo-helm
+コマンド
+```
+helm repo add argo https://argoproj.github.io/argo-helm
+```
+コマンド結果
+```
 "argo" has been added to your repositories
 ```
 
-```helmコマンド
-$ helm repo update
+コマンド
+```
+helm repo update
+```
+コマンド結果
+```
 Hang tight while we grab the latest from your chart repositories...
 ...Successfully got an update from the "argo" chart repository
 ...Successfully got an update from the "bitnami" chart repository
 Update Complete. ⎈Happy Helming!⎈
 ```
 
-```helmコマンド
-$ helm search repo argocd
+コマンド
+```
+helm search repo argocd
+```
+コマンド結果
+```
 NAME                            CHART VERSION   APP VERSION     DESCRIPTION
 argo/argocd-applicationset      0.1.5           v0.1.0          A Helm chart for installing ArgoCD ApplicationSet
 argo/argocd-notifications       1.3.2           1.1.1           A Helm chart for ArgoCD notifications, an add-o...
 argo/argo-cd                    3.6.4           2.0.3           A Helm chart for ArgoCD, a declarative, GitOps ...
 ```
 
-```kubectlコマンド
-$ kubectl create namespace argocd
+コマンド
+```
+kubectl create namespace argocd
+```
+コマンド結果
+```
 namespace/argocd created
 ```
 
-```kubectlコマンド
-$ kubectl get ns argocd
+コマンド
+```
+kubectl get namespace argocd
+```
+コマンド結果
+```
 NAME     STATUS   AGE
 argocd   Active   20s
 ```
 
-```helmコマンド
-$ helm install argo-cd -n argocd argo/argo-cd --version 3.6.4
+コマンド
+```
+helm install argo-cd -n argocd argo/argo-cd --version 3.6.4
+```
+コマンド結果
+```
 manifest_sorter.go:192: info: skipping unknown hook: "crd-install"
 manifest_sorter.go:192: info: skipping unknown hook: "crd-install"
 NAME: argo-cd
@@ -463,8 +561,12 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 
 #### デプロイ状況の確認
 
-```kubectlコマンド
-$ kubectl get pods,services -n argocd
+コマンド
+```
+kubectl get pods,services -n argocd
+```
+コマンド結果
+```
 NAME                                                         READY   STATUS    RESTARTS   AGE
 pod/argo-cd-argocd-application-controller-676599564b-gt2bz   1/1     Running   0          54s
 pod/argo-cd-argocd-dex-server-7b7d8d89b7-kmxf5               1/1     Running   0          54s
@@ -482,61 +584,122 @@ service/argo-cd-argocd-server                   ClusterIP   10.48.10.158   <none
 
 #### Argo CD GUIの設定
 
-```kubectlコマンド
-$ kubectl patch service argo-cd-argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+コマンド
+```
+kubectl patch service argo-cd-argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+```
+コマンド結果
+```
 service/argo-cd-argocd-server patched
 ```
 
-```kubectlコマンド
-$ kubectl get service -n argocd
+コマンド
+```
+kubectl get service -n argocd
+```
+コマンド結果
+```
 NAME                                    TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)                      AGE
 argo-cd-argocd-application-controller   ClusterIP      10.48.13.200   <none>         8082/TCP                     2m55s
 argo-cd-argocd-dex-server               ClusterIP      10.48.0.207    <none>         5556/TCP,5557/TCP            2m55s
 argo-cd-argocd-redis                    ClusterIP      10.48.9.140    <none>         6379/TCP                     2m55s
 argo-cd-argocd-repo-server              ClusterIP      10.48.8.132    <none>         8081/TCP                     2m55s
-argo-cd-argocd-server                   LoadBalancer   10.48.10.158   34.85.78.201   80:30177/TCP,443:32249/TCP   2m55s
+argo-cd-argocd-server                   LoadBalancer   10.48.10.158   34.xx.xx.xx   80:30177/TCP,443:32249/TCP   2m55s
 ```
 
-```kubectlコマンド
-$ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+コマンド
+```
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
+コマンド結果
+```
 qAGYKIRoLiMsIEby
 ```
 
-```argocdコマンド
-$ argocd --insecure login 34.85.78.201 --username admin
+#### Argo CD Clientのインストール
+
+コマンド
+```
+sudo curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/$VERSION/argocd-linux-amd64
+```
+
+コマンド
+```
+sudo chmod +x /usr/local/bin/argocd
+```
+
+コマンド
+```
+argocd version
+```
+コマンド結果
+```
+argocd: v2.0.3+8d2b13d
+  BuildDate: 2021-05-27T17:38:37Z
+  GitCommit: 8d2b13d733e1dff7d1ad2c110ed31be4804406e2
+  GitTreeState: clean
+  GoVersion: go1.16
+  Compiler: gc
+  Platform: linux/amd64
+FATA[0000] Failed to establish connection to 34.84.196.132:443: dial tcp 34.84.196.132:443: connect: connection refused
+```
+
+コマンド
+```
+argocd --insecure login 34.xx.xx.xx --username admin
+```
+コマンド結果
+```
 Password:
 'admin:login' logged in successfully
 Context '34.85.78.201' updated
 ```
 
-```argocdコマンド
-$ argocd  account update-password --account admin
+コマンド
+```
+argocd  account update-password --account admin
+```
+コマンド結果
+```
 *** Enter current password:
 *** Enter new password:
 *** Confirm new password:
 Password updated
-Context '34.85.78.201' updated
+Context '34.xx.xx.xx' updated
 ```
 
 ## 7.6 GitOpsの実行
 
-```linuxコマンド
-$ LB_EXIP=$(kubectl get service gitops-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+コマンド
+```
+LB_EXIP=$(kubectl get service gitops-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 ```
 
-```linuxコマンド
-$ curl http://${LB_EXIP}
+コマンド
+```
+curl http://${LB_EXIP}
+```
+コマンド結果
+```
 Hello GitOps!!
 ```
 
-```kubectlコマンド
-$ kubectl get service gitops-service
+コマンド
+```
+kubectl get service gitops-service
+```
+コマンド結果
+```
 NAME             TYPE           CLUSTER-IP    EXTERNAL-IP     PORT(S)        AGE
 gitops-service   LoadBalancer   10.48.13.12   34.84.113.170   80:32558/TCP   9m45s
 ```
 
-```linuxコマンド
-$ vim app/main.go
+コマンド
+```
+vim app/main.go
+```
+コマンド結果
+```
 package main
 
 import (
@@ -554,22 +717,32 @@ func main() {
 }
 ```
 
-```gitコマンド
+コマンド
+```
 $ git add .
 ```
 
-```gitコマンド
-$ git commit -m "Hello Argo CD"
+コマンド
+```
+git commit -m "Hello Argo CD"
+```
+コマンド結果
+```
 [main ce79239] Hello Argo CD
  1 file changed, 2 insertions(+), 2 deletions(-)
 ```
 
-```gitコマンド
-$ git branch -M main
+コマンド
+```
+git branch -M main
 ```
 
-```gitコマンド
-$ git push -u origin main
+コマンド
+```
+git push -u origin main
+```
+コマンド結果
+```
 Enumerating objects: 7, done.
 Counting objects: 100% (7/7), done.
 Delta compression using up to 4 threads
@@ -582,17 +755,29 @@ To https://github.com/cyberblack28/code.git
 Branch 'main' set up to track remote branch 'main' from 'origin'.
 ```
 
-```linuxコマンド
-$ curl http://${LB_EXIP}
+コマンド
+```
+curl http://${LB_EXIP}
+```
+コマンド結果
+```
 Hello Argo CD!!
 ```
 
-```linuxコマンド
-$ curl http://${LB_EXIP}
+コマンド
+```
+curl http://${LB_EXIP}
+```
+コマンド結果
+```
 Hello GitOps!!
 ```
 
-```linuxコマンド
-$ curl http://${LB_EXIP}
+コマンド
+```
+curl http://${LB_EXIP}
+```
+コマンド結果
+```
 Hello Argo CD!!
 ```
