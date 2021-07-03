@@ -20,9 +20,11 @@
 
 【1】インスタンスの作成
 
+コマンド
 ```
 gcloud compute instances create docker --zone asia-northeast1-b --machine-type=n1-standard-1 --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --boot-disk-size=20GB
 ```
+コマンド結果
 ```
 WARNING: You have selected a disk size of under [200GB]. This may result in poor I/O performance. For more information, see: https://developers.google.com/compute/docs/disks#performance.
 Created [https://www.googleapis.com/compute/v1/projects/mercurial-shape-278704/zones/asia-northeast1-b/instances/docker].
@@ -32,10 +34,11 @@ WARNING: Some requests generated warnings:
 NAME    ZONE               MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP    STATUS
 docker  asia-northeast1-b  n1-standard-1               10.146.0.9   34.84.111.225  RUNNING
 ```
-
+コマンド
 ```
 gcloud compute firewall-rules create docker --allow tcp
 ```
+コマンド結果
 ```
 Creating firewall...⠹Created [https://www.googleapis.com/compute/v1/projects/mercurial-shape-278704/global/firewalls/docker].
 Creating firewall...done.
@@ -45,17 +48,20 @@ docker  default  INGRESS    1000      tcp          False
 
 【2】SSH接続
 
+コマンド
 ```
 gcloud projects list
 ```
+コマンド結果
 ```
 PROJECT_ID              NAME              PROJECT_NUMBER
 mercurial-shape-278704  My First Project  xxxxxxxxxxxx
 ```
-
+コマンド
 ```
 gcloud compute ssh --project mercurial-shape-278704 --zone asia-northeast1-b docker
 ```
+コマンド結果
 ```
 Warning: Permanently added 'compute.7067885094151172666' (ECDSA) to the list of known hosts.
 Welcome to Ubuntu 20.04.2 LTS (GNU/Linux 5.4.0-1042-gcp x86_64)
@@ -92,9 +98,11 @@ $
 
 【3】root ユーザ設定
 
+コマンド
 ```
 sudo passwd root
 ```
+コマンド結果
 ```
 New password:dockerpractice2021
 Retype new password:dockerpractice2021
@@ -105,9 +113,11 @@ Password:dockerpractice2021
 
 【4】仮想マシンの削除
 
+コマンド
 ```
 gcloud compute instances delete docker --zone asia-northeast1-b
 ```
+コマンド結果
 ```
 The following instances will be deleted. Any attached disks configured
  to be auto-deleted will be deleted unless they are attached to any
@@ -123,9 +133,11 @@ Deleted [https://www.googleapis.com/compute/v1/projects/mercurial-shape-278704/z
 
 【5】ファイアウォールの削除
 
+コマンド
 ```
 gcloud compute firewall-rules delete docker
 ```
+コマンド結果
 ```
 The following firewalls will be deleted:
  - [docker]
@@ -139,15 +151,18 @@ Deleted [https://www.googleapis.com/compute/v1/projects/mercurial-shape-278704/g
 
 【1】Dockerインストールスクリプトのダウンロード
 
+コマンド
 ```
 curl -fsSL get.docker.com -o get-docker.sh
 ```
 
 【2】Dockerのインストール
 
+コマンド
 ```
 sh get-docker.sh
 ```
+コマンド結果
 ```
 # Executing docker install script, commit: 7cae5f8b0decc17d6571f9f52eb840fbc13b2737
 + sh -c apt-get update -qq >/dev/null
@@ -212,9 +227,11 @@ WARNING: Access to the remote API on a privileged Docker daemon is equivalent
 
 【3】Docker コマンドの実行
 
+コマンド
 ```
 docker system info
 ```
+コマンド結果
 ```
 Client:
  Context:    default
