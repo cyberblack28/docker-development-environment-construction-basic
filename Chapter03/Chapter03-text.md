@@ -7,15 +7,17 @@
 #### Dockerfileの作成
 
 ```gitコマンド
-# git clone https://github.com/cyberblack28/docker-development-environment-construction-basic
+git clone https://github.com/cyberblack28/docker-development-environment-construction-basic
 ```
 
 ```unixコマンド
-# cd docker-development-environment-construction-basic/Chapter03/3-1-1-01
+cd docker-development-environment-construction-basic/Chapter03/3-1-1-01
 ```
 
-```linuxコマンド
-# cat Dockerfile
+```
+cat Dockerfile
+```
+```
 #CentOS7のベースイメージを取得
 FROM centos:7
 
@@ -34,8 +36,10 @@ ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
 
 #### index.htmlファイルの作成
 
-```linuxコマンド
+```
 # cat index.html
+```
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -48,8 +52,14 @@ ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
 
 #### コンテナイメージの作成
 
-```dockerコマンド
-# docker image build -t cyberblack28/sample-nginx .
+```
+export DOCKERHUB_REPO_NAME="cyberblack28"
+```
+
+```
+docker image build -t cyberblack28/sample-nginx .
+```
+```
 Sending build context to Docker daemon  3.072kB
 Step 1/5 : FROM centos:7
 7: Pulling from library/centos
@@ -543,17 +553,21 @@ Successfully tagged cyberblack28/sample-nginx:latest
 
 #### コンテナイメージの確認
 
-```dockerコマンド
-# docker image ls
+```
+docker image ls
+```
+```
 REPOSITORY                  TAG       IMAGE ID       CREATED          SIZE
-cyberblack28/sample-nginx   latest    dda2f2973802   10 minutes ago   558MB
+cyberblack28/sample-nginx   latest    59cb9dc6b0e2   10 minutes ago   558MB
 centos                      7         8652b9f0cb4c   5 months ago     204MB
 ```
 
 #### レイヤの確認
 
-```dockerコマンド
-# docker image history cyberblack28/sample-nginx
+```
+docker image history cyberblack28/sample-nginx
+```
+```
 IMAGE          CREATED          CREATED BY                                      SIZE      COMMENT
 59cb9dc6b0e2   12 minutes ago   /bin/sh -c #(nop)  ENTRYPOINT ["/usr/sbin/ng…   0B
 2fd5a19d6053   12 minutes ago   /bin/sh -c #(nop) COPY file:3e884108a93ee9b1…   126B
@@ -573,12 +587,14 @@ c39fdd92f3fc   12 minutes ago   /bin/sh -c yum -y install nginx                 
 
 #### Go 言語のサンプルアプリケーションの作成
 
-```linuxコマンド
-# cd ../3-1-3-01
+```
+cd ../3-1-3-01
 ```
 
-```linuxコマンド
-# cat main.go
+```
+cat main.go
+```
+```
 package main
 
 import "fmt"
@@ -588,10 +604,12 @@ func main() {
 }
 ```
 
-```linuxコマンド
-# cat Dockerfile-msb
+```
+cat Dockerfile-msb
+```
+```
 #Stage1
-#Goのビルドを実行するベースイメージをPull
+#Goのビルドを実行するベースイメージを取得
 FROM golang:1.16.4-alpine3.13 as builder
 #ローカルのmain.goをイメージ内にコピー
 COPY ./main.go ./
@@ -599,7 +617,7 @@ COPY ./main.go ./
 RUN go build -o /msb ./main.go
 
 #Stage2
-#alpineベースイメージをPull
+#alpineのベースイメージを取得
 FROM alpine:3.13
 #ビルドイメージからビルド成果物のmsbをコピーして配置
 COPY --from=builder /msb /usr/local/bin/msb
@@ -607,8 +625,10 @@ COPY --from=builder /msb /usr/local/bin/msb
 ENTRYPOINT ["/usr/local/bin/msb"]
 ```
 
-```dockerコマンド
-# docker image build -t msb -f Dockerfile-msb .
+```
+docker image build -t msb -f Dockerfile-msb .
+```
+```
 Sending build context to Docker daemon  3.584kB
 Step 1/6 : FROM golang:1.16.4-alpine3.13 as builder
 1.16.4-alpine3.13: Pulling from library/golang
@@ -642,13 +662,17 @@ Successfully built 1ffb1b502170
 Successfully tagged msb:latest
 ```
 
-```dockerコマンド
-# docker container run -it --rm msb
+```
+docker container run -it --rm msb
+```
+```
 Let's start multi-stage builds !!
 ```
 
-```dockerコマンド
-# docker image ls
+```
+docker image ls
+```
+```
 REPOSITORY                  TAG                 IMAGE ID       CREATED          SIZE
 msb                         latest              1ffb1b502170   2 minutes ago    7.55MB
 <none>                      <none>              0b9401537c5c   2 minutes ago    303MB
@@ -662,8 +686,10 @@ centos                      7                   8652b9f0cb4c   5 months ago     
 
 #### BuildKitを利用したビルド
 
-```dockerコマンド
-# DOCKER_BUILDKIT=1 docker image build -t msb -f Dockerfile-msb .
+```
+DOCKER_BUILDKIT=1 docker image build -t msb -f Dockerfile-msb .
+```
+```
 [+] Building 1.7s (11/11) FINISHED
  => [internal] load build definition from Dockerfile-msb                                                                                                                         0.1s
  => => transferring dockerfile: 589B                                                                                                                                             0.0s
@@ -684,8 +710,10 @@ centos                      7                   8652b9f0cb4c   5 months ago     
  => => naming to docker.io/library/msb                                                                                                                                           0.0s
 ```
 
-```dockerコマンド
-# docker image ls
+```
+docker image ls
+```
+```
 REPOSITORY                  TAG                 IMAGE ID       CREATED          SIZE
 msb                         latest              ab4aa580a77f   3 minutes ago    7.55MB
 <none>                      <none>              1ffb1b502170   7 minutes ago    7.55MB
@@ -698,8 +726,10 @@ centos                      7                   8652b9f0cb4c   5 months ago     
 
 #### Trivyのインストール
 
-```dockerコマンド
-# curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/master/contrib/install.sh | sh -s -- -b /usr/local/bin
+```
+curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/master/contrib/install.sh | sh -s -- -b /usr/local/bin
+```
+```
 aquasecurity/trivy info checking GitHub for latest tag
 aquasecurity/trivy info found version: 0.17.2 for v0.17.2/Linux/64bit
 aquasecurity/trivy info installed /usr/local/bin/trivy
@@ -709,8 +739,10 @@ aquasecurity/trivy info installed /usr/local/bin/trivy
 
 省略箇所はあまりにも量が多く、随時変わるものなのでこちらでも省略とします。
 
-```trivyコマンド
-# trivy image cyberblack28/sample-nginx
+```
+trivy image cyberblack28/sample-nginx
+```
+```
 2021-05-08T14:48:03.203Z        INFO    Detecting RHEL/CentOS vulnerabilities...
 2021-05-08T14:48:03.222Z        INFO    Trivy skips scanning programming language libraries because no supported file was detected
 
@@ -726,8 +758,10 @@ Total: 687 (UNKNOWN: 0, LOW: 385, MEDIUM: 297, HIGH: 5, CRITICAL: 0)
 
 省略箇所はあまりにも量が多く、随時変わるものなのでこちらでも省略とします。
 
-```trivyコマンド
-# trivy nginx:1.19.2
+```
+trivy nginx:1.19.2
+```
+```
 2020-10-06T13:20:26.558Z        INFO    Need to update DB
 2020-10-06T13:20:26.558Z        INFO    Downloading DB...
 18.68 MiB / 18.68 MiB [------------------------------------------------------------------------------------------------------------------------------------------------------] 100.00% 4.42 MiB p/s 4s
@@ -772,8 +806,10 @@ Total: 151 (UNKNOWN: 0, LOW: 116, MEDIUM: 35, HIGH: 0, CRITICAL: 0)
 
 #### Docker Hubへのログイン
 
-```dockerコマンド
-# docker login
+```
+docker login
+```
+```
 Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
 Username: cyberblack28
 Password:
@@ -786,8 +822,10 @@ Login Succeeded
 
 #### Pushコマンドの実行
 
-```dockerコマンド
-# docker image push cyberblack28/sample-nginx
+```
+docker image push cyberblack28/sample-nginx
+```
+```
 Using default tag: latest
 The push refers to repository [docker.io/cyberblack28/sample-nginx]
 09ff5c3f3c16: Pushed
@@ -799,8 +837,10 @@ latest: digest: sha256:c80b9c9ef042fecee96e7bd4b4e8456d113757133fe575adfe61768a4
 
 #### IMAGE IDの確認
 
-```dockerコマンド
-# docker image ls
+```
+docker image ls
+```
+```
 REPOSITORY                  TAG                 IMAGE ID       CREATED          SIZE
 msb                         latest              ab4aa580a77f   9 minutes ago    7.55MB
 <none>                      <none>              1ffb1b502170   13 minutes ago   7.55MB
@@ -813,8 +853,10 @@ centos                      7                   8652b9f0cb4c   5 months ago     
 
 #### イメージの削除と確認
 
-```dockerコマンド
-# docker image rm 59cb9dc6b0e2
+```
+docker image rm ${DOCKERHUB_REPO_NAME}/sample-nginx
+```
+```
 Untagged: cyberblack28/sample-nginx:latest
 Untagged: cyberblack28/sample-nginx@sha256:c80b9c9ef042fecee96e7bd4b4e8456d113757133fe575adfe61768a434aaae7
 Deleted: sha256:59cb9dc6b0e253c56c88a3b0ac12a09e5d1e2e30f47b2489a899e3a09504bf1c
@@ -826,8 +868,10 @@ Deleted: sha256:5558949c41b554a1377ae604cc086a964a763405a3ef7121faa022b70e828384
 Deleted: sha256:dc254c8b63c3b59e102926bc8214ce1269a57890de864f8e98deb663edf399f7
 ```
 
-```dockerコマンド
-# docker image ls
+```
+docker image ls
+```
+```
 REPOSITORY   TAG                 IMAGE ID       CREATED          SIZE
 msb          latest              ab4aa580a77f   11 minutes ago   7.55MB
 <none>       <none>              1ffb1b502170   15 minutes ago   7.55MB
@@ -839,8 +883,10 @@ centos       7                   8652b9f0cb4c   5 months ago     204MB
 
 #### Pullコマンドの実行
 
-```dockerコマンド
-# docker image pull cyberblack28/sample-nginx
+```
+docker image pull cyberblack28/sample-nginx
+```
+```
 Using default tag: latest
 latest: Pulling from cyberblack28/sample-nginx
 2d473b07cdd5: Already exists
@@ -852,8 +898,10 @@ Status: Downloaded newer image for cyberblack28/sample-nginx:latest
 docker.io/cyberblack28/sample-nginx:latest
 ```
 
-```dockerコマンド
-# docker image ls
+```
+docker image ls
+```
+```
 REPOSITORY                  TAG                 IMAGE ID       CREATED          SIZE
 msb                         latest              ab4aa580a77f   16 minutes ago   7.55MB
 <none>                      <none>              1ffb1b502170   19 minutes ago   7.55MB
@@ -866,12 +914,14 @@ centos                      7                   8652b9f0cb4c   5 months ago     
 
 #### Image Tag
 
-```linuxコマンド
-# cd ../3-2-4-01
+```
+cd ../3-2-4-01
 ```
 
-```dockerコマンド
-# cat index.html
+```
+cat index.html
+```
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -883,8 +933,10 @@ centos                      7                   8652b9f0cb4c   5 months ago     
 </html>
 ```
 
-```dockerコマンド
-# docker image build -t cyberblack28/sample-nginx .
+```
+docker image build -t ${DOCKERHUB_REPO_NAME}/sample-nginx .
+```
+```
 Sending build context to Docker daemon  3.072kB
 Step 1/5 : FROM centos:7
  ---> 8652b9f0cb4c
@@ -1372,8 +1424,10 @@ Successfully built d487de1ee98f
 Successfully tagged cyberblack28/sample-nginx:latest
 ```
 
-```dockerコマンド
-# docker image ls
+```
+docker image ls
+```
+```
 REPOSITORY                  TAG                 IMAGE ID       CREATED          SIZE
 cyberblack28/sample-nginx   latest              d487de1ee98f   7 minutes ago    558MB
 msb                         latest              ab4aa580a77f   27 minutes ago   7.55MB
@@ -1385,12 +1439,14 @@ alpine                      3.13                6dbb9cc54074   3 weeks ago      
 centos                      7                   8652b9f0cb4c   5 months ago     204MB
 ```
 
-```dockerコマンド
-# docker image tag 59cb9dc6b0e2 cyberblack28/sample-nginx:1.0
+```
+docker image tag 59cb9dc6b0e2 ${DOCKERHUB_REPO_NAME}/sample-nginx:1.0
 ```
 
-```dockerコマンド
-# docker image ls
+```
+docker image ls
+```
+```
 REPOSITORY                  TAG                 IMAGE ID       CREATED          SIZE
 cyberblack28/sample-nginx   latest              d487de1ee98f   10 minutes ago   558MB
 msb                         latest              ab4aa580a77f   29 minutes ago   7.55MB
@@ -1402,8 +1458,10 @@ alpine                      3.13                6dbb9cc54074   3 weeks ago      
 centos                      7                   8652b9f0cb4c   5 months ago     204MB
 ```
 
-```dockerコマンド
-# docker image push cyberblack28/sample-nginx:1.0
+```
+docker image push ${DOCKERHUB_REPO_NAME}/sample-nginx:1.0
+```
+```
 The push refers to repository [docker.io/cyberblack28/sample-nginx]
 09ff5c3f3c16: Layer already exists
 6724fad9c54d: Layer already exists
@@ -1416,13 +1474,17 @@ The push refers to repository [docker.io/cyberblack28/sample-nginx]
 
 #### docker container run
 
-```dockerコマンド
-# docker container run --name sample-nginx -d -p 8080:80 cyberblack28/sample-nginx
+```
+docker container run --name sample-nginx -d -p 8080:80 ${DOCKERHUB_REPO_NAME}/sample-nginx
+```
+```
 c04bf6b03914a9e9984fc5f7b7c61d4bc1bd7d3295d06bc6bdf5bdca94b20f91
 ```
 
-```dockerコマンド
-# curl http://localhost:8080
+```
+curl http://localhost:8080
+```
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -1433,16 +1495,20 @@ c04bf6b03914a9e9984fc5f7b7c61d4bc1bd7d3295d06bc6bdf5bdca94b20f91
 </body>
 ```
 
-```dockerコマンド
-# docker container ls
+```
+docker container ls
+```
+```
 CONTAINER ID   IMAGE                       COMMAND                  CREATED              STATUS              PORTS                                   NAMES
 c04bf6b03914   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   About a minute ago   Up About a minute   0.0.0.0:8080->80/tcp, :::8080->80/tcp   sample-nginx
 ```
 
 #### docker container exec
 
-```dockerコマンド
-# docker container exec -it sample-nginx /bin/bash
+```
+docker container exec -it sample-nginx /bin/bash
+```
+```
 [root@c04bf6b03914 /]# ls
 anaconda-post.log  bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
 [root@c04bf6b03914 /]# exit
@@ -1451,36 +1517,46 @@ exit
 
 #### docker container stop / docker container start
 
-```dockerコマンド
-# docker container stop sample-nginx
+```
+docker container stop sample-nginx
+```
+```
 sample-nginx
 ```
 
-```dockerコマンド
-# docker container ls -a
+```
+docker container ls -a
+```
+```
 CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS                      PORTS     NAMES
 c04bf6b03914   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   4 minutes ago   Exited (0) 15 seconds ago             sample-nginx
 ```
 
-```dockerコマンド
-# docker container start sample-nginx
+```
+docker container start sample-nginx
+```
+```
 sample-nginx
 ```
 
-```dockerコマンド
-# docker container ls -a
+```
+docker container ls -a
+```
+```
 CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS         PORTS                                   NAMES
 c04bf6b03914   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   6 minutes ago   Up 8 seconds   0.0.0.0:8080->80/tcp, :::8080->80/tcp   sample-nginx
 ```
 
 #### docker container cp
 
-```linuxコマンド
-# cd ../3-3-2-01
+```
+cd ../3-3-2-01
 ```
 
-```linuxコマンド
-# cat copy.html
+```
+cat copy.html
+```
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -1492,12 +1568,14 @@ c04bf6b03914   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   6 minutes 
 </html>
 ```
 
-```dockerコマンド
-# docker container cp copy.html sample-nginx:/usr/share/nginx/html
+```
+docker container cp copy.html sample-nginx:/usr/share/nginx/html
 ```
 
-```linuxコマンド
-# curl http://localhost:8080/copy.html
+```
+curl http://localhost:8080/copy.html
+```
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -1511,16 +1589,20 @@ c04bf6b03914   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   6 minutes 
 
 #### docker container stats
 
-```dockerコマンド
-# docker container stats sample-nginx
+```
+docker container stats sample-nginx
+```
+```
 CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O   PIDS
 c04bf6b03914   sample-nginx   0.00%     3.777MiB / 3.597GiB   0.10%     1.8kB / 4.25kB   0B / 0B     2
 ```
 
 #### docker container inspect
 
-```dockerコマンド
-# docker container inspect sample-nginx
+```
+docker container inspect sample-nginx
+```
+```
 [
     {
         "Id": "c04bf6b03914a9e9984fc5f7b7c61d4bc1bd7d3295d06bc6bdf5bdca94b20f91",
@@ -1757,35 +1839,45 @@ c04bf6b03914   sample-nginx   0.00%     3.777MiB / 3.597GiB   0.10%     1.8kB / 
 
 #### docker container rm
 
-```dockerコマンド
-# docker container stop sample-nginx
+```
+docker container stop sample-nginx
+```
+```
 sample-nginx
 ```
 
-```dockerコマンド
-# docker container ls -a
+```
+docker container ls -a
+```
+```
 CONTAINER ID   IMAGE                       COMMAND                  CREATED          STATUS                      PORTS     NAMES
 c04bf6b03914   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   15 minutes ago   Exited (0) 11 seconds ago             sample-nginx
 ```
 
-```dockerコマンド
-# docker container rm sample-nginx
+```
+docker container rm sample-nginx
+```
+```
 sample-nginx
 ```
 
-```dockerコマンド
-# docker container ls -a
+```
+docker container ls -a
+```
+```
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
 #### docker container logs
 
-```linuxコマンド
-# cd ../3-3-2-02
+```
+cd ../3-3-2-02
 ```
 
-```dockerコマンド
-# cat Dockerfile
+```
+cat Dockerfile
+```
+```
 #CentOS7のベースイメージをPull
 FROM centos:7
 
@@ -1805,8 +1897,10 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/
 ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
 ```
 
-```dockerコマンド
-# docker image build -t cyberblack28/sample-nginx .
+```
+docker image build -t ${DOCKERHUB_REPO_NAME}/sample-nginx .
+```
+```
 Sending build context to Docker daemon  3.584kB
 Step 1/6 : FROM centos:7
  ---> 8652b9f0cb4c
@@ -1831,19 +1925,25 @@ Successfully built e721ae4e9582
 Successfully tagged cyberblack28/sample-nginx:latest
 ```
 
-```dockerコマンド
-# docker container run --name sample-nginx -d -p 8080:80 cyberblack28/sample-nginx
+```
+docker container run --name sample-nginx -d -p 8080:80 ${DOCKERHUB_REPO_NAME}/sample-nginx
+```
+```
 089df1d46ec28ddec9f5c14af8b67681eaccdb09235fb5666900ff5aba2d92e0
 ```
 
-```dockerコマンド
-# docker container ls
+```
+docker container ls
+```
+```
 CONTAINER ID   IMAGE                       COMMAND                  CREATED          STATUS          PORTS                                   NAMES
 089df1d46ec2   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   26 seconds ago   Up 25 seconds   0.0.0.0:8080->80/tcp, :::8080->80/tcp   sample-nginx
 ```
 
-```linuxコマンド
-# curl http://localhost:8080
+```
+curl http://localhost:8080
+```
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -1855,29 +1955,39 @@ CONTAINER ID   IMAGE                       COMMAND                  CREATED     
 </html>
 ```
 
-```dockerコマンド
-# docker container logs sample-nginx
+```
+docker container logs sample-nginx
+```
+```
 172.17.0.1 - - [11/May/2021:14:35:45 +0000] "GET / HTTP/1.1" 200 126 "-" "curl/7.68.0" "-"
 ```
 
-```dockerコマンド
-# docker container stop sample-nginx
+```
+docker container stop sample-nginx
+```
+```
 sample-nginx
 ```
 
-```dockerコマンド
-# docker container ls -a
+```
+docker container ls -a
+```
+```
 CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS                      PORTS     NAMES
 089df1d46ec2   cyberblack28/sample-nginx   "/usr/sbin/nginx -g …"   3 minutes ago   Exited (0) 13 seconds ago             sample-nginx
 ```
 
-```dockerコマンド
-# docker container rm sample-nginx
+```
+docker container rm sample-nginx
+```
+```
 sample-nginx
 ```
 
-```dockerコマンド
-# docker container ls
+```
+docker container ls
+```
+```
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
@@ -1885,12 +1995,14 @@ CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 
 #### バインドマウントの作成
 
-```linuxコマンド
-# cd ../3-3-4-01
+```
+cd ../3-3-4-01
 ```
 
-```dockerコマンド
-# cat htdocs/index.html
+```
+cat htdocs/index.html
+```
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -1904,8 +2016,10 @@ CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 
 以下結果は同じになります。どちらか実行してください。
 
-```dockerコマンド
-# docker run --name bind-nginx -d -p 8080:80 --mount type=bind,source=/root/docker-development-environment-construction-basic/Chapter03/3-3-4-01/htdocs,target=/usr/share/nginx/html nginx
+```
+docker run --name bind-nginx -d -p 8080:80 --mount type=bind,source=/root/docker-development-environment-construction-basic/Chapter03/3-3-4-01/htdocs,target=/usr/share/nginx/html nginx
+```
+```
 Unable to find image 'nginx:latest' locally
 latest: Pulling from library/nginx
 f7ec5a41d630: Pull complete
@@ -1919,8 +2033,10 @@ Status: Downloaded newer image for nginx:latest
 1d92e100abcfb9301c2f77cc5f707d44820e19bcb970a9f56b96cfaa3be8ee1a
 ```
 
-```linuxコマンド
-# curl http://localhost:8080/index.html
+```
+curl http://localhost:8080/index.html
+```
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -1931,10 +2047,17 @@ Status: Downloaded newer image for nginx:latest
 </body>
 ```
 
-```dockerコマンド
-# docker run --name bind-nginx -d -p 8080:80 -v /root/docker-development-environment-construction-basic/Chapter03/3-3-4-01/htdocs:/usr/share/nginx/html nginx
+```
+docker run --name bind-nginx -d -p 8080:80 -v /root/docker-development-environment-construction-basic/Chapter03/3-3-4-01/htdocs:/usr/share/nginx/html nginx
+```
+```
 aaab73a2a5de468200062b5ddcd42bb3e4c4a801053a5341a84a00a13176bf5b
-# curl http:////localhost:8080/index.html
+```
+
+```
+curl http:////localhost:8080/index.html
+```
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -1945,8 +2068,10 @@ aaab73a2a5de468200062b5ddcd42bb3e4c4a801053a5341a84a00a13176bf5b
 </body>
 ```
 
-```linuxコマンド
-# curl http://localhost:8080/index.html
+```
+curl http://localhost:8080/index.html
+```
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -1959,12 +2084,14 @@ aaab73a2a5de468200062b5ddcd42bb3e4c4a801053a5341a84a00a13176bf5b
 
 #### マウントファイルの変更
 
-```linuxコマンド
-# vim htdocs/index.html
+```
+vim htdocs/index.html
 ```
 
-```dockerコマンド
-# curl http://localhost:8080/index.html
+```
+curl http://localhost:8080/index.html
+```
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -1976,13 +2103,17 @@ aaab73a2a5de468200062b5ddcd42bb3e4c4a801053a5341a84a00a13176bf5b
 </html>
 ```
 
-```dockerコマンド
-# docker container stop bind-nginx
+```
+docker container stop bind-nginx
+```
+```
 bind-nginx
 ```
 
-```dockerコマンド
-# docker container rm bind-nginx
+```
+docker container rm bind-nginx
+```
+```
 bind-nginx
 ```
 
@@ -1990,42 +2121,54 @@ bind-nginx
 
 #### ボリュームの作成
 
-```dockerコマンド
-# docker volume create htdocs
+```
+docker volume create htdocs
+```
+```
 htdocs
 ```
 
-```dockerコマンド
-# docker volume ls
+```
+docker volume ls
+```
+```
 DRIVER VOLUME NAME
 local htdocs
 ```
 
 以下結果は同じです。どちらかで実行してください。
 
-```dockerコマンド
-# docker container run --name volume-nginx -d -p 8080:80 --mount source=htdocs,target=/usr/share/nginx/html nginx
+```
+docker container run --name volume-nginx -d -p 8080:80 --mount source=htdocs,target=/usr/share/nginx/html nginx
+```
+```
 978821cb0c6c259e3a22245844b86b0f9216f3268af9bf95f5007f19cb975a26
 ```
 
-```dockerコマンド
-# docker container run --name volume-nginx -d -p 8080:80 -v htdocs:/usr/share/nginx/html nginx
+```
+docker container run --name volume-nginx -d -p 8080:80 -v htdocs:/usr/share/nginx/html nginx
+```
+```
 67b44f15a9f8495a6fadbeb17bdab87d7a9c68b32978cda4d23269c86cd9751d
 ```
 
 #### ホスト側ディレクトリの確認
 
-```linuxコマンド
-# ls /var/lib/docker/volumes/htdocs/_data/
+```
+ls /var/lib/docker/volumes/htdocs/_data/
+```
+```
 50x.html  index.html
 ```
 
-```linuxコマンド
+```
 cp -p /root/docker-development-environment-construction-basic/Chapter03/3-3-4-02/volume.html /var/lib/docker/volumes/htdocs/_data/volume.html
 ```
 
-```linuxコマンド
-# curl http://localhost:8080/volume.html
+```
+curl http://localhost:8080/volume.html
+```
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -2037,8 +2180,10 @@ cp -p /root/docker-development-environment-construction-basic/Chapter03/3-3-4-02
 </html>
 ```
 
-```dockerコマンド
-# docker container exec -it volume-nginx /bin/bash
+```
+docker container exec -it volume-nginx /bin/bash
+```
+```
 root@978821cb0c6c:/# touch /usr/share/nginx/html/test
 root@978821cb0c6c:/# ls /usr/share/nginx/html/
 50x.html  index.html  test  volume.html
@@ -2046,18 +2191,24 @@ root@978821cb0c6c:/# exit
 exit
 ```
 
-```dockerコマンド
-# ls /var/lib/docker/volumes/htdocs/_data/
+```
+ls /var/lib/docker/volumes/htdocs/_data/
+```
+```
 50x.html  index.html  test  volume.html
 ```
 
-```dockerコマンド
-# docker container stop volume-nginx
+```
+docker container stop volume-nginx
+```
+```
 volume-nginx
 ```
 
-```dockerコマンド
-# docker container rm volume-nginx
+```
+docker container rm volume-nginx
+```
+```
 volume-nginx
 ```
 
@@ -2065,26 +2216,34 @@ volume-nginx
 
 #### 一時ファイルシステムの作成
 
-```dockerコマンド
-# docker run -itd --name tmpfs-nginx --mount type=tmpfs,destination=/root/tmp,tmpfs-size=10,tmpfs-mode=755 nginx
+```
+docker run -itd --name tmpfs-nginx --mount type=tmpfs,destination=/root/tmp,tmpfs-size=10,tmpfs-mode=755 nginx
+```
+```
 8708997d938db1c978494621e12a63255b191dc0261a0825eb2c20e82dd1003f
 ```
 
-```dockerコマンド
-# docker container exec -it tmpfs-nginx /bin/bash
+```
+docker container exec -it tmpfs-nginx /bin/bash
+```
+```
 root@8708997d938d:/# ls /root
 tmp
 root@8708997d938d:/# exit
 exit
 ```
 
-```dockerコマンド
-# docker container stop tmpfs-nginx
+```
+docker container stop tmpfs-nginx
+```
+```
 tmpfs-nginx
 ```
 
-```dockerコマンド
-# docker container rm tmpfs-nginx
+```
+docker container rm tmpfs-nginx
+```
+```
 tmpfs-nginx
 ```
 
@@ -2092,28 +2251,18 @@ tmpfs-nginx
 
 ### 作業ディレクトリの作成
 
-```linuxコマンド
-# cd /root
+```
+mkdir -p /tmp/data-volume/share
 ```
 
-```linuxコマンド
-# mkdir /tmp/data-volume
+```
+touch /tmp/data-volume/share/share-file.txt
 ```
 
-```linuxコマンド
-# cd /tmp/data-volume
 ```
-
-```linuxコマンド
-# mkdir share
+docker run -it -d --name data-volume -v /tmp/data-volume/share:/tmp/data busybox
 ```
-
-```linuxコマンド
-# touch share/share-file.txt
 ```
-
-```dockerコマンド
-# docker run -it -d --name ubuntu -v /tmp/data-volume/share:/tmp/data ubuntu
 Unable to find image 'ubuntu:latest' locally
 latest: Pulling from library/ubuntu
 345e3491a907: Pull complete
@@ -2126,95 +2275,123 @@ da7bbd309b62f4da57217629ee3fd026475b5515ccd01f8c8ddc65bdc2c2bf49
 
 ### コンテナの作成
 
-```dockerコマンド
-# docker run -it -d --name share01 --volumes-from ubuntu ubuntu
-a7f94c95c139799c8be2351d4d3ab1fb106b6c5cac95b10d39b6aa69759a7901
+```
+docker run -it -d --name share01 --volumes-from data-volume ubuntu
+```
+```
+Unable to find image ’ubuntu:latest’ locally
+：
+：<省略>
+：
+Digest: sha256:adf73ca014822ad8237623d388cedf4d5346aa72c270c5acc01431cc93e18e2d
 ```
 
-```dockerコマンド
-# docker run -it -d --name share02 --volumes-from ubuntu ubuntu
-92f5643a37cb94febed0d3c902750331f7348fd6fda7a810878bdd62f04f6700
+```
+docker run -it -d --name share02 --volumes-from data-volume ubuntu
+```
+```
+a0cd09adf542836788611a8b6379b08787c251e7bbd79db04881b0b7fe754f23
 ```
 
-```dockerコマンド
-# docker container ls
-CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS         PORTS     NAMES
-92f5643a37cb   ubuntu    "/bin/bash"   2 minutes ago   Up 2 minutes             share02
-a7f94c95c139   ubuntu    "/bin/bash"   3 minutes ago   Up 2 minutes             share01
-da7bbd309b62   ubuntu    "/bin/bash"   5 minutes ago   Up 5 minutes             ubuntu
+```
+docker container ls
+```
+```
+CONTAINER ID   IMAGE     COMMAND       CREATED              STATUS              PORTS   NAMES
+a0cd09adf542   ubuntu    "/bin/bash"   About a minute ago   Up About a minute           share02
+4e8831914723   ubuntu    "/bin/bash"   About a minute ago   Up About a minute           share01
+39ed6f38858e   busybox   "sh"          2 minutes ago        Up 2 minutes                data-volume
 ```
 
 ### データ共有の確認
 
-```dockerコマンド
-# docker exec -it ubuntu /bin/bash
-root@da7bbd309b62:/# ls /tmp/data/
+```
+docker container exec -it data-volume /bin/sh
+```
+```
+/ # ls /tmp/data
 share-file.txt
-root@da7bbd309b62:/# touch /tmp/data/new-sharefile
-root@da7bbd309b62:/# ls /tmp/data
-new-sharefile  share-file.txt
-root@da7bbd309b62:/# exit
+/ # exit
+```
+
+```
+docker container exec -it share01 /bin/bash
+```
+```
+root@4e8831914723:/# ls /tmp/data
+share-file.txt
+root@4e8831914723:/# exit
 exit
 ```
 
-```dockerコマンド
-# docker exec -it share01 /bin/bash
-root@a7f94c95c139:/# ls /tmp/data
-new-sharefile  share-file.txt
-root@a7f94c95c139:/# exit
+```
+docker container exec -it share02 /bin/bash
+```
+```
+root@a0cd09adf542:/# ls /tmp/data
+share-file.txt
+root@a0cd09adf542:/# exit
 exit
 ```
 
-```dockerコマンド
-# docker exec -it share02 /bin/bash
-root@92f5643a37cb:/# ls /tmp/data
-new-sharefile  share-file.txt
-root@92f5643a37cb:/# exit
-exit
+```
+docker container stop data-volume
+```
+```
+data-volume
 ```
 
-```dockerコマンド
-# docker container stop ubuntu
-ubuntu
 ```
-
-```dockerコマンド
-# docker container stop share01
+docker container stop share01
+```
+```
 share01
 ```
 
-```dockerコマンド
-# docker container stop share02
+```
+docker container stop share02
+```
+```
 share02
 ```
 
-```dockerコマンド
-# docker container rm ubuntu
-ubuntu
+```
+docker container rm data-volume
+```
+```
+data-volume
 ```
 
-```dockerコマンド
-# docker container rm share01
+```
+docker container rm share01
+```
+```
 share01
 ```
 
-```dockerコマンド
-# docker container rm share02
+```
+docker container rm share02
+```
+```
 share02
 ```
 
 ### 3・3・8 コンテナのネットワーク
 
-```dockerコマンド
-# docker network ls
+```
+docker network ls
+```
+```
 NETWORK ID     NAME      DRIVER    SCOPE
 2572d881e2b2   bridge    bridge    local
 10be770dee84   host      host      local
 d2180dcb719e   none      null      local
 ```
 
-```linuxコマンド
-# ip a
+```
+ip a
+```
+```
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
@@ -2237,13 +2414,17 @@ d2180dcb719e   none      null      local
 
 ### 3・3・9 ブリッジネットワークとアプリケーション
 
-```dockerコマンド
-# docker network create wordpress-network
+```
+docker network create wordpress-network
+```
+```
 e0d035cf8c1dda9485db8226ecd50b4877e0cf730c0e3a97a93b950ace59f073
 ```
 
-```dockerコマンド
-# docker network ls
+```
+docker network ls
+```
+```
 NETWORK ID     NAME                DRIVER    SCOPE
 f041f9a7a51c   bridge              bridge    local
 0db81ad2118c   host                host      local
@@ -2251,14 +2432,16 @@ f041f9a7a51c   bridge              bridge    local
 e0d035cf8c1d   wordpress-network   bridge    local
 ```
 
-```dockerコマンド
-# docker run -d --name mysql \
+```
+# docker container run -d --name mysql \
 --network wordpress-network \
 -e MYSQL_ROOT_PASSWORD=wordpress \
 -e MYSQL_DATABASE=wordpress \
 -e MYSQL_USER=wordpress \
 -e MYSQL_PASSWORD=wordpress \
 mysql:8.0.25
+```
+```
 Unable to find image 'mysql:8.0.25' locally
 8.0.25: Pulling from library/mysql
 69692152171a: Pull complete
@@ -2278,8 +2461,8 @@ Status: Downloaded newer image for mysql:8.0.25
 35d594a48e41d87f3cb820e8e4e7d7f8afbce65615f5a74aaa64c2fb66336f2a
 ```
 
-```dockerコマンド
-# docker run -d --name wordpress \
+```
+docker container run -d --name wordpress \
 --network wordpress-network \
 -p 8080:80 \
 -e WORDPRESS_DB_HOST=mysql:3306 \
@@ -2287,6 +2470,8 @@ Status: Downloaded newer image for mysql:8.0.25
 -e WORDPRESS_DB_USER=wordpress \
 -e WORDPRESS_DB_PASSWORD=wordpress \
 wordpress:php7.4-apache
+```
+```
 Unable to find image 'wordpress:php7.4-apache' locally
 php7.4-apache: Pulling from library/wordpress
 69692152171a: Already exists
@@ -2315,15 +2500,19 @@ Status: Downloaded newer image for wordpress:php7.4-apache
 534c3dabf55661cf2914d21caa1b242e4074a80082884c58b2101122bbbc5f32
 ```
 
-```dockerコマンド
-# docker container ls
+```
+docker container ls
+```
+```
 CONTAINER ID   IMAGE                     COMMAND                  CREATED          STATUS          PORTS                                   NAMES
 534c3dabf556   wordpress:php7.4-apache   "docker-entrypoint.s…"   9 minutes ago    Up 9 minutes    0.0.0.0:8080->80/tcp, :::8080->80/tcp   wordpress
 35d594a48e41   mysql:8.0.25              "docker-entrypoint.s…"   10 minutes ago   Up 10 minutes   3306/tcp, 33060/tcp                     mysql
 ```
 
-```dockerコマンド
-# curl http://localhost:8080/wp-admin/install.php
+```
+curl http://localhost:8080/wp-admin/install.php
+```
+```
 <!DOCTYPE html>
 <html lang="en-US" xml:lang="en-US">
 <head>
@@ -2483,20 +2672,26 @@ jQuery( function( $ ) {
 </html>
 ```
 
-```dockerコマンド
-# docker container stop wordpress
+```
+docker container stop wordpress
+```
+```
 wordpress
 ```
 
-```dockerコマンド
-# docker container stop mysql
+```
+docker container stop mysql
+```
+```
 mysql
 ```
 
 ## 3.4 コンテナとイメージの一括削除
 
-```dockerコマンド
-# docker container prune
+```
+docker container prune
+```
+```
 WARNING! This will remove all stopped containers.
 Are you sure you want to continue? [y/N] y
 Deleted Containers:
@@ -2504,13 +2699,17 @@ Deleted Containers:
 2461c5ba5fc414a549174dcc036b335a532a94768bbc539efb1959945306aeb8
 ```
 
-```dockerコマンド
-# docker container ls -a
+```
+docker container ls -a
+```
+```
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
-```dockerコマンド
-# docker image prune -a
+```
+docker image prune -a
+```
+```
 WARNING! This will remove all images without at least one container associated to them.
 Are you sure you want to continue? [y/N] y
 Deleted Images:
@@ -2608,18 +2807,25 @@ deleted: sha256:722a834ff95bfd3dac4bc5aae498c245eb76b98108ed9de4293df2596e60cf1a
 Total reclaimed space: 2.148GB
 ```
 
-```dockerコマンド
-# docker image ls
+```
+docker image ls
+```
+```
 REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```
 
-```linuxコマンド
-# exit
+```
+exit
+```
+```
 logout
-$ exit
+```
+```
+exit
+```
+```
 logout
-Connection to 34.84.148.90 closed.
-$
+Connection to 34.xx.xx.xx closed.
 ```
 
 仮想マシンの削除方法は、[「2-2. Docker 環境のセットアップ」](../Chapter02/Chapter02-text.md)を参照してください。
