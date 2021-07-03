@@ -6,49 +6,77 @@
 
 #### 【1】GCPプロジェクトの確認
 
-```gcloudコマンド
-$ gcloud projects list
+コマンド
+```
+gcloud projects list
+```
+コマンド結果
+```
 PROJECT_ID              NAME              PROJECT_NUMBER
-mercurial-shape-278704  My First Project  540200718496
+mercurial-shape-278704  My First Project  xxxxxxxxxxxx
 ```
 
 #### 【2】プロジェクトIDの設定
 
-```gcloudコマンド
-$ gcloud config set project <YOUR-PROJECT-ID>
+コマンド
+```
+gcloud config set project <YOUR-PROJECT-ID>
+```
+コマンド結果
+```
 Updated property [core/project].
 ```
 
-```gcloudコマンド
-$ export PROJECT_ID=$(gcloud config get-value project); echo $PROJECT_ID
+コマンド
+```
+export PROJECT_ID=$(gcloud config get-value project); echo $PROJECT_ID
+```
+コマンド結果
+```
 Your active configuration is: [cloudshell-3891]
 mercurial-shape-278704
 ```
 
 #### 【3】Zoneの設定
 
-```gcloudコマンド
-$ gcloud config set compute/zone asia-northeast1-a
+コマンド
+```
+gcloud config set compute/zone asia-northeast1-a
+```
+コマンド結果
+```
 Updated property [compute/zone].
 ```
 
-```gcloudコマンド
-$ export COMPUTE_ZONE=$(gcloud config get-value compute/zone); echo $COMPUTE_ZONE
+コマンド
+```
+export COMPUTE_ZONE=$(gcloud config get-value compute/zone); echo $COMPUTE_ZONE
+```
+コマンド結果
+```
 Your active configuration is: [cloudshell-3891]
 asia-northeast1-a
 ```
 
 #### 【4】APIの有効化
 
-```gcloudコマンド
-$ gcloud services enable cloudapis.googleapis.com container.googleapis.com
+コマンド
+```
+gcloud services enable cloudapis.googleapis.com container.googleapis.com
+```
+コマンド結果
+```
 Operation "operations/acf.p2-540200718496-4784cf88-330f-40cb-be37-f9e842b7a148" finished successfully.
 ```
 
 #### 【5】Kubernetesクラスタの作成
 
-```gcloudコマンド
-$ gcloud container get-server-config
+コマンド
+```
+gcloud container get-server-config
+```
+コマンド結果
+```
 Fetching server config for asia-northeast1-a
 channels:
 - channel: RAPID
@@ -345,8 +373,12 @@ validNodeVersions:
 - 1.11.10-gke.5
 ```
 
-```gcloudコマンド
-$ gcloud container clusters create k8s-cluster --zone $COMPUTE_ZONE --cluster-version=1.18.17-gke.100 --async
+コマンド
+```
+gcloud container clusters create k8s-cluster --zone $COMPUTE_ZONE --cluster-version=1.18.17-gke.100 --async
+```
+コマンド結果
+```
 WARNING: Currently VPC-native is not the default mode during cluster creation. In the future, this will become the default mode and can be disabled using `--no-enable-ip-alias` flag. Use `--[no-]enable-ip-alias` flag to suppress this warning.
 WARNING: Starting with version 1.18, clusters will have shielded GKE nodes by default.
 WARNING: Your Pod address range (`--cluster-ipv4-cidr`) can accommodate at most 1008 node(s).
@@ -357,24 +389,36 @@ k8s-cluster        asia-northeast1-a                          PROVISIONING
 
 #### 【6】Kubernetesクラスタの起動確認
 
-```gcloudコマンド
-$ gcloud container clusters list
+コマンド
+```
+gcloud container clusters list
+```
+コマンド結果
+```
 NAME         LOCATION           MASTER_VERSION   MASTER_IP      MACHINE_TYPE  NODE_VERSION     NUM_NODES  STATUS
 k8s-cluster  asia-northeast1-a  1.18.17-gke.100  35.200.13.121  e2-medium     1.18.17-gke.100  3          RUNNING
 ```
 
 #### 【7】Credentialの取得
 
-```gcloudコマンド
-$ gcloud container clusters get-credentials k8s-cluster --zone $COMPUTE_ZONE --project $PROJECT_ID
+コマンド
+```
+gcloud container clusters get-credentials k8s-cluster --zone $COMPUTE_ZONE --project $PROJECT_ID
+```
+コマンド結果
+```
 Fetching cluster endpoint and auth data.
 kubeconfig entry generated for k8s-cluster.
 ```
 
 #### 【8】Node状況の確認
 
-```gcloudコマンド
-$ kubectl get nodes
+コマンド
+```
+kubectl get nodes
+```
+コマンド結果
+```
 NAME                                         STATUS   ROLES    AGE     VERSION
 gke-k8s-cluster-default-pool-18e132c4-5sg2   Ready    <none>   4m47s   v1.18.17-gke.100
 gke-k8s-cluster-default-pool-18e132c4-fpr2   Ready    <none>   4m47s   v1.18.17-gke.100
@@ -383,8 +427,12 @@ gke-k8s-cluster-default-pool-18e132c4-vnmj   Ready    <none>   4m46s   v1.18.17-
 
 #### 【9】Kubernetesクラスタの削除
 
-```gcloudコマンド
-$ gcloud container clusters delete k8s-cluster --zone $COMPUTE_ZONE --async
+コマンド
+```
+gcloud container clusters delete k8s-cluster --zone $COMPUTE_ZONE --async
+```
+コマンド結果
+```
 The following clusters will be deleted.
  - [k8s-cluster] in [asia-northeast1-a]
 
