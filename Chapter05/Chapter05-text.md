@@ -1981,6 +1981,8 @@ kubectl get persistentvolume nfs-pv
 ```
 コマンド結果
 ```
+NAME     CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
+nfs-pv   10Gi       RWO            Retain           Available           nfs                     4m50s
 ```
 
 コマンド
@@ -2017,6 +2019,11 @@ kubectl get persistentvolumes,persistentvolumeclaims
 ```
 コマンド結果
 ```
+NAME                      CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM             STORAGECLASS   REASON   AGE
+persistentvolume/nfs-pv   10Gi       RWO            Retain           Bound    default/nfs-pvc   nfs                     7m30s
+
+NAME                            STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+persistentvolumeclaim/nfs-pvc   Bound    nfs-pv   10Gi       RWO            nfs            11s
 ```
 
 #### NFS サーバのDeploymentとServiceの作成
@@ -2240,13 +2247,14 @@ persistentvolume/wordpress-pv created
 
 コマンド
 ```
-kubectl get persistentvolumea
+kubectl get persistentvolumes
 ```
 コマンド結果
 ```
-NAME           CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
-mysql-pv       10Gi       RWX            Retain           Available           mysql                   66s
-wordpress-pv   10Gi       RWX            Retain           Available           wordpress               9s
+NAME           CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM             STORAGECLASS   REASON   AGE
+mysql-pv       10Gi       RWX            Retain           Available                     mysql                   2m15s
+nfs-pv         10Gi       RWO            Retain           Bound       default/nfs-pvc   nfs                     15m
+wordpress-pv   10Gi       RWX            Retain           Available                     wordpress               4s
 ```
 
 #### PersistentVolumeClaimの作成
@@ -2320,12 +2328,14 @@ kubectl get persistentvolumes,persistentvolumeclaims
 コマンド結果
 ```
 NAME                            CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                   STORAGECLASS   REASON   AGE
-persistentvolume/mysql-pv       10Gi       RWX            Retain           Bound    default/mysql-pvc       mysql                   3m2s
-persistentvolume/wordpress-pv   10Gi       RWX            Retain           Bound    default/wordpress-pvc   wordpress               2m5s
+persistentvolume/mysql-pv       10Gi       RWX            Retain           Bound    default/mysql-pvc       mysql                   3m21s
+persistentvolume/nfs-pv         10Gi       RWO            Retain           Bound    default/nfs-pvc         nfs                     16m
+persistentvolume/wordpress-pv   10Gi       RWX            Retain           Bound    default/wordpress-pvc   wordpress               70s
 
 NAME                                  STATUS   VOLUME         CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-persistentvolumeclaim/mysql-pvc       Bound    mysql-pv       10Gi       RWX            mysql          19s
-persistentvolumeclaim/wordpress-pvc   Bound    wordpress-pv   10Gi       RWX            wordpress      11s
+persistentvolumeclaim/mysql-pvc       Bound    mysql-pv       10Gi       RWX            mysql          21s
+persistentvolumeclaim/nfs-pvc         Bound    nfs-pv         10Gi       RWO            nfs            9m2s
+persistentvolumeclaim/wordpress-pvc   Bound    wordpress-pv   10Gi       RWX            wordpress      8s
 ```
 
 ### 5.2.5 DeploymentとServiceの作成
@@ -2549,7 +2559,7 @@ NAME                TYPE           CLUSTER-IP    EXTERNAL-IP      PORT(S)       
 kubernetes          ClusterIP      10.48.0.1     <none>           443/TCP                      34m
 mysql-service       ClusterIP      10.48.14.45   <none>           3306/TCP                     4m3s
 nfs-service         ClusterIP      10.48.4.25    <none>           2049/TCP,20048/TCP,111/TCP   23m
-wordpress-service   LoadBalancer   10.48.6.192   35.194.109.124   80:31367/TCP                 53s
+wordpress-service   LoadBalancer   10.48.6.192   35.xx.xx.xx      80:31367/TCP                 53s
 ```
 
 ### 5.2.6 アプリケーションのスケールアウト/スケールイン
@@ -2606,7 +2616,7 @@ metadata:
   labels:
     app: wordpress
 spec:
-  replicas: 5
+  replicas: 5  #「replicas」を5に変更
   selector:
     matchLabels:
       app: wordpress
@@ -2616,12 +2626,12 @@ spec:
         app: wordpress
     spec:
       containers:
-        - image: wordpress
+        - image: wordpress:5.6.2
           name: wordpress
           env:
-          - name: WORDPRESS_DB_HOST         # Service名「mysql-service」を定義
+          - name: WORDPRESS_DB_HOST
             value: mysql-service
-          - name: WORDPRESS_DB_PASSWORD     # MySQLのデータベースパスワードを参照する定義
+          - name: WORDPRESS_DB_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: mysql
@@ -2629,10 +2639,10 @@ spec:
           ports:
             - containerPort: 80
               name: wordpress
-          volumeMounts:                     # Podのマウントパス定義
+          volumeMounts:
             - name: wordpress-local-storage
               mountPath: /var/www/html
-      volumes:                              #「wordpress-pvc」を指定する定義
+      volumes:
         - name: wordpress-local-storage
           persistentVolumeClaim:
             claimName: wordpress-pvc
@@ -2684,123 +2694,6 @@ metadata:
   generation: 3
   labels:
     app: wordpress
-  managedFields:
-  - apiVersion: apps/v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:metadata:
-        f:annotations:
-          .: {}
-          f:kubectl.kubernetes.io/last-applied-configuration: {}
-        f:labels:
-          .: {}
-          f:app: {}
-      f:spec:
-        f:progressDeadlineSeconds: {}
-        f:replicas: {}
-        f:revisionHistoryLimit: {}
-        f:selector:
-          f:matchLabels:
-            .: {}
-            f:app: {}
-        f:strategy:
-          f:rollingUpdate:
-            .: {}
-            f:maxSurge: {}
-            f:maxUnavailable: {}
-          f:type: {}
-        f:template:
-          f:metadata:
-            f:labels:
-              .: {}
-              f:app: {}
-          f:spec:
-            f:containers:
-              k:{"name":"wordpress"}:
-                .: {}
-                f:env:
-                  .: {}
-                  k:{"name":"WORDPRESS_DB_HOST"}:
-                    .: {}
-                    f:name: {}
-                    f:value: {}
-                  k:{"name":"WORDPRESS_DB_PASSWORD"}:
-                    .: {}
-                    f:name: {}
-                    f:valueFrom:
-                      .: {}
-                      f:secretKeyRef:
-                        .: {}
-                        f:key: {}
-                        f:name: {}
-                f:image: {}
-                f:imagePullPolicy: {}
-                f:name: {}
-                f:ports:
-                  .: {}
-                  k:{"containerPort":80,"protocol":"TCP"}:
-                    .: {}
-                    f:containerPort: {}
-                    f:name: {}
-                    f:protocol: {}
-                f:resources: {}
-                f:terminationMessagePath: {}
-                f:terminationMessagePolicy: {}
-                f:volumeMounts:
-                  .: {}
-                  k:{"mountPath":"/var/www/html"}:
-                    .: {}
-                    f:mountPath: {}
-                    f:name: {}
-            f:dnsPolicy: {}
-            f:restartPolicy: {}
-            f:schedulerName: {}
-            f:securityContext: {}
-            f:terminationGracePeriodSeconds: {}
-            f:volumes:
-              .: {}
-              k:{"name":"wordpress-local-storage"}:
-                .: {}
-                f:name: {}
-                f:persistentVolumeClaim:
-                  .: {}
-                  f:claimName: {}
-    manager: kubectl-client-side-apply
-    operation: Update
-    time: "2021-05-25T13:23:48Z"
-  - apiVersion: apps/v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:metadata:
-        f:annotations:
-          f:deployment.kubernetes.io/revision: {}
-      f:status:
-        f:availableReplicas: {}
-        f:conditions:
-          .: {}
-          k:{"type":"Available"}:
-            .: {}
-            f:lastTransitionTime: {}
-            f:lastUpdateTime: {}
-            f:message: {}
-            f:reason: {}
-            f:status: {}
-            f:type: {}
-          k:{"type":"Progressing"}:
-            .: {}
-            f:lastTransitionTime: {}
-            f:lastUpdateTime: {}
-            f:message: {}
-            f:reason: {}
-            f:status: {}
-            f:type: {}
-        f:observedGeneration: {}
-        f:readyReplicas: {}
-        f:replicas: {}
-        f:updatedReplicas: {}
-    manager: kube-controller-manager
-    operation: Update
-    time: "2021-05-25T13:33:06Z"
   name: wordpress
   namespace: default
   resourceVersion: "16002"
