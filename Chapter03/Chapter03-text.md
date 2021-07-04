@@ -42,7 +42,7 @@ ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
 
 コマンド
 ```
-# cat index.html
+cat index.html
 ```
 コマンド結果
 ```
